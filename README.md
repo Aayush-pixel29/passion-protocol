@@ -9,7 +9,9 @@ Next.js (App Router) + Supabase (Auth, Postgres, RLS).
 ## Setup
 
 1. Create a project at [supabase.com](https://supabase.com).
-2. In the SQL editor, run [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql).
+2. In the SQL editor, run in order:
+   - [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql)
+   - [`supabase/migrations/002_harden_connects.sql`](supabase/migrations/002_harden_connects.sql)
 3. Copy env vars:
 
    ```bash
@@ -51,3 +53,10 @@ Create your own account on `/login`, finish onboarding, and match against that p
 ## Matching
 
 Role (`looking_for`) is a **filter**. Score is computed from four vibe sliders (pace, comms, risk, energy): same answers score 100; maximum distance scores 0.
+
+## Live site
+
+**https://passion-protocol.vercel.app**
+
+GitHub is connected to Vercel: pushing `master` redeploys. Do not put `SUPABASE_SERVICE_ROLE_KEY` on Vercel.
+

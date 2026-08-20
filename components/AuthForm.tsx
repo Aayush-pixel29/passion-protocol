@@ -15,8 +15,12 @@ export function AuthForm() {
   async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
     setError("");
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters.");
+    if (password.length < 8) {
+      setError("Password must be at least 8 characters.");
+      return;
+    }
+    if (password.length > 72) {
+      setError("Password is too long.");
       return;
     }
     setPending(true);
@@ -61,6 +65,8 @@ export function AuthForm() {
         type="password"
         autoComplete={mode === "signup" ? "new-password" : "current-password"}
         required
+        minLength={8}
+        maxLength={72}
         value={password}
         onChange={(e) => setPassword(e.target.value)}
         placeholder="••••••••"

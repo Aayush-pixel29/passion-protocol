@@ -51,6 +51,8 @@ export function OnboardingForm({
           defaultValue={defaultCodename}
           placeholder="e.g. NEO_BUILDER"
           minLength={2}
+          maxLength={32}
+          pattern="[A-Za-z0-9_ ]{2,32}"
           required
         />
 
@@ -97,6 +99,7 @@ export function OnboardingForm({
           className="input"
           defaultValue={defaultBio ?? ""}
           placeholder="What you want to build together"
+          maxLength={280}
         />
       </div>
 

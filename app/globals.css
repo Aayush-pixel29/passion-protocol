@@ -50,6 +50,13 @@ select {
   font-family: inherit;
 }
 
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid #ff8a1a;
+  outline-offset: 2px;
+}
+
 .site {
   min-height: 100vh;
 }

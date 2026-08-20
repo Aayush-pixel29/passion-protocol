@@ -5,6 +5,14 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { isOperatorRole } from "@/lib/types";
 
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+const CODENAME_RE = /^[A-Z0-9_]{2,32}$/;
+
+function isUuid(value: string): boolean {
+  return UUID_RE.test(value);
+}
+
 export async function signOut() {
   const supabase = await createClient();
   await supabase.auth.signOut();
@@ -25,19 +33,21 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   const codename = rawName.replace(/\s+/g, "_").toUpperCase();
   const role = String(formData.get("role") ?? "");
   const lookingFor = String(formData.get("lookingFor") ?? "");
-  const bio = String(formData.get("bio") ?? "").trim() || null;
+  const bioRaw = String(formData.get("bio") ?? "").trim();
+  const bio = bioRaw ? bioRaw.slice(0, 280) : null;
+
+  if (!CODENAME_RE.test(codename)) {
+    return { error: "Codename must be 2–32 letters, numbers, or underscores." };
+  }
+  if (!isOperatorRole(role) || !isOperatorRole(lookingFor)) {
+    return { error: "Select both I AM and I NEED." };
+  }
 
   const pace = Number(formData.get("pace"));
   const comms = Number(formData.get("comms"));
   const risk = Number(formData.get("risk"));
   const energy = Number(formData.get("energy"));
 
-  if (codename.length < 2) {
-    return { error: "Codename required (at least 2 characters)." };
-  }
-  if (!isOperatorRole(role) || !isOperatorRole(lookingFor)) {
-    return { error: "Select both I AM and I NEED." };
-  }
   if ([pace, comms, risk, energy].some((n) => !Number.isInteger(n) || n < 1 || n > 5)) {
     return { error: "Set every vibe slider." };
   }
@@ -84,17 +94,25 @@ export async function sendConnect(toId: string): Promise<{ error?: string; statu
   if (!user) {
     return { error: "Session expired." };
   }
-  if (user.id === toId) {
-    return { error: "Cannot connect to yourself." };
+  if (!isUuid(toId) || user.id === toId) {
+    return { error: "Invalid partner." };
   }
 
-  const { data: existing } = await supabase
+  const { data: outgoing } = await supabase
     .from("connect_requests")
     .select("id, from_id, to_id, status")
-    .or(
-      `and(from_id.eq.${user.id},to_id.eq.${toId}),and(from_id.eq.${toId},to_id.eq.${user.id})`
-    )
+    .eq("from_id", user.id)
+    .eq("to_id", toId)
     .maybeSingle();
+
+  const { data: incoming } = await supabase
+    .from("connect_requests")
+    .select("id, from_id, to_id, status")
+    .eq("from_id", toId)
+    .eq("to_id", user.id)
+    .maybeSingle();
+
+  const existing = outgoing ?? incoming;
 
   if (existing) {
     if (existing.status === "accepted") {
