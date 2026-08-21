@@ -8,13 +8,13 @@ import { formatRole, type ConnectState } from "@/lib/types";
 export default async function DiscoverPage() {
   const { user, profile, vibe, supabase } = await getOwnProfile();
   if (!user) redirect("/login");
-  if (!profile?.onboarding_complete || !profile.looking_for || !vibe) {
+  if (!profile?.onboarding_complete || !profile.looking_for || !profile.role || !vibe) {
     redirect("/onboarding");
   }
 
   const pool = await loadCompletedOperators();
   const ranked = rankMatches(
-    { id: user.id, looking_for: profile.looking_for, vibe },
+    { id: user.id, role: profile.role, looking_for: profile.looking_for, vibe },
     pool
   );
 

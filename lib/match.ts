@@ -15,7 +15,7 @@ export function vibeScore(a: VibeAnswers, b: VibeAnswers): number {
 }
 
 export function rankMatches(
-  me: { looking_for: OperatorRole; vibe: VibeAnswers; id: string },
+  me: { role: OperatorRole; looking_for: OperatorRole; vibe: VibeAnswers; id: string },
   others: Array<{ profile: Profile; vibe: VibeAnswers }>
 ): RankedMatch[] {
   return others
@@ -23,7 +23,8 @@ export function rankMatches(
       (row) =>
         row.profile.id !== me.id &&
         row.profile.onboarding_complete &&
-        row.profile.role === me.looking_for
+        row.profile.role === me.looking_for &&
+        row.profile.looking_for === me.role
     )
     .map((row) => ({
       profile: row.profile,

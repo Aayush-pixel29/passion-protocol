@@ -19,6 +19,27 @@ export async function signOut() {
   redirect("/");
 }
 
+export async function deleteAccount(): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) {
+    return { error: "Session expired." };
+  }
+
+  // Calls the RPC created in 003_delete_user.sql
+  const { error } = await supabase.rpc("delete_user");
+  
+  if (error) {
+    return { error: error.message };
+  }
+  
+  await supabase.auth.signOut();
+  redirect("/");
+}
+
 export async function saveOnboarding(formData: FormData): Promise<{ error: string } | void> {
   const supabase = await createClient();
   const {
@@ -108,6 +129,21 @@ export async function sendConnect(toId: string): Promise<{ error?: string; statu
   }
   if (!isUuid(toId) || user.id === toId) {
     return { error: "Invalid partner." };
+  }
+
+  // Rate limiting: count outgoing requests in last 24h
+  const oneDayAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
+  const { count, error: countError } = await supabase
+    .from("connect_requests")
+    .select("*", { count: "exact", head: true })
+    .eq("from_id", user.id)
+    .gte("created_at", oneDayAgo);
+
+  if (countError) {
+    return { error: "Failed to verify rate limits." };
+  }
+  if (count !== null && count >= 30) {
+    return { error: "Daily connect limit reached. You can only send 30 requests per 24 hours." };
   }
 
   const { data: outgoing } = await supabase

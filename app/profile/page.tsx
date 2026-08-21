@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 import { formatRole } from "@/lib/types";
 import { redirect } from "next/navigation";
+import { DeleteAccountButton } from "@/components/DeleteAccountButton";
 
 const DIMS: Array<{ key: "pace" | "comms" | "risk" | "energy"; label: string }> = [
   { key: "pace", label: "Pace" },
@@ -142,6 +143,14 @@ export default async function ProfilePage() {
             </div>
           </div>
         ) : null}
+
+        <div style={{ marginTop: 60, borderTop: "1px solid #eaeaea", paddingTop: 40 }}>
+          <h3 style={{ color: "#ef4444" }}>Danger Zone</h3>
+          <p className="sub" style={{ marginTop: 8, marginBottom: 16 }}>
+            Permanently delete your account and all associated data. This action cannot be undone.
+          </p>
+          <DeleteAccountButton />
+        </div>
       </main>
     </div>
   );
