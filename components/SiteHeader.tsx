@@ -11,7 +11,8 @@ export function SiteHeader({ current, signedIn }: Props) {
     <header className="site-header">
       <div className="site-header-inner">
         <Link href={signedIn ? "/discover" : "/"} className="brand">
-          Passion Protocol
+          <span style={{ color: "#ff3d6e", marginRight: 6 }}>⚡</span>
+          <span>Passion Protocol</span>
         </Link>
         <nav className="nav">
           {signedIn ? (
@@ -22,7 +23,7 @@ export function SiteHeader({ current, signedIn }: Props) {
               <Link href="/profile" className={current === "profile" ? "active" : ""}>
                 Profile
               </Link>
-              <form action={signOut}>
+              <form action={signOut} style={{ display: "inline" }}>
                 <button className="ghost-btn" type="submit">
                   Sign out
                 </button>
@@ -30,8 +31,10 @@ export function SiteHeader({ current, signedIn }: Props) {
             </>
           ) : (
             <>
-              <Link href="/login">Sign in</Link>
-              <Link href="/login" className="header-cta">
+              <Link href="/login" className="ghost-btn">
+                Sign in
+              </Link>
+              <Link href="/login" className="header-cta pill-btn">
                 Get started
               </Link>
             </>

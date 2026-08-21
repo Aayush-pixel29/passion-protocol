@@ -2,7 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { sendConnect, respondToConnect } from "@/lib/actions";
-import { formatRole, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
+import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
 
 export type DiscoverCard = {
   profile: Profile;
@@ -26,7 +26,7 @@ function getAvatarGradient(id: string) {
   }
   const hue1 = Math.abs(hash) % 360;
   const hue2 = (hue1 + 45) % 360;
-  return `linear-gradient(135deg, hsl(${hue1}, 75%, 65%), hsl(${hue2}, 85%, 45%))`;
+  return `linear-gradient(135deg, hsl(${hue1}, 80%, 60%), hsl(${hue2}, 90%, 48%))`;
 }
 
 export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
@@ -41,7 +41,9 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
   if (visible.length === 0) {
     return (
       <div className="empty">
-        <p>No operators with that role yet.</p>
+        <p style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+          No operators with that role yet
+        </p>
         <p>You&apos;re one of the first here — invite a collaborator or check back soon!</p>
       </div>
     );
@@ -103,20 +105,20 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
           return (
             <article key={card.profile.id} className={accepted ? "match-card success" : "match-card"}>
               <div className="match-card-top">
-                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
                   <div
                     style={{
-                      width: 40,
-                      height: 40,
+                      width: 44,
+                      height: 44,
                       borderRadius: "50%",
                       background: avatarBg,
                       display: "flex",
                       alignItems: "center",
                       justifyContent: "center",
                       color: "#ffffff",
-                      fontWeight: 700,
-                      fontSize: "1.1rem",
-                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                      fontWeight: 800,
+                      fontSize: "1.15rem",
+                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
                       flexShrink: 0,
                     }}
                   >
@@ -125,7 +127,7 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                   <div>
                     <h3>{card.profile.codename}</h3>
                     <p className="card-skill">
-                      {formatRole(card.profile.role)} · needs {formatRole(card.profile.looking_for)}
+                      {formatRoleWithIcon(card.profile.role)} · needs {formatRoleWithIcon(card.profile.looking_for)}
                     </p>
                   </div>
                 </div>
@@ -140,18 +142,18 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                 ))}
               </div>
               {accepted ? (
-                <div className="left">
-                  <p className="status-line" style={{ color: "#10b981", fontWeight: 600 }}>
-                    Partnership active
+                <div className="left" style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid #d1fae5" }}>
+                  <p className="status-line" style={{ color: "#10b981", fontWeight: 700 }}>
+                    ● Partnership active
                   </p>
                   {card.contactUrl ? (
-                    <p className="sub" style={{ marginTop: 4 }}>
+                    <p className="sub" style={{ marginTop: 6, fontSize: "0.9rem" }}>
                       Contact:{" "}
                       <a
                         href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: "#3b82f6", textDecoration: "underline" }}
+                        style={{ color: "#3b82f6", fontWeight: 600, textDecoration: "underline" }}
                       >
                         {card.contactUrl}
                       </a>
@@ -161,9 +163,11 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                   )}
                 </div>
               ) : outgoing ? (
-                <p className="status-line left">Request sent</p>
+                <p className="status-line left" style={{ marginTop: "auto", fontWeight: 600, color: "var(--accent)" }}>
+                  ✓ Request sent
+                </p>
               ) : incoming ? (
-                <div className="btn-row left">
+                <div className="btn-row left" style={{ marginTop: "auto" }}>
                   <button
                     className="pill-btn skip"
                     type="button"
@@ -182,9 +186,9 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                   </button>
                 </div>
               ) : declined ? (
-                <p className="status-line left sub">Request declined</p>
+                <p className="status-line left sub" style={{ marginTop: "auto" }}>Request declined</p>
               ) : (
-                <div className="btn-row left">
+                <div className="btn-row left" style={{ marginTop: "auto" }}>
                   <button className="pill-btn skip" type="button" onClick={() => skip(card.profile.id)}>
                     Skip
                   </button>
