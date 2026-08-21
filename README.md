@@ -13,6 +13,7 @@ Next.js (App Router) + Supabase (Auth, Postgres, RLS).
    - [`supabase/migrations/001_init.sql`](supabase/migrations/001_init.sql)
    - [`supabase/migrations/002_harden_connects.sql`](supabase/migrations/002_harden_connects.sql)
    - [`supabase/migrations/002_profile_links.sql`](supabase/migrations/002_profile_links.sql)
+   - [`supabase/migrations/003_delete_user.sql`](supabase/migrations/003_delete_user.sql)
 3. Copy env vars:
 
    ```bash
