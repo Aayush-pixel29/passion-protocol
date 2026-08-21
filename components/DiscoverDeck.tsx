@@ -19,6 +19,16 @@ const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
   { key: "energy", label: "Energy" },
 ];
 
+function getAvatarGradient(id: string) {
+  let hash = 0;
+  for (let i = 0; i < id.length; i++) {
+    hash = id.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  const hue1 = Math.abs(hash) % 360;
+  const hue2 = (hue1 + 45) % 360;
+  return `linear-gradient(135deg, hsl(${hue1}, 75%, 65%), hsl(${hue2}, 85%, 45%))`;
+}
+
 export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [local, setLocal] = useState(cards);
@@ -32,7 +42,7 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
     return (
       <div className="empty">
         <p>No operators with that role yet.</p>
-        <p>Invite someone, or run the demo seed so Discover has a pool.</p>
+        <p>You&apos;re one of the first here — invite a collaborator or check back soon!</p>
       </div>
     );
   }
@@ -87,18 +97,41 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
           const declined = card.connectStatus === "declined";
           const pending = busyId === card.profile.id;
 
+          const avatarBg = getAvatarGradient(card.profile.id || card.profile.codename);
+          const initial = card.profile.codename ? card.profile.codename[0].toUpperCase() : "O";
+
           return (
             <article key={card.profile.id} className={accepted ? "match-card success" : "match-card"}>
               <div className="match-card-top">
-                <div>
-                  <h3>{card.profile.codename}</h3>
-                  <p className="card-skill">
-                    {formatRole(card.profile.role)} · needs {formatRole(card.profile.looking_for)}
-                  </p>
+                <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
+                  <div
+                    style={{
+                      width: 40,
+                      height: 40,
+                      borderRadius: "50%",
+                      background: avatarBg,
+                      display: "flex",
+                      alignItems: "center",
+                      justifyContent: "center",
+                      color: "#ffffff",
+                      fontWeight: 700,
+                      fontSize: "1.1rem",
+                      boxShadow: "0 2px 8px rgba(0,0,0,0.12)",
+                      flexShrink: 0,
+                    }}
+                  >
+                    {initial}
+                  </div>
+                  <div>
+                    <h3>{card.profile.codename}</h3>
+                    <p className="card-skill">
+                      {formatRole(card.profile.role)} · needs {formatRole(card.profile.looking_for)}
+                    </p>
+                  </div>
                 </div>
                 <div className="score-badge">{card.score}%</div>
               </div>
-              {card.profile.bio ? <p className="sub">{card.profile.bio}</p> : null}
+              {card.profile.bio ? <p className="sub" style={{ marginTop: 12 }}>{card.profile.bio}</p> : null}
               <div className="dims">
                 {DIMS.map((d) => (
                   <span key={d.key}>
