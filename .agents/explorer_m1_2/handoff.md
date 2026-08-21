@@ -1,3 +1,108 @@
+# Design System CSS Tokens & Architecture Blueprint Handoff Report
+
+**Agent**: `explorer_m1_2`  
+**Working Directory**: `d:\passion-protocol\.agents\explorer_m1_2`  
+**Target File**: `d:\passion-protocol\.agents\explorer_m1_2\handoff.md`  
+**Parent Agent**: `sub_orch_m1` (Conversation ID: `9c420d0f-aaab-49b8-b7e7-7180e735d5de`)  
+**Mission**: Investigate `app/globals.css` (1,281 lines) and map out the complete overhaul strategy to transform it into the premium dark space obsidian design system with neon accents, glassmorphic surfaces, and 100% backward compatibility across all routes.
+
+---
+
+## 1. Observation
+
+### 1.1 Existing CSS File Inspection (`app/globals.css`)
+- **File Path**: `d:\passion-protocol\app\globals.css` (1,281 lines total)
+- **Current Token Architecture** (`app/globals.css` lines 1–21):
+  ```css
+  :root {
+    --bg: #fff6ef;
+    --bg-2: #ffe8f3;
+    --bg-3: #e8f4ff;
+    --surface: #ffffff;
+    --stroke: #f0d4c4;
+    --text: #1c1230;
+    --muted: #5c4d63;
+    --dim: #7a6a7e;
+    --accent: #ff3d6e;
+    --accent-2: #7c3aed;
+    --accent-3: #ff8a1a;
+    --success: #0f9d6e;
+    --danger: #e11d48;
+    --shadow: 0 18px 50px rgba(255, 61, 110, 0.12);
+    --shadow-hover: 0 24px 50px -12px rgba(255, 61, 110, 0.22), 0 8px 24px -4px rgba(28, 18, 48, 0.06);
+    --radius: 18px;
+    --font-sans: var(--font-jakarta), "Segoe UI", system-ui, -apple-system, sans-serif;
+    --font-display: var(--font-fraunces), Georgia, "Times New Roman", serif;
+    --wrap: 1180px;
+  }
+  ```
+- **Observed Deficiencies in Existing CSS**:
+  1. **Color Scheme**: The current palette uses a warm light peach/cream canvas (`--bg: #fff6ef`) with soft purple/orange accents and low-contrast light surfaces (`--surface: #ffffff`). It contradicts the required dark space obsidian aesthetic (`#090a10`, `#10121d`, `#171928`).
+  2. **Missing Modern Surface Tokens**: Lacks fine-grained surface layer tokens (`--surface-solid`, `--surface-card`, `--surface-hover`, `--surface-inset`, `--surface-elevated`) needed for deep glassmorphism.
+  3. **Missing Border & Stroke Tokens**: Only `--stroke` exists. Missing `--stroke-hover`, `--stroke-cyan`, `--stroke-accent`, `--stroke-emerald`, and `--stroke-subtle`.
+  4. **Missing Accent Palette Tokens**: Missing `--accent-4` (`#10b981` emerald), `--accent-orange` / `--accent-amber` (`#f59e0b`), and glowing aura variables (`--glow-violet`, `--glow-cyan`, `--glow-pink`, `--glow-emerald`).
+  5. **Missing Glassmorphism Utilities**: There are no utility classes for `.glass-panel`, `.glass-card`, `.glass-inset`, `.glow-box`, `.gradient-text`, `.gradient-text-cyan`, `.gradient-text-emerald`, or `.neon-border`.
+  6. **Hardcoded Light Mode Assumptions in Component Rules**:
+     - `.hero-panel`: `background: var(--surface)` (line 416)
+     - `.hero-sample`: `background: #fff7f0` (line 446)
+     - `.kicker`: `background: #ffe8d4; color: #b45309` (lines 369–370)
+     - `.nav a:hover, .nav a.active`: `background: #ffe4ee` (line 213)
+     - `.ghost-btn:hover`: `background: #fff1e6` (line 249)
+     - `.pill-btn.skip`: `background: var(--surface); color: var(--muted); border: 1px solid var(--stroke)` (lines 326–328)
+     - `.role-chip.coder`: `background: #eef2ff; color: #3730a3` (lines 588–589)
+     - `.role-chip.designer`: `background: #fdf2f8; color: #9d174d` (lines 607–608)
+     - `.role-chip.writer`: `background: #fffbeb; color: #92400e` (lines 626–627)
+     - `.role-chip.maker`: `background: #ecfdf5; color: #065f46` (lines 645–646)
+     - `.empty`: `background: rgba(255, 255, 255, 0.6)` (line 1088)
+     - `.stats`: `border-top: 1px solid #f3e4dc` (line 1031)
+     - `.bar-track`: `background: #ffe4ee` (line 1064)
+
+### 1.2 Comprehensive Class Inventory Across Application Pages
+Through grep searches of `className` across `app/` and `components/`, the following classes are actively in use and MUST be fully supported and enhanced:
+
+| Area / File | Classes Observed |
+|---|---|
+| **Global / Layout** (`app/layout.tsx`) | `html`, `body`, `var(--font-jakarta)`, `var(--font-fraunces)` |
+| **Landing Page** (`app/page.tsx`) | `.site`, `.wrap`, `.hero-split`, `.kicker`, `.accent`, `.lede`, `.hero-actions`, `.primary-btn.inline`, `.text-link`, `.hero-panel`, `.hero-panel-label`, `.hero-sample`, `.score-badge`, `.hero-list`, `.feature-grid`, `.feature-card`, `.feature-index.one`, `.feature-index.two`, `.feature-index.three` |
+| **Site Header** (`components/SiteHeader.tsx`) | `.site-header`, `.site-header-inner`, `.brand`, `.nav`, `.active`, `.ghost-btn`, `.header-cta.pill-btn` |
+| **Discover Page** (`app/discover/page.tsx`, `components/DiscoverDeck.tsx`) | `.site`, `.wrap`, `.page-intro.spread`, `.kicker`, `.sub`, `.empty`, `.error`, `.match-grid`, `.match-card`, `.match-card.success`, `.match-card-top`, `.card-skill`, `.score-badge`, `.dims`, `.left`, `.status-line`, `.btn-row.left`, `.pill-btn.skip`, `.pill-btn.accept` |
+| **Profile Page** (`app/profile/page.tsx`, `components/ProjectForm.tsx`, `components/DeleteAccountButton.tsx`) | `.site`, `.wrap`, `.page-intro`, `.kicker`, `.profile-grid`, `.identity`, `.rank`, `.sub`, `.stats`, `.stat-value`, `.stat-label`, `.fingerprint`, `.label.plain`, `.slider-meta`, `.bar-track`, `.bar-fill`, `.match-grid`, `.match-card.success`, `.match-card-top`, `.card-skill`, `.status-line`, `.button`, `.primary-btn`, `.label`, `input`, `textarea` |
+| **Messages Page** (`app/messages/page.tsx`, `components/ChatInterface.tsx`) | `.site`, `.wrap`, `.page-intro`, `.kicker`, `.empty`, `.sub`, `.primary-btn.inline`, `.label`, `.primary-btn` |
+| **Onboarding Flow** (`app/onboarding/page.tsx`, `components/OnboardingForm.tsx`) | `.site`, `.wrap.narrow`, `.page-intro`, `.kicker`, `.onboard-form`, `.label`, `.label.plain`, `.input`, `input`, `select`, `textarea`, `.chip-row`, `.chip`, `.chip.selected`, `.slider-block`, `.slider-meta`, `input[type="range"]`, `.error`, `.primary-btn` |
+| **Auth / Login** (`app/login/page.tsx`, `components/AuthForm.tsx`) | `.site`, `.wrap.split-page`, `.split-copy`, `.kicker`, `.lede`, `.panel`, `.label`, `.input`, `.sub`, `.error`, `.primary-btn`, `.toggle-auth` |
+| **Badges & Avatars** | `.role-chip`, `.role-tag`, `.role-chip[data-role]`, `.role-tag[data-role]`, `.coder`, `.designer`, `.maker`, `.writer`, `.avatar-badge`, `.avatar-badge.sm`, `.avatar-badge.md`, `.avatar-badge.lg`, `.avatar-badge.xl`, `.avatar-badge.ring-glow`, `.gradient-sunset`, `.gradient-violet`, `.gradient-ocean`, `.gradient-emerald`, `.avatar-initial`, `.avatar-emoji`, `.status-dot` |
+| **Animations & States** | `@keyframes fadeIn`, `@keyframes slideUp`, `@keyframes pulseBadge`, `@keyframes cardHover`, `.animate-fade-in`, `.animate-slide-up`, `.animate-pulse`, `.pulse-badge`, `.animate-card-hover` |
+
+---
+
+## 2. Logic Chain
+
+### 2.1 Aesthetic Strategy: Deep Space Obsidian with Neon Accents
+The overhaul replaces the light peach palette with a deep space obsidian design system inspired by `lets-code-landing-page.vercel.app`:
+1. **Background Layering**: `#090a10` base canvas + multi-radial gradient lighting (electric violet `rgba(139, 92, 246, 0.16)`, neon cyan `rgba(6, 182, 212, 0.12)`, passion pink `rgba(255, 61, 110, 0.08)`) + subtle 32px cosmic dot-grid pattern.
+2. **Surface Hierarchy**:
+   - Level 1 (`--surface-solid` `#121420`): Solid opaque dark containers.
+   - Level 2 (`--surface` `rgba(18, 20, 32, 0.78)`): Standard glassmorphic frosted surface with `backdrop-filter: blur(20px)`.
+   - Level 3 (`--surface-card` `rgba(22, 25, 42, 0.70)`): Match cards, bento boxes, profile sections.
+   - Level 4 (`--surface-hover` `rgba(30, 35, 58, 0.85)`): Interactive hover state with subtle purple tint.
+   - Level 5 (`--surface-inset` `rgba(10, 12, 20, 0.65)`): Form inputs, code teasers, nested project pitch containers.
+3. **Stroke & Border Luminosity**:
+   - Base strokes: `rgba(255, 255, 255, 0.09)`.
+   - Active / Hover strokes: `rgba(139, 92, 246, 0.45)` (violet), `rgba(6, 182, 212, 0.45)` (cyan), `rgba(255, 61, 110, 0.45)` (pink).
+4. **Vibrant Accents**:
+   - Pink / Coral (`--accent: #ff3d6e`): Primary actions, high-energy highlights.
+   - Electric Violet (`--accent-2: #8b5cf6`): Focus rings, gradient transitions, secondary tags.
+   - Neon Cyan (`--accent-3: #06b6d4`): Synergy badges, tech tags, metrics.
+   - Radiant Emerald (`--accent-4: #10b981`): Success matches, verified status, online indicators.
+   - Vivid Amber (`--accent-amber: #f59e0b`): Warning indicators, business category badges.
+
+---
+
+### 2.2 Complete Overhaul Blueprint for `app/globals.css`
+
+Below is the complete, modular specification ready for implementation:
+
+```css
 /* ==========================================================================
    PASSION PROTOCOL — DESIGN SYSTEM TOKENS & STYLING
    Theme: Deep Space Obsidian Glassmorphism with Neon Accents
@@ -229,10 +334,6 @@ textarea:focus-visible,
   background: var(--surface-inset);
   border: 1px solid var(--stroke-subtle);
   border-radius: var(--radius-sm);
-}
-
-.glow-box {
-  box-shadow: var(--glow-violet);
 }
 
 .gradient-text {
@@ -1567,1187 +1668,54 @@ textarea::placeholder {
     scroll-behavior: auto !important;
   }
 }
+```
 
-/* ==========================================================================
-   MILESTONE 2: LANDING PAGE OVERHAUL STYLES
-   ========================================================================== */
+---
 
-/* --- Hero Section & Preview Enhancements --- */
-.hero-section {
-  position: relative;
-  padding: 40px 0 60px;
-}
+## 3. Caveats
 
-.hero-badge-pill {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  background: rgba(139, 92, 246, 0.12);
-  border: 1px solid rgba(139, 92, 246, 0.32);
-  border-radius: var(--radius-full);
-  padding: 6px 14px;
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--accent-2);
-  margin-bottom: 20px;
-}
+1. **Inline Style Overrides in React Components**:
+   - Some legacy components (such as `components/ChatInterface.tsx` lines 128 and 144, `app/profile/page.tsx` line 68, `components/DiscoverDeck.tsx` line 139) still contain hardcoded light-mode inline background colors (e.g. `background: "#fff"`, `background: "rgba(0,0,0,0.03)"`, `background: "#f8fafc"`).
+   - While the global CSS overhaul sets the global dark mode canvas and variables, Milestone 3 will clean up these inline style properties to use CSS classes (`.glass-panel`, `.glass-inset`, `.chat-container`) so they blend with complete dark obsidian harmony.
+2. **Font Variable Bindings**:
+   - `app/layout.tsx` binds `jakarta.variable` (`--font-jakarta`) and `fraunces.variable` (`--font-fraunces`). The CSS tokens `--font-sans` and `--font-display` must reference these variables with safe system font fallbacks.
+3. **Danger Zone Button Styling**:
+   - `components/DeleteAccountButton.tsx` uses `className="button"` with inline red styles (`backgroundColor: "#ef4444"`). The CSS includes `.button` in button definitions to ensure base alignment and padding are preserved.
 
-.badge-spark {
-  font-size: 14px;
-}
+---
 
-.hero-headline {
-  font-size: clamp(34px, 4.5vw, 54px);
-  line-height: 1.15;
-  letter-spacing: -0.03em;
-  margin-bottom: 20px;
-}
+## 4. Conclusion
 
-.hero-social-proof {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  margin-top: 32px;
-}
+The CSS token architecture and utility classes mapped out above will transform Passion Protocol from a light-peach layout into a high-end dark space obsidian aesthetic inspired by `lets-code-landing-page.vercel.app`.
 
-.avatar-stack {
-  display: flex;
-  align-items: center;
-}
+### Key Deliverables & Outcomes:
+1. **Root Variable System**: Complete obsidian background tokens (`--bg`, `--bg-2`, `--bg-3`), 5-layer surface tokens (`--surface`, `--surface-solid`, `--surface-card`, `--surface-hover`, `--surface-inset`), glowing stroke tokens (`--stroke-hover`, `--stroke-cyan`, `--stroke-accent`, `--stroke-emerald`), and neon accent palette (`--accent`, `--accent-2`, `--accent-3`, `--accent-4`).
+2. **Glassmorphic Utilities**: Production-ready classes (`.glass-panel`, `.glass-card`, `.glass-inset`, `.gradient-text`, `.gradient-text-cyan`, `.gradient-text-emerald`, `.neon-border`, `.badge-pill`).
+3. **Complete Component Styling**: High-contrast, glowing redesign for `.match-card`, `.score-badge`, `.role-chip`, `.role-tag`, `.avatar-badge`, `.primary-btn`, `.outline-btn`, `.pill-btn`, `.ghost-btn`, `.bar-track`, `.bar-fill`, `.identity`, `.fingerprint`, `.panel`, `.empty`, and form inputs.
+4. **100% Backward & Forward Compatibility**: Every existing class across all routes is maintained with zero breaking layout changes.
 
-.stack-avatar {
-  border-radius: 50%;
-  border: 2px solid var(--bg);
-  margin-left: -8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.4);
-}
+---
 
-.stack-avatar:first-child {
-  margin-left: 0;
-}
+## 5. Verification Method
 
-.social-proof-text {
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
+To verify the CSS implementation independently:
 
-.rating-stars {
-  color: #fbbf24;
-  font-size: 14px;
-  letter-spacing: 2px;
-}
+1. **Build & Typecheck**:
+   ```bash
+   npm run build
+   ```
+   *Expected Result*: Build completes with **0 TypeScript and 0 ESLint errors**.
 
-.rating-desc {
-  font-size: 13px;
-  color: var(--muted);
-  font-weight: 500;
-}
+2. **CSS Syntax & Rule Verification**:
+   - [ ] Confirm `--bg` is set to `#090a10`.
+   - [ ] Confirm `--surface`, `--surface-solid`, `--surface-card`, `--surface-hover`, `--surface-inset` are defined.
+   - [ ] Confirm all neon accents (`--accent`, `--accent-2`, `--accent-3`, `--accent-4`) are defined.
+   - [ ] Confirm `.glass-panel`, `.glass-card`, `.gradient-text`, `.neon-border` classes exist.
+   - [ ] Confirm `.match-card`, `.score-badge`, `.role-chip`, `.role-tag`, `.avatar-badge`, `.bar-track`, `.bar-fill` classes exist.
 
-.realtime-match-pill {
-  font-size: 0.75rem;
-  background: rgba(16, 185, 129, 0.12);
-  color: #10b981;
-  border: 1px solid rgba(16, 185, 129, 0.32);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  font-weight: 700;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.hero-avatar-wrap {
-  width: 46px;
-  height: 46px;
-  border-radius: 50%;
-  overflow: hidden;
-  border: 2px solid var(--accent-2);
-  flex-shrink: 0;
-}
-
-.hero-sample-identity {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.hero-sample-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.hero-sample-target {
-  font-size: 12px;
-  color: var(--muted);
-}
-
-.hero-vibe-bars {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin: 18px 0;
-  padding: 14px 16px;
-  background: rgba(10, 12, 20, 0.55);
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--stroke);
-}
-
-.vibe-bar-row {
-  display: grid;
-  grid-template-columns: 55px 1fr 30px;
-  align-items: center;
-  gap: 10px;
-}
-
-.vibe-bar-label {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--text-bright);
-}
-
-.bar-track {
-  height: 6px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 999px;
-  overflow: hidden;
-}
-
-.bar-fill {
-  height: 100%;
-  background: linear-gradient(90deg, var(--accent-2), var(--accent-3));
-  border-radius: 999px;
-  transition: width 0.3s ease;
-}
-
-.vibe-bar-val {
-  font-size: 11px;
-  color: var(--muted);
-  text-align: right;
-  font-weight: 600;
-}
-
-.hero-project-box {
-  background: rgba(139, 92, 246, 0.08);
-  border: 1px solid rgba(139, 92, 246, 0.2);
-  border-radius: var(--radius-sm);
-  padding: 10px 14px;
-  margin-bottom: 16px;
-}
-
-.project-badge {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent-3);
-  margin-bottom: 2px;
-}
-
-.project-title {
-  font-size: 13px;
-  font-weight: 600;
-  color: var(--text-bright);
-}
-
-.hero-switcher {
-  display: flex;
-  gap: 8px;
-  margin-bottom: 16px;
-}
-
-.switcher-pill {
-  flex: 1;
-  background: var(--surface-card);
-  border: 1px solid var(--stroke);
-  color: var(--muted);
-  border-radius: var(--radius-sm);
-  padding: 6px 10px;
-  font-size: 12px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.switcher-pill:hover {
-  background: var(--surface-hover);
-  color: var(--text-bright);
-}
-
-.switcher-pill.active {
-  background: rgba(139, 92, 246, 0.25);
-  border-color: var(--accent-2);
-  color: #fff;
-  box-shadow: var(--glow-violet);
-}
-
-.hero-synergy-orbit-node {
-  display: flex;
-  justify-content: center;
-  margin: 12px 0 16px;
-}
-
-.synergy-orbit-img {
-  animation: floatOrb 6s ease-in-out infinite;
-  filter: drop-shadow(0 0 20px rgba(6, 182, 212, 0.4));
-}
-
-/* --- Metrics Ribbon --- */
-.metrics-ribbon-section {
-  margin: 48px 0 80px;
-}
-
-.metrics-ribbon {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  padding: 32px 24px;
-  background: var(--surface-card);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-lg);
-  box-shadow: var(--shadow);
-}
-
-.stat-card {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-  position: relative;
-}
-
-.stat-card:not(:last-child)::after {
-  content: "";
-  position: absolute;
-  right: -10px;
-  top: 15%;
-  height: 70%;
-  width: 1px;
-  background: var(--stroke);
-}
-
-.stat-value {
-  font-family: var(--font-display);
-  font-size: clamp(28px, 3.5vw, 42px);
-  font-weight: 800;
-  letter-spacing: -0.03em;
-  margin-bottom: 6px;
-}
-
-.stat-label {
-  color: var(--muted);
-  font-size: 13px;
-  font-weight: 700;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
-
-/* --- Bento Grid --- */
-.bento-section {
-  margin: 80px 0;
-}
-
-.section-header {
-  margin-bottom: 48px;
-}
-
-.section-header.text-center {
-  text-align: center;
-  max-width: 720px;
-  margin-left: auto;
-  margin-right: auto;
-  margin-bottom: 48px;
-}
-
-.section-title {
-  font-size: clamp(28px, 3.5vw, 42px);
-  margin: 8px 0 12px;
-  letter-spacing: -0.02em;
-}
-
-.section-subtitle {
-  color: var(--muted);
-  font-size: 16px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.bento-grid {
-  display: grid;
-  grid-template-columns: repeat(12, 1fr);
-  gap: 24px;
-}
-
-.bento-card {
-  background: var(--surface-card);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-lg);
-  padding: 32px;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  box-shadow: var(--shadow);
-  transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.3s ease;
-  grid-column: span 4;
-}
-
-.bento-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--stroke-hover);
-  box-shadow: var(--shadow-hover);
-}
-
-.bento-card-wide {
-  grid-column: span 8;
-}
-
-.bento-card-tall {
-  grid-column: span 4;
-}
-
-.bento-card-top {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 20px;
-}
-
-.bento-tag {
-  font-size: 11px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent-3);
-  background: rgba(6, 182, 212, 0.10);
-  border: 1px solid rgba(6, 182, 212, 0.25);
-  padding: 4px 10px;
-  border-radius: 6px;
-}
-
-.bento-card-body {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 24px;
-  height: 100%;
-}
-
-.bento-card-body.vertical {
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.bento-text h3 {
-  font-size: 22px;
-  margin: 0 0 10px;
-  color: var(--text-bright);
-}
-
-.bento-text p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0 0 16px;
-}
-
-.bento-chips {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.bento-image-wrap {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.bento-image {
-  max-width: 100%;
-  height: auto;
-  border-radius: var(--radius);
-  transition: transform 0.3s ease;
-}
-
-.bento-card:hover .bento-image {
-  transform: scale(1.04);
-}
-
-.contract-preview-badge {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--accent-4);
-  background: rgba(16, 185, 129, 0.1);
-  border: 1px solid rgba(16, 185, 129, 0.25);
-  padding: 8px 12px;
-  border-radius: var(--radius-sm);
-}
-
-/* --- How It Works --- */
-.how-it-works-section {
-  margin: 80px 0;
-}
-
-.how-it-works-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.step-card {
-  background: var(--surface-card);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-lg);
-  padding: 32px 24px;
-  position: relative;
-  display: flex;
-  flex-direction: column;
-  box-shadow: var(--shadow);
-  transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.step-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--stroke-hover);
-  box-shadow: var(--shadow-hover);
-}
-
-.step-badge {
-  width: 40px;
-  height: 40px;
-  border-radius: 10px;
-  background: linear-gradient(135deg, var(--accent) 0%, var(--accent-2) 100%);
-  color: #fff;
-  font-weight: 800;
-  font-size: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 20px;
-  box-shadow: var(--glow-pink);
-}
-
-.step-card:nth-child(2) .step-badge {
-  background: linear-gradient(135deg, var(--accent-2) 0%, var(--accent-3) 100%);
-  box-shadow: var(--glow-violet);
-}
-
-.step-card:nth-child(3) .step-badge {
-  background: linear-gradient(135deg, var(--accent-3) 0%, var(--accent-4) 100%);
-  box-shadow: var(--glow-cyan);
-}
-
-.step-icon-wrap {
-  margin-bottom: 16px;
-}
-
-.step-icon-img {
-  width: 56px;
-  height: 56px;
-  object-fit: contain;
-}
-
-.step-card h3 {
-  font-size: 20px;
-  margin: 0 0 10px;
-  color: var(--text-bright);
-}
-
-.step-card p {
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-/* --- Simulator --- */
-.simulator-section {
-  margin: 80px 0;
-}
-
-.simulator-card {
-  padding: 36px;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--stroke);
-  box-shadow: var(--shadow-lg);
-}
-
-.simulator-grid {
-  display: grid;
-  grid-template-columns: 1.1fr 0.9fr;
-  gap: 36px;
-}
-
-.simulator-controls {
-  display: flex;
-  flex-direction: column;
-  gap: 24px;
-}
-
-.control-group {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.control-header-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.control-label {
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  color: var(--accent-3);
-}
-
-.control-sub {
-  font-size: 12px;
-  color: var(--dim);
-}
-
-.category-chips-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 8px;
-}
-
-.role-chip-img {
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-  flex-shrink: 0;
-}
-
-.sliders-group {
-  background: rgba(10, 12, 20, 0.45);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-md);
-  padding: 20px;
-  gap: 16px;
-}
-
-.slider-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.slider-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 13px;
-  font-weight: 700;
-  color: var(--text-bright);
-}
-
-.slider-num {
-  color: var(--accent-3);
-}
-
-.vibe-range {
-  width: 100%;
-  accent-color: var(--accent-2);
-  cursor: pointer;
-}
-
-.presets-row {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.preset-pill {
-  font-size: 12px;
-  padding: 6px 12px;
-}
-
-.simulator-results {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-}
-
-.results-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-}
-
-.results-header h3 {
-  font-size: 20px;
-  margin: 0 0 4px;
-}
-
-.results-sub {
-  font-size: 13px;
-  color: var(--muted);
-  margin: 0;
-}
-
-.results-badge {
-  font-size: 11px;
-  font-weight: 800;
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-  padding: 4px 10px;
-  border-radius: var(--radius-full);
-  white-space: nowrap;
-}
-
-.simulator-cards-list {
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-}
-
-.sim-candidate-card {
-  padding: 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  border-radius: var(--radius-md);
-  border: 1px solid var(--stroke);
-  transition: all 0.2s ease;
-}
-
-.sim-candidate-card:hover {
-  border-color: var(--stroke-hover);
-  transform: translateY(-2px);
-}
-
-.sim-candidate-main {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-}
-
-.sim-avatar {
-  border-radius: 50%;
-  border: 2px solid var(--accent-2);
-  flex-shrink: 0;
-}
-
-.sim-candidate-details {
-  display: flex;
-  flex-direction: column;
-  gap: 3px;
-}
-
-.sim-name-row {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
-.sim-codename {
-  font-size: 15px;
-  font-weight: 800;
-  color: var(--text-bright);
-}
-
-.role-tag.sm {
-  font-size: 11px;
-  padding: 2px 8px;
-}
-
-.sim-project {
-  font-size: 12px;
-  color: var(--text);
-}
-
-.sim-budget {
-  font-size: 11px;
-  color: var(--accent-4);
-  font-weight: 700;
-}
-
-.sim-score-col {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  gap: 6px;
-}
-
-.tier-badge {
-  font-size: 10px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.06em;
-  padding: 3px 8px;
-  border-radius: 6px;
-  white-space: nowrap;
-}
-
-.tier-exceptional {
-  color: #10b981;
-  background: rgba(16, 185, 129, 0.12);
-  border: 1px solid rgba(16, 185, 129, 0.3);
-}
-
-.tier-high {
-  color: #8b5cf6;
-  background: rgba(139, 92, 246, 0.12);
-  border: 1px solid rgba(139, 92, 246, 0.3);
-}
-
-.tier-moderate {
-  color: #f59e0b;
-  background: rgba(245, 158, 11, 0.12);
-  border: 1px solid rgba(245, 158, 11, 0.3);
-}
-
-.tier-divergent {
-  color: #f43f5e;
-  background: rgba(244, 63, 94, 0.12);
-  border: 1px solid rgba(244, 63, 94, 0.3);
-}
-
-.simulator-cta-box {
-  margin-top: 8px;
-}
-
-/* --- Testimonials --- */
-.testimonials-section {
-  margin: 80px 0;
-}
-
-.testimonials-grid {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 24px;
-}
-
-.testimonial-card {
-  padding: 28px;
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
-  transition: transform 0.25s ease, border-color 0.25s ease;
-}
-
-.testimonial-card:hover {
-  transform: translateY(-4px);
-  border-color: var(--stroke-hover);
-}
-
-.testimonial-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 18px;
-}
-
-.pair-avatars {
-  display: flex;
-  align-items: center;
-}
-
-.pair-avatar {
-  border-radius: 50%;
-  border: 2px solid var(--bg);
-}
-
-.pair-avatar.overlap {
-  margin-left: -12px;
-}
-
-.pair-info {
-  display: flex;
-  flex-direction: column;
-  flex: 1;
-}
-
-.pair-names {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-bright);
-}
-
-.pair-roles {
-  font-size: 11px;
-  color: var(--muted);
-}
-
-.score-badge.sm {
-  font-size: 12px;
-  padding: 4px 8px;
-  min-width: auto;
-}
-
-.testimonial-quote {
-  font-size: 14px;
-  line-height: 1.65;
-  color: #cbd5e1;
-  font-style: italic;
-  margin: 0 0 20px;
-}
-
-.testimonial-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  border-top: 1px solid var(--stroke);
-  padding-top: 14px;
-}
-
-.outcome-pill {
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent-3);
-}
-
-.verified-badge {
-  font-size: 11px;
-  color: #10b981;
-  font-weight: 700;
-}
-
-/* --- FAQ Accordion --- */
-.faq-section {
-  margin: 80px 0;
-  max-width: 860px;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.faq-accordion {
-  border-radius: var(--radius-lg);
-  overflow: hidden;
-  border: 1px solid var(--stroke);
-}
-
-.faq-item {
-  border-bottom: 1px solid var(--stroke);
-  transition: background 0.2s ease;
-}
-
-.faq-item:last-child {
-  border-bottom: 0;
-}
-
-.faq-item.open {
-  background: rgba(255, 255, 255, 0.02);
-}
-
-.faq-trigger {
-  width: 100%;
-  background: transparent;
-  border: 0;
-  padding: 20px 24px;
-  text-align: left;
-  color: var(--text-bright);
-  font-size: 16px;
-  font-weight: 700;
-  cursor: pointer;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 16px;
-}
-
-.faq-icon {
-  font-size: 20px;
-  color: var(--accent-3);
-  font-weight: 300;
-}
-
-.faq-content {
-  padding: 0 24px 20px;
-  color: var(--muted);
-  font-size: 14px;
-  line-height: 1.65;
-  animation: fadeIn 0.25s ease;
-}
-
-.faq-content p {
-  margin: 0;
-}
-
-/* --- Pre-Footer CTA Banner --- */
-.cta-banner-section {
-  margin: 80px 0 60px;
-}
-
-.cta-banner {
-  position: relative;
-  border-radius: var(--radius-lg);
-  border: 1px solid var(--stroke);
-  overflow: hidden;
-  padding: 64px 32px;
-  text-align: center;
-  box-shadow: var(--shadow-lg), var(--glow-violet);
-}
-
-.cta-backdrop-wrap {
-  position: absolute;
-  inset: 0;
-  z-index: 0;
-  pointer-events: none;
-  opacity: 0.35;
-}
-
-.cta-backdrop-img {
-  object-fit: cover;
-}
-
-.cta-content {
-  position: relative;
-  z-index: 1;
-  max-width: 620px;
-  margin: 0 auto;
-}
-
-.cta-pill {
-  display: inline-block;
-  font-size: 12px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent-3);
-  background: rgba(6, 182, 212, 0.12);
-  border: 1px solid rgba(6, 182, 212, 0.3);
-  padding: 4px 14px;
-  border-radius: var(--radius-full);
-  margin-bottom: 16px;
-}
-
-.cta-title {
-  font-size: clamp(30px, 4vw, 44px);
-  margin: 0 0 12px;
-  letter-spacing: -0.02em;
-}
-
-.cta-desc {
-  color: #cbd5e1;
-  font-size: 16px;
-  line-height: 1.6;
-  margin: 0 0 28px;
-}
-
-.cta-actions {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 16px;
-  flex-wrap: wrap;
-}
-
-/* --- Modern Multi-Column Footer --- */
-.site-footer {
-  margin-top: 80px;
-  padding: 64px 0 32px;
-  background: rgba(9, 10, 16, 0.95);
-}
-
-.footer-grid {
-  display: grid;
-  grid-template-columns: 1.5fr 1fr 1fr 1.2fr;
-  gap: 40px;
-  margin-bottom: 48px;
-}
-
-.brand-col {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-}
-
-.footer-brand {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.brand-icon {
-  font-size: 20px;
-}
-
-.brand-name {
-  font-size: 18px;
-  font-weight: 800;
-  color: var(--text-bright);
-}
-
-.footer-tagline {
-  color: var(--muted);
-  font-size: 13px;
-  line-height: 1.6;
-  margin: 0;
-  max-width: 300px;
-}
-
-.system-status {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-  margin-top: 8px;
-}
-
-.status-dot {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: #10b981;
-  box-shadow: 0 0 8px rgba(16, 185, 129, 0.6);
-}
-
-.status-text {
-  font-size: 12px;
-  color: #10b981;
-  font-weight: 700;
-}
-
-.footer-col h4 {
-  font-size: 13px;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: var(--accent-3);
-  margin: 0 0 16px;
-}
-
-.footer-links {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.footer-links a {
-  color: var(--muted);
-  font-size: 13px;
-  text-decoration: none;
-  transition: color 0.15s ease;
-}
-
-.footer-links a:hover {
-  color: var(--text-bright);
-}
-
-.newsletter-desc {
-  font-size: 13px;
-  color: var(--muted);
-  line-height: 1.5;
-  margin: 0 0 12px;
-}
-
-.footer-newsletter {
-  display: flex;
-  gap: 8px;
-}
-
-.newsletter-input {
-  flex: 1;
-  background: var(--surface-inset);
-  border: 1px solid var(--stroke);
-  border-radius: var(--radius-sm);
-  padding: 8px 12px;
-  color: var(--text-bright);
-  font-size: 13px;
-}
-
-.newsletter-input:focus {
-  outline: none;
-  border-color: var(--accent-2);
-}
-
-.footer-bottom {
-  border-top: 1px solid var(--stroke);
-  padding-top: 24px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 16px;
-  font-size: 12px;
-  color: var(--dim);
-}
-
-.footer-bottom p {
-  margin: 0;
-}
-
-.footer-legal-links {
-  display: flex;
-  gap: 20px;
-}
-
-.footer-legal-links span {
-  cursor: pointer;
-  transition: color 0.15s ease;
-}
-
-.footer-legal-links span:hover {
-  color: var(--muted);
-}
-
-/* --- Responsive Media Queries for Landing Page --- */
-@media (max-width: 1080px) {
-  .bento-card.bento-card-wide,
-  .bento-card.bento-card-tall,
-  .bento-card {
-    grid-column: span 12;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr 1fr;
-    gap: 32px;
-  }
-}
-
-@media (max-width: 980px) {
-  .metrics-ribbon {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 20px;
-  }
-
-  .stat-card:not(:last-child)::after {
-    display: none;
-  }
-
-  .how-it-works-grid,
-  .testimonials-grid {
-    grid-template-columns: 1fr;
-    gap: 20px;
-  }
-
-  .simulator-grid {
-    grid-template-columns: 1fr;
-    gap: 32px;
-  }
-}
-
-@media (max-width: 768px) {
-  .metrics-ribbon {
-    grid-template-columns: 1fr 1fr;
-    padding: 20px 16px;
-  }
-
-  .category-chips-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .footer-grid {
-    grid-template-columns: 1fr;
-    gap: 28px;
-  }
-
-  .footer-bottom {
-    flex-direction: column;
-    align-items: flex-start;
-  }
-}
-
+3. **Visual Inspection Across Routes**:
+   - `/` (Landing Page): Verify deep space obsidian canvas with multi-radial glow and styled hero panel.
+   - `/discover`: Verify dark glass match cards, role tags, and neon score badges.
+   - `/profile`: Verify dark glass identity card, glowing vibe fingerprint equalizer, and stats.
+   - `/onboarding`: Verify dark form inputs, role chips, and range sliders.
+   - `/login`: Verify dark glass auth card and glowing action button.

@@ -1,0 +1,467 @@
+{
+  "assetReports": [
+    {
+      "filename": "hero-network-matrix.png",
+      "bytes": 1765662,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1376,
+      "height": 768,
+      "aspectRatio": 1.7916666666666667,
+      "aspectRatioLabel": "16:9",
+      "expectedRatio": "16:9",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "fc61a9aeb2d05665"
+    },
+    {
+      "filename": "hero-synergy-orbit.png",
+      "bytes": 1790279,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "ef79801ed36662cf"
+    },
+    {
+      "filename": "bento-vibe-engine.png",
+      "bytes": 1723434,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "0ae08dab9a8e00a9"
+    },
+    {
+      "filename": "bento-roles-complement.png",
+      "bytes": 1284851,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "df2e49b524ecfee5"
+    },
+    {
+      "filename": "bento-project-incubator.png",
+      "bytes": 1526946,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "be39481494b74b46"
+    },
+    {
+      "filename": "bento-privacy-shield.png",
+      "bytes": 1824992,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "2f59190bf4ff7723"
+    },
+    {
+      "filename": "bento-smart-contracts.png",
+      "bytes": 1845487,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "3c7386abf3630a77"
+    },
+    {
+      "filename": "role-software-coder.png",
+      "bytes": 1445677,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "84c54d4b680dbe9d"
+    },
+    {
+      "filename": "role-creative-designer.png",
+      "bytes": 1298493,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "dcedb70227f3f4a6"
+    },
+    {
+      "filename": "role-hardware-maker.png",
+      "bytes": 1830263,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "b6e59ac05e811304"
+    },
+    {
+      "filename": "role-business-growth.png",
+      "bytes": 111163,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "0b5609ffb91f6a7a"
+    },
+    {
+      "filename": "role-marketing-writer.png",
+      "bytes": 127925,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "edfb36cf69765f3d"
+    },
+    {
+      "filename": "role-general-builder.png",
+      "bytes": 118257,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "0568f060701b8d81"
+    },
+    {
+      "filename": "avatar-alex-coder.png",
+      "bytes": 120100,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "48bf089a8b48d386"
+    },
+    {
+      "filename": "avatar-maya-designer.png",
+      "bytes": 118453,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "74addf6635b187fc"
+    },
+    {
+      "filename": "avatar-david-hardware.png",
+      "bytes": 107580,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "22de5310c5ab1e59"
+    },
+    {
+      "filename": "avatar-elena-growth.png",
+      "bytes": 118982,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "e66a5f23f2dc6c1d"
+    },
+    {
+      "filename": "avatar-carlos-writer.png",
+      "bytes": 117314,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "97e8246d0271070d"
+    },
+    {
+      "filename": "avatar-priya-fintech.png",
+      "bytes": 118999,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1024,
+      "height": 1024,
+      "aspectRatio": 1,
+      "aspectRatioLabel": "1:1",
+      "expectedRatio": "1:1",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "2f07e94022012612"
+    },
+    {
+      "filename": "empty-discover-deck.png",
+      "bytes": 178781,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1920,
+      "height": 1080,
+      "aspectRatio": 1.7777777777777777,
+      "aspectRatioLabel": "16:9",
+      "expectedRatio": "16:9",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "a7de47ee7ea99d26"
+    },
+    {
+      "filename": "empty-messages-chat.png",
+      "bytes": 165990,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1920,
+      "height": 1080,
+      "aspectRatio": 1.7777777777777777,
+      "aspectRatioLabel": "16:9",
+      "expectedRatio": "16:9",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "ac923fc9c16b964a"
+    },
+    {
+      "filename": "cta-nebula-backdrop.png",
+      "bytes": 414610,
+      "magicHeaderHex": "89504e470d0a1a0a",
+      "isMagicValid": true,
+      "width": 1920,
+      "height": 1080,
+      "aspectRatio": 1.7777777777777777,
+      "aspectRatioLabel": "16:9",
+      "expectedRatio": "16:9",
+      "ratioMatchesSpec": true,
+      "chunksFound": [
+        "IHDR",
+        "IDAT",
+        "IEND"
+      ],
+      "hasIHDR": true,
+      "hasIDAT": true,
+      "hasIEND": true,
+      "sha256Prefix": "b4760e5b301ead63"
+    }
+  ],
+  "hasDuplicateImages": false
+}

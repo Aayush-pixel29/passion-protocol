@@ -1,0 +1,276 @@
+{
+  "tokenResults": [
+    {
+      "token": "--bg",
+      "found": true
+    },
+    {
+      "token": "--bg-2",
+      "found": true
+    },
+    {
+      "token": "--bg-3",
+      "found": true
+    },
+    {
+      "token": "--surface",
+      "found": true
+    },
+    {
+      "token": "--surface-card",
+      "found": true
+    },
+    {
+      "token": "--surface-solid",
+      "found": true
+    },
+    {
+      "token": "--surface-hover",
+      "found": true
+    },
+    {
+      "token": "--surface-inset",
+      "found": true
+    },
+    {
+      "token": "--surface-glass",
+      "found": true
+    },
+    {
+      "token": "--surface-elevated",
+      "found": true
+    },
+    {
+      "token": "--stroke",
+      "found": true
+    },
+    {
+      "token": "--stroke-subtle",
+      "found": true
+    },
+    {
+      "token": "--stroke-strong",
+      "found": true
+    },
+    {
+      "token": "--stroke-hover",
+      "found": true
+    },
+    {
+      "token": "--stroke-accent",
+      "found": true
+    },
+    {
+      "token": "--stroke-cyan",
+      "found": true
+    },
+    {
+      "token": "--stroke-emerald",
+      "found": true
+    },
+    {
+      "token": "--text",
+      "found": true
+    },
+    {
+      "token": "--text-bright",
+      "found": true
+    },
+    {
+      "token": "--muted",
+      "found": true
+    },
+    {
+      "token": "--dim",
+      "found": true
+    },
+    {
+      "token": "--accent",
+      "found": true
+    },
+    {
+      "token": "--accent-2",
+      "found": true
+    },
+    {
+      "token": "--accent-3",
+      "found": true
+    },
+    {
+      "token": "--accent-4",
+      "found": true
+    },
+    {
+      "token": "--accent-amber",
+      "found": true
+    },
+    {
+      "token": "--radius",
+      "found": true
+    },
+    {
+      "token": "--radius-sm",
+      "found": true
+    },
+    {
+      "token": "--radius-md",
+      "found": true
+    },
+    {
+      "token": "--radius-lg",
+      "found": true
+    },
+    {
+      "token": "--radius-full",
+      "found": true
+    },
+    {
+      "token": "--font-sans",
+      "found": true
+    },
+    {
+      "token": "--font-display",
+      "found": true
+    },
+    {
+      "token": "--wrap",
+      "found": true
+    },
+    {
+      "token": "--wrap-narrow",
+      "found": true
+    },
+    {
+      "token": "--shadow",
+      "found": true
+    },
+    {
+      "token": "--shadow-sm",
+      "found": true
+    },
+    {
+      "token": "--shadow-lg",
+      "found": true
+    },
+    {
+      "token": "--shadow-hover",
+      "found": true
+    },
+    {
+      "token": "--glow-violet",
+      "found": true
+    },
+    {
+      "token": "--glow-cyan",
+      "found": true
+    },
+    {
+      "token": "--glow-pink",
+      "found": true
+    },
+    {
+      "token": "--glow-emerald",
+      "found": true
+    }
+  ],
+  "classResults": [
+    {
+      "class": ".glass-panel",
+      "found": true
+    },
+    {
+      "class": ".glass-card",
+      "found": true
+    },
+    {
+      "class": ".glass-inset",
+      "found": true
+    },
+    {
+      "class": ".match-card",
+      "found": true
+    },
+    {
+      "class": ".score-badge",
+      "found": true
+    },
+    {
+      "class": ".role-chip",
+      "found": true
+    },
+    {
+      "class": ".role-tag",
+      "found": true
+    },
+    {
+      "class": ".avatar-badge",
+      "found": true
+    },
+    {
+      "class": ".primary-btn",
+      "found": true
+    },
+    {
+      "class": ".outline-btn",
+      "found": true
+    },
+    {
+      "class": ".pill-btn",
+      "found": true
+    },
+    {
+      "class": ".ghost-btn",
+      "found": true
+    },
+    {
+      "class": ".bar-track",
+      "found": true
+    },
+    {
+      "class": ".bar-fill",
+      "found": true
+    },
+    {
+      "class": ".gradient-text",
+      "found": true
+    },
+    {
+      "class": ".gradient-text-cyan",
+      "found": true
+    },
+    {
+      "class": ".gradient-text-emerald",
+      "found": true
+    },
+    {
+      "class": ".neon-border",
+      "found": true
+    },
+    {
+      "class": ".badge-pill",
+      "found": true
+    }
+  ],
+  "fontChecks": [
+    {
+      "name": "Plus_Jakarta_Sans imported",
+      "pass": true
+    },
+    {
+      "name": "Fraunces imported",
+      "pass": true
+    },
+    {
+      "name": "--font-jakarta variable set",
+      "pass": true
+    },
+    {
+      "name": "--font-fraunces variable set",
+      "pass": true
+    },
+    {
+      "name": "Variables injected in html/body className",
+      "pass": false
+    }
+  ]
+}

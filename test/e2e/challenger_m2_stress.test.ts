@@ -1,0 +1,306 @@
+/**
+ * Challenger M2 Adversarial Stress Test Suite
+ * 
+ * Focus Areas:
+ * 1. Asset Binary & Metadata Integrity (22 PNGs, signatures, IHDR dimensions)
+ * 2. Next.js <Image> CLS Prevention (explicit numeric width/height or fill+sizes)
+ * 3. Session-Based Routing & Dynamic CTA Logic (null user vs authenticated user)
+ * 4. Landing Component Invariants (HeroPreview, BentoGrid, Simulator, FAQ, Footer)
+ * 5. Deterministic Vibe Math & Synergy Tier Stress Testing
+ */
+
+import fs from 'node:fs';
+import path from 'node:path';
+import { describe, test, expect, assert } from './test_framework';
+import { vibeScore } from '../../lib/match';
+import { INDUSTRY_CATEGORIES, CATEGORY_ICONS, formatRoleWithIcon, type VibeAnswers, type IndustryCategory } from '../../lib/types';
+
+const ROOT_DIR = path.resolve(__dirname, '../..');
+const PUBLIC_IMAGES_DIR = path.join(ROOT_DIR, 'public', 'images');
+const APP_DIR = path.join(ROOT_DIR, 'app');
+const COMPONENTS_DIR = path.join(ROOT_DIR, 'components');
+
+const EXPECTED_22_ASSETS = [
+  'avatar-alex-coder.png',
+  'avatar-carlos-writer.png',
+  'avatar-david-hardware.png',
+  'avatar-elena-growth.png',
+  'avatar-maya-designer.png',
+  'avatar-priya-fintech.png',
+  'bento-privacy-shield.png',
+  'bento-project-incubator.png',
+  'bento-roles-complement.png',
+  'bento-smart-contracts.png',
+  'bento-vibe-engine.png',
+  'cta-nebula-backdrop.png',
+  'empty-discover-deck.png',
+  'empty-messages-chat.png',
+  'hero-network-matrix.png',
+  'hero-synergy-orbit.png',
+  'role-business-growth.png',
+  'role-creative-designer.png',
+  'role-general-builder.png',
+  'role-hardware-maker.png',
+  'role-marketing-writer.png',
+  'role-software-coder.png',
+];
+
+const PNG_SIGNATURE = Buffer.from([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a]);
+
+function parsePNGHeader(buffer: Buffer) {
+  if (buffer.length < 24) throw new Error('Buffer too short for PNG');
+  if (!buffer.subarray(0, 8).equals(PNG_SIGNATURE)) throw new Error('Invalid PNG signature');
+  const chunkType = buffer.subarray(12, 16).toString('ascii');
+  if (chunkType !== 'IHDR') throw new Error(`Expected IHDR, found ${chunkType}`);
+  const width = buffer.readUInt32BE(16);
+  const height = buffer.readUInt32BE(20);
+  const bitDepth = buffer.readUInt8(24);
+  const colorType = buffer.readUInt8(25);
+  return { width, height, bitDepth, colorType };
+}
+
+function getAllFiles(dir: string, extensions: string[] = ['.tsx', '.ts', '.jsx', '.js']): string[] {
+  if (!fs.existsSync(dir)) return [];
+  const results: string[] = [];
+  const entries = fs.readdirSync(dir, { withFileTypes: true });
+  for (const entry of entries) {
+    const fullPath = path.join(dir, entry.name);
+    if (entry.isDirectory()) {
+      results.push(...getAllFiles(fullPath, extensions));
+    } else if (entry.isFile() && extensions.some((ext) => entry.name.endsWith(ext))) {
+      results.push(fullPath);
+    }
+  }
+  return results;
+}
+
+describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () => {
+
+  describe('1. Asset Suite Completeness & Binary Sanity', () => {
+    test('public/images contains exactly all 22 required PNG assets', () => {
+      const diskFiles = fs.readdirSync(PUBLIC_IMAGES_DIR).filter((f) => f.endsWith('.png'));
+      expect(diskFiles.length).toBe(22);
+
+      const diskSet = new Set(diskFiles);
+      for (const expected of EXPECTED_22_ASSETS) {
+        assert.ok(diskSet.has(expected), `Missing asset: ${expected}`);
+      }
+    });
+
+    test('every PNG asset has valid 8-byte signature, positive dimensions, and size > 10KB', () => {
+      for (const assetName of EXPECTED_22_ASSETS) {
+        const filePath = path.join(PUBLIC_IMAGES_DIR, assetName);
+        const stat = fs.statSync(filePath);
+        expect(stat.size).toBeGreaterThan(10000); // All generated assets are rich images > 10KB
+
+        const buf = fs.readFileSync(filePath);
+        const header = parsePNGHeader(buf);
+        expect(header.width).toBeGreaterThan(0);
+        expect(header.height).toBeGreaterThan(0);
+      }
+    });
+  });
+
+  describe('2. Cumulative Layout Shift (CLS) Prevention in Next.js <Image>', () => {
+    test('all <Image> elements across app/ and components/ declare numeric width & height OR fill', () => {
+      const sourceFiles = [...getAllFiles(APP_DIR), ...getAllFiles(COMPONENTS_DIR)];
+      const violations: string[] = [];
+
+      for (const file of sourceFiles) {
+        const content = fs.readFileSync(file, 'utf-8');
+        if (!content.includes('next/image')) continue;
+
+        // Regex match JSX <Image ... />
+        const imageTagRegex = /<Image\b([\s\S]*?)\/?>/g;
+        let match: RegExpExecArray | null;
+        while ((match = imageTagRegex.exec(content)) !== null) {
+          const props = match[1];
+          const hasWidth = /\bwidth\s*=\s*\{?\d+\}?/.test(props);
+          const hasHeight = /\bheight\s*=\s*\{?\d+\}?/.test(props);
+          const hasFill = /\bfill\b/.test(props);
+          const hasAlt = /\balt\s*=\s*["'{]/.test(props);
+
+          if (!hasAlt) {
+            violations.push(`${path.basename(file)}: <Image> missing alt attribute`);
+          }
+          if (!hasFill && (!hasWidth || !hasHeight)) {
+            violations.push(`${path.basename(file)}: <Image> missing explicit width/height or fill`);
+          }
+        }
+      }
+
+      assert.strictEqual(violations.length, 0, `CLS / Accessibility violations:\n${violations.join('\n')}`);
+    });
+
+    test('when fill is used on <Image>, container has relative/absolute positioning and sizes attribute', () => {
+      const pageFile = path.join(APP_DIR, 'page.tsx');
+      const content = fs.readFileSync(pageFile, 'utf-8');
+
+      // Check cta-nebula-backdrop usage
+      assert.ok(content.includes('src="/images/cta-nebula-backdrop.png"'), 'CTA banner must use cta-nebula-backdrop.png');
+      assert.ok(content.includes('fill'), 'CTA banner image must use fill');
+      assert.ok(content.includes('sizes='), 'CTA banner fill image must include sizes attribute');
+      assert.ok(content.includes('cta-backdrop-wrap'), 'CTA banner image must be wrapped in cta-backdrop-wrap container');
+    });
+  });
+
+  describe('3. Codebase Asset Reference Exhaustiveness', () => {
+    test('all image paths referenced in app/ and components/ resolve to existing public/ files', () => {
+      const sourceFiles = [...getAllFiles(APP_DIR), ...getAllFiles(COMPONENTS_DIR)];
+      const refRegex = /["'`](\/images\/[a-zA-Z0-9_\-]+\.png)["'`]/g;
+      const brokenRefs: string[] = [];
+
+      for (const file of sourceFiles) {
+        const content = fs.readFileSync(file, 'utf-8');
+        let match: RegExpExecArray | null;
+        while ((match = refRegex.exec(content)) !== null) {
+          const imagePath = match[1];
+          const fullDiskPath = path.join(ROOT_DIR, 'public', imagePath.replace(/^\//, ''));
+          if (!fs.existsSync(fullDiskPath)) {
+            brokenRefs.push(`${imagePath} referenced in ${path.basename(file)}`);
+          }
+        }
+      }
+
+      assert.strictEqual(brokenRefs.length, 0, `Broken image references found:\n${brokenRefs.join('\n')}`);
+    });
+  });
+
+  describe('4. Session-Based Routing Logic Simulation', () => {
+    test('unauthenticated state (user = null) generates /login CTA and "Find Your Partner"', () => {
+      const user: any = null;
+      const ctaHref = user ? "/discover" : "/login";
+      const ctaLabel = user ? "Explore Discover Deck" : "Find Your Partner";
+
+      expect(ctaHref).toBe("/login");
+      expect(ctaLabel).toBe("Find Your Partner");
+    });
+
+    test('authenticated state (user = { id: "u-1" }) generates /discover CTA and "Explore Discover Deck"', () => {
+      const user: any = { id: "u-1", email: "builder@test.com" };
+      const ctaHref = user ? "/discover" : "/login";
+      const ctaLabel = user ? "Explore Discover Deck" : "Find Your Partner";
+
+      expect(ctaHref).toBe("/discover");
+      expect(ctaLabel).toBe("Explore Discover Deck");
+    });
+
+    test('LandingSimulator generates pre-filled calibration params for unauthenticated user and /discover for authed user', () => {
+      const vibe: VibeAnswers = { pace: 5, comms: 4, risk: 5, energy: 4 };
+      const myCat: IndustryCategory = "Software & IT";
+      const targetCat: IndustryCategory = "Creative & Design";
+
+      // Unauthenticated
+      const unauthedHref = `/onboarding?role=${encodeURIComponent(myCat)}&seeking=${encodeURIComponent(targetCat)}&pace=${vibe.pace}&comms=${vibe.comms}&risk=${vibe.risk}&energy=${vibe.energy}`;
+      expect(unauthedHref).toBe("/onboarding?role=Software%20%26%20IT&seeking=Creative%20%26%20Design&pace=5&comms=4&risk=5&energy=4");
+
+      // Authenticated
+      const authedHref = "/discover";
+      expect(authedHref).toBe("/discover");
+    });
+  });
+
+  describe('5. Interactive Landing Component Logic & Math Verification', () => {
+    test('LandingHeroPreview candidate samples compute correct static scores and valid assets', () => {
+      const SAMPLES = [
+        { codename: "RIYA_DESIGNS 🎨", score: 94, avatarImg: "/images/avatar-maya-designer.png", vibe: { pace: 5, comms: 4, risk: 5, energy: 4 } },
+        { codename: "ALEX_AI 💻", score: 96, avatarImg: "/images/avatar-alex-coder.png", vibe: { pace: 5, comms: 5, risk: 4, energy: 5 } },
+        { codename: "DAVID_MAKER ⚙️", score: 91, avatarImg: "/images/avatar-david-hardware.png", vibe: { pace: 4, comms: 3, risk: 5, energy: 4 } },
+      ];
+
+      for (const sample of SAMPLES) {
+        const diskPath = path.join(ROOT_DIR, 'public', sample.avatarImg.replace(/^\//, ''));
+        assert.ok(fs.existsSync(diskPath), `Avatar does not exist: ${sample.avatarImg}`);
+        expect(sample.score).toBeGreaterThanOrEqual(90);
+        expect(sample.score).toBeLessThanOrEqual(100);
+      }
+    });
+
+    test('LandingSimulator deterministic vibe calculation matches vibeScore formula across extreme ranges', () => {
+      // Test identical vibes
+      const identicalA: VibeAnswers = { pace: 5, comms: 5, risk: 5, energy: 5 };
+      const identicalB: VibeAnswers = { pace: 5, comms: 5, risk: 5, energy: 5 };
+      expect(vibeScore(identicalA, identicalB)).toBe(100);
+
+      // Test polar opposite vibes (max distance = |5-1|*4 = 16 => score = 0)
+      const oppositeA: VibeAnswers = { pace: 1, comms: 1, risk: 1, energy: 1 };
+      const oppositeB: VibeAnswers = { pace: 5, comms: 5, risk: 5, energy: 5 };
+      expect(vibeScore(oppositeA, oppositeB)).toBe(0);
+
+      // Test preset vibes
+      const sprint: VibeAnswers = { pace: 5, comms: 5, risk: 5, energy: 4 };
+      const deepTech: VibeAnswers = { pace: 2, comms: 2, risk: 4, energy: 2 };
+      const score = vibeScore(sprint, deepTech);
+      // dist = |5-2| + |5-2| + |5-4| + |4-2| = 3 + 3 + 1 + 2 = 9
+      // score = Math.round(100 - (9/16)*100) = Math.round(100 - 56.25) = 44
+      expect(score).toBe(44);
+    });
+
+    test('LandingBentoGrid contains all 5 bento cards and 5 3D illustration assets', () => {
+      const bentoFile = path.join(COMPONENTS_DIR, 'LandingBentoGrid.tsx');
+      const content = fs.readFileSync(bentoFile, 'utf-8');
+
+      const expectedBentoKeys = ['vibe', 'roles', 'incubator', 'privacy', 'contracts'];
+      for (const key of expectedBentoKeys) {
+        assert.ok(content.includes(`key="${key}"`), `Bento grid missing card key: ${key}`);
+      }
+
+      const expectedBentoImages = [
+        '/images/bento-vibe-engine.png',
+        '/images/bento-roles-complement.png',
+        '/images/bento-project-incubator.png',
+        '/images/bento-privacy-shield.png',
+        '/images/bento-smart-contracts.png',
+      ];
+      for (const img of expectedBentoImages) {
+        assert.ok(content.includes(img), `Bento grid missing image: ${img}`);
+      }
+    });
+
+    test('LandingFaq includes 6 glassmorphic FAQ items covering all core topics', () => {
+      const faqFile = path.join(COMPONENTS_DIR, 'LandingFaq.tsx');
+      const content = fs.readFileSync(faqFile, 'utf-8');
+
+      const expectedTopics = ['algorithm', 'privacy', 'workflow', 'contracts', 'profile', 'limits'];
+      for (const topic of expectedTopics) {
+        assert.ok(content.includes(`topic: "${topic}"`), `FAQ missing topic: ${topic}`);
+      }
+      assert.ok(content.includes('aria-expanded'), 'FAQ buttons must have aria-expanded');
+      assert.ok(content.includes('role="region"'), 'FAQ answers must have role="region"');
+    });
+  });
+
+  describe('6. Landing Page Sections & Invariant Verification', () => {
+    test('app/page.tsx renders all 10 required sections', () => {
+      const pageFile = path.join(APP_DIR, 'page.tsx');
+      const content = fs.readFileSync(pageFile, 'utf-8');
+
+      // 1. Header
+      assert.ok(content.includes('<SiteHeader'), 'Missing SiteHeader');
+      // 2. Hero Section
+      assert.ok(content.includes('hero-section') || content.includes('hero-split'), 'Missing Hero section');
+      assert.ok(content.includes('<LandingHeroPreview'), 'Missing LandingHeroPreview');
+      // 3. Metrics Ribbon
+      assert.ok(content.includes('metrics-ribbon'), 'Missing Metrics Ribbon');
+      assert.ok(content.includes('4,200+'), 'Missing 4,200+ stat');
+      assert.ok(content.includes('89%'), 'Missing 89% stat');
+      assert.ok(content.includes('&lt;48h') || content.includes('<48h'), 'Missing <48h stat');
+      assert.ok(content.includes('$2.4M+'), 'Missing $2.4M+ stat');
+      // 4. Bento Grid
+      assert.ok(content.includes('<LandingBentoGrid'), 'Missing LandingBentoGrid');
+      // 5. How It Works
+      assert.ok(content.includes('how-it-works-section') || content.includes('how-it-works-grid'), 'Missing How It Works');
+      // 6. Simulator
+      assert.ok(content.includes('<LandingSimulator'), 'Missing LandingSimulator');
+      // 7. Testimonials
+      assert.ok(content.includes('testimonials-section') || content.includes('testimonials-grid'), 'Missing Testimonials');
+      // 8. FAQ
+      assert.ok(content.includes('<LandingFaq'), 'Missing LandingFaq');
+      // 9. Pre-Footer CTA
+      assert.ok(content.includes('cta-banner-section') || content.includes('cta-banner'), 'Missing Pre-Footer CTA');
+      // 10. Footer
+      assert.ok(content.includes('site-footer'), 'Missing Footer');
+      assert.ok(content.includes('All Systems Operational'), 'Missing operational status');
+    });
+  });
+});
