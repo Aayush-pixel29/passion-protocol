@@ -15,6 +15,7 @@ function asProfile(
     professional_title?: string | null;
     looking_for_category?: string | null;
     looking_for_title?: string | null;
+    intent_filter?: string | null;
     bio?: string | null;
     onboarding_complete: boolean;
   },
@@ -32,11 +33,14 @@ function asProfile(
     professional_title: row.professional_title || null,
     looking_for_category: row.looking_for_category && isValidCategory(row.looking_for_category) ? row.looking_for_category : null,
     looking_for_title: row.looking_for_title || null,
+    intent_filter: row.intent_filter || null,
     bio: row.bio || null,
     contact_url: contactUrl ?? null,
     onboarding_complete: row.onboarding_complete,
   };
 }
+
+const PROFILE_SELECT = "id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title, intent_filter";
 
 export async function getSessionUser() {
   const supabase = await createClient();
@@ -52,7 +56,7 @@ export async function getOwnProfile() {
 
   const { data: profileRow } = await supabase
     .from("profiles")
-    .select("id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title")
+    .select(PROFILE_SELECT)
     .eq("id", user.id)
     .maybeSingle();
 
@@ -87,7 +91,7 @@ export async function loadCompletedOperators() {
   const supabase = await createClient();
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title")
+    .select(PROFILE_SELECT)
     .eq("onboarding_complete", true);
 
   const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
@@ -118,4 +122,23 @@ export async function loadCompletedOperators() {
       const project = projectByUser.get(profile.id) ?? null;
       return vibe ? [{ profile, vibe, project }] : [];
     });
+}
+
+// Fetch a handful of completed profiles for the public sneak-peek marquee
+export async function loadSneakPeekProfiles(): Promise<Array<{ codename: string; professional_title: string; industry_category: string; intent_filter: string | null }>> {
+  const supabase = await createClient();
+  const { data } = await supabase
+    .from("profiles")
+    .select("codename, professional_title, industry_category, intent_filter")
+    .eq("onboarding_complete", true)
+    .not("professional_title", "is", null)
+    .not("industry_category", "is", null)
+    .limit(20);
+
+  return (data ?? []).map((row) => ({
+    codename: row.codename,
+    professional_title: row.professional_title ?? "Builder",
+    industry_category: row.industry_category ?? "Other",
+    intent_filter: row.intent_filter ?? null,
+  }));
 }

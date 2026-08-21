@@ -18,6 +18,36 @@ export const CATEGORY_ICONS: Record<string, string> = {
   "Other": "🛠️",
 };
 
+// Intent Filters — what kind of collaboration are you looking for?
+export const INTENT_FILTERS = [
+  "Hackathon",
+  "Side Project",
+  "VC Startup",
+  "Open Source",
+  "Freelance",
+] as const;
+
+export type IntentFilter = (typeof INTENT_FILTERS)[number];
+
+export const INTENT_ICONS: Record<string, string> = {
+  "Hackathon": "🏆",
+  "Side Project": "🛠️",
+  "VC Startup": "🚀",
+  "Open Source": "🌍",
+  "Freelance": "💼",
+};
+
+// Micro-Contract Templates
+export const CONTRACT_TEMPLATES = [
+  { key: "5050_revenue", label: "50/50 Revenue Split", splitA: 50, splitB: 50, platformFee: 20, description: "Equal revenue split after 20% platform fee" },
+  { key: "6040_revenue", label: "60/40 Revenue Split", splitA: 60, splitB: 40, platformFee: 20, description: "Lead partner gets 60%, contributor 40% after platform fee" },
+  { key: "prize_share", label: "Prize Share Agreement", splitA: 50, splitB: 50, platformFee: 20, description: "For hackathon/competition winnings — equal split after fee" },
+  { key: "portfolio_only", label: "Portfolio Only (Zero-Earning)", splitA: 0, splitB: 0, platformFee: 0, description: "$0 revenue — both parties retain portfolio rights only" },
+  { key: "custom", label: "Custom Terms", splitA: 50, splitB: 50, platformFee: 20, description: "Define your own split and terms" },
+] as const;
+
+export type ContractTemplateKey = (typeof CONTRACT_TEMPLATES)[number]["key"];
+
 export type VibeAnswers = {
   pace: number;
   comms: number;
@@ -44,6 +74,7 @@ export type Profile = {
   professional_title: string | null;
   looking_for_category: string | null;
   looking_for_title: string | null;
+  intent_filter: string | null;
   bio: string | null;
   contact_url?: string | null;
   onboarding_complete: boolean;
@@ -51,6 +82,10 @@ export type Profile = {
 
 export function isValidCategory(value: string): boolean {
   return (INDUSTRY_CATEGORIES as readonly string[]).includes(value);
+}
+
+export function isValidIntent(value: string): boolean {
+  return (INTENT_FILTERS as readonly string[]).includes(value);
 }
 
 export function formatRoleWithIcon(category: string | null | undefined, title: string | null | undefined): string {
@@ -86,6 +121,10 @@ export type PartnershipContract = {
   proposed_to: string;
   price_amount: number;
   deliverables: string;
+  contract_type: string;
+  revenue_split_a: number;
+  revenue_split_b: number;
+  platform_fee_pct: number;
   status: PartnershipStatus;
   created_at: string;
 };

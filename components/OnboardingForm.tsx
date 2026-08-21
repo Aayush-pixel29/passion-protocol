@@ -2,7 +2,7 @@
 
 import { useActionState, useState } from "react";
 import { saveOnboarding } from "@/lib/actions";
-import { INDUSTRY_CATEGORIES, type IndustryCategory } from "@/lib/types";
+import { INDUSTRY_CATEGORIES, INTENT_FILTERS, INTENT_ICONS, type IndustryCategory, type IntentFilter } from "@/lib/types";
 
 const SLIDERS: Array<{
   name: "pace" | "comms" | "risk" | "energy";
@@ -21,6 +21,7 @@ import type { Profile } from "@/lib/types";
 export function OnboardingForm({ profile }: { profile?: Profile | null }) {
   const [category, setCategory] = useState<IndustryCategory | "">((profile?.industry_category as IndustryCategory) ?? "");
   const [lookingCategory, setLookingCategory] = useState<IndustryCategory | "">((profile?.looking_for_category as IndustryCategory) ?? "");
+  const [intent, setIntent] = useState<IntentFilter | "">((profile?.intent_filter as IntentFilter) ?? "");
   
   const [state, action, pending] = useActionState(
     async (_prev: { error: string } | void, formData: FormData) => {
@@ -105,9 +106,30 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
         </div>
       </section>
 
-      {/* 3. Vibe */}
+      {/* 3. Intent — What are you building for? */}
       <section>
-        <h3 style={{ borderBottom: "1px solid var(--stroke)", paddingBottom: 8, marginBottom: 16 }}>3. The Vibe</h3>
+        <h3 style={{ borderBottom: "1px solid var(--stroke)", paddingBottom: 8, marginBottom: 16 }}>3. What Are You Building For?</h3>
+        <p style={{ color: "var(--muted)", fontSize: 14, marginBottom: 14 }}>
+          Select your primary collaboration intent. Partners with matching intent get a boost in your Discover deck.
+        </p>
+        <input type="hidden" name="intent_filter" value={intent} />
+        <div className="chip-row">
+          {INTENT_FILTERS.map((f) => (
+            <button
+              key={f}
+              type="button"
+              className={intent === f ? "chip selected" : "chip"}
+              onClick={() => setIntent(intent === f ? "" : f)}
+            >
+              {INTENT_ICONS[f]} {f}
+            </button>
+          ))}
+        </div>
+      </section>
+
+      {/* 4. Vibe */}
+      <section>
+        <h3 style={{ borderBottom: "1px solid var(--stroke)", paddingBottom: 8, marginBottom: 16 }}>4. The Vibe</h3>
         {SLIDERS.map((s) => (
           <label key={s.name} className="slider-block" style={{ marginBottom: 12 }}>
             <span className="slider-meta">

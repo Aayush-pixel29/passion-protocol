@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useTransition } from "react";
+import Image from "next/image";
+import Link from "next/link";
 import { sendConnect, respondToConnect } from "@/lib/actions";
 import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
 
@@ -19,6 +21,43 @@ const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
   { key: "risk", label: "Risk" },
   { key: "energy", label: "Energy" },
 ];
+
+function getAvatarImage(codename: string, category: string | null): string {
+  const upper = (codename || "").toUpperCase();
+  if (upper.includes("ALEX") || upper.includes("DEV") || upper.includes("ARJUN")) {
+    return "/images/avatar-alex-coder.png";
+  }
+  if (upper.includes("RIYA") || upper.includes("MAYA") || upper.includes("DESIGN")) {
+    return "/images/avatar-maya-designer.png";
+  }
+  if (upper.includes("NEO") || upper.includes("DAVID") || upper.includes("MAKER")) {
+    return "/images/avatar-david-hardware.png";
+  }
+  if (upper.includes("KAI") || upper.includes("CARLOS") || upper.includes("SCRIPT")) {
+    return "/images/avatar-carlos-writer.png";
+  }
+  if (upper.includes("LUNA") || upper.includes("PRIYA") || upper.includes("CODE")) {
+    return "/images/avatar-priya-fintech.png";
+  }
+  if (upper.includes("GROWTH") || upper.includes("ELENA")) {
+    return "/images/avatar-elena-growth.png";
+  }
+
+  switch (category) {
+    case "Software & IT":
+      return "/images/avatar-alex-coder.png";
+    case "Creative & Design":
+      return "/images/avatar-maya-designer.png";
+    case "Engineering & Hardware":
+      return "/images/avatar-david-hardware.png";
+    case "Business & Sales":
+      return "/images/avatar-elena-growth.png";
+    case "Marketing & Content":
+      return "/images/avatar-carlos-writer.png";
+    default:
+      return "/images/avatar-priya-fintech.png";
+  }
+}
 
 function getAvatarGradient(id: string) {
   let hash = 0;
@@ -41,11 +80,30 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
 
   if (visible.length === 0) {
     return (
-      <div className="empty">
-        <p style={{ fontSize: "1.2rem", fontWeight: 700, color: "var(--text)", marginBottom: 8 }}>
+      <div className="empty" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}>
+        <div style={{ position: "relative", width: 280, height: 160, marginBottom: 8 }}>
+          <Image
+            src="/images/empty-discover-deck.png"
+            alt="Deep space observatory scanning for operators"
+            width={280}
+            height={160}
+            style={{ objectFit: "contain", width: "100%", height: "auto" }}
+            priority
+          />
+        </div>
+        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-bright)", margin: 0 }}>
           No operators with that role yet
         </p>
-        <p>You&apos;re one of the first here — invite a collaborator or check back soon!</p>
+        <p style={{ maxWidth: 480, margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
+          You&apos;re one of the first here — invite a collaborator or check back soon!
+        </p>
+        <Link 
+          href="/profile" 
+          className="outline-btn"
+          style={{ marginTop: 8, padding: "10px 20px", fontSize: "14px" }}
+        >
+          Adjust Vibe Preferences →
+        </Link>
       </div>
     );
   }
@@ -100,89 +158,226 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
           const declined = card.connectStatus === "declined";
           const pending = busyId === card.profile.id;
 
-          const avatarBg = getAvatarGradient(card.profile.id || card.profile.codename);
+          const avatarSrc = getAvatarImage(card.profile.codename, card.profile.industry_category);
           const initial = card.profile.codename ? card.profile.codename[0].toUpperCase() : "O";
+          const avatarBg = getAvatarGradient(card.profile.id || card.profile.codename);
+          const isHighSynergy = card.score >= 90;
 
           return (
-            <article key={card.profile.id} className={accepted ? "match-card success" : "match-card"}>
+            <article 
+              key={card.profile.id} 
+              className={accepted ? "match-card success" : "match-card"}
+            >
               <div className="match-card-top">
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div
-                    style={{
+                  <div 
+                    className="avatar-badge ring-glow md" 
+                    style={{ 
+                      position: "relative", 
+                      overflow: "hidden",
+                      background: avatarBg,
                       width: 44,
                       height: 44,
-                      borderRadius: "50%",
-                      background: avatarBg,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      color: "#ffffff",
-                      fontWeight: 800,
-                      fontSize: "1.15rem",
-                      boxShadow: "0 4px 12px rgba(0,0,0,0.15)",
-                      flexShrink: 0,
+                      boxShadow: isHighSynergy ? "0 0 0 2px var(--surface-solid), var(--glow-cyan)" : undefined
                     }}
                   >
-                    {initial}
+                    <Image
+                      src={avatarSrc}
+                      alt={`${card.profile.codename} avatar`}
+                      width={44}
+                      height={44}
+                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
+                    />
+                    <span className="avatar-initial" style={{ position: "absolute", zIndex: -1 }}>{initial}</span>
                   </div>
                   <div>
-                    <h3>{card.profile.codename}</h3>
-                    <p className="card-skill">
+                    <h3 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{card.profile.codename}</h3>
+                    <p className="card-skill" style={{ margin: 0, fontSize: "13px" }}>
                       {formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)} · needs {formatRoleWithIcon(card.profile.looking_for_category, card.profile.looking_for_title)}
                     </p>
                   </div>
                 </div>
-                <div className="score-badge">{card.score}%</div>
+                <div 
+                  className={isHighSynergy ? "score-badge pulse" : "score-badge"}
+                  title={`${card.score}% Vibe Synergy`}
+                >
+                  {card.score}%
+                </div>
               </div>
               
               {card.project ? (
-                <div style={{ marginTop: 16, padding: 12, background: "rgba(0,0,0,0.03)", borderRadius: 8 }}>
-                  <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem" }}>{card.project.title}</h4>
-                  <p className="sub" style={{ margin: 0, fontSize: "0.85rem" }}>{card.project.description}</p>
+                <div 
+                  className="glass-inset" 
+                  style={{ 
+                    marginTop: 14, 
+                    padding: "12px 14px",
+                    background: "var(--surface-inset)",
+                    border: "1px solid var(--stroke-subtle)",
+                    borderRadius: "var(--radius-sm)"
+                  }}
+                >
+                  <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "var(--text-bright)" }}>
+                    {card.project.title}
+                  </h4>
+                  <p className="sub" style={{ margin: 0, fontSize: "0.85rem", lineHeight: 1.5 }}>
+                    {card.project.description}
+                  </p>
                   {card.project.budget_range ? (
-                    <p style={{ margin: "8px 0 0 0", fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)" }}>
-                      Budget: {card.project.budget_range}
-                    </p>
+                    <div style={{ marginTop: 8 }}>
+                      <span 
+                        className="role-tag" 
+                        style={{ 
+                          fontSize: "11px", 
+                          padding: "2px 8px", 
+                          color: "var(--accent-3)", 
+                          borderColor: "var(--stroke-cyan)",
+                          background: "rgba(6, 182, 212, 0.10)"
+                        }}
+                      >
+                        Budget: {card.project.budget_range}
+                      </span>
+                    </div>
                   ) : null}
                 </div>
               ) : card.profile.bio ? (
-                <p className="sub" style={{ marginTop: 12 }}>{card.profile.bio}</p>
+                <p 
+                  className="sub" 
+                  style={{ 
+                    marginTop: 12, 
+                    fontSize: "0.88rem", 
+                    lineHeight: 1.5,
+                    fontStyle: "italic",
+                    color: "#cbd5e1"
+                  }}
+                >
+                  &ldquo;{card.profile.bio}&rdquo;
+                </p>
               ) : null}
               
-              <div className="dims" style={{ marginTop: 16 }}>
-                {DIMS.map((d) => (
-                  <span key={d.key}>
-                    {d.label} {card.vibe[d.key]}/5
-                  </span>
-                ))}
+              <div 
+                className="dims" 
+                style={{ 
+                  marginTop: 16,
+                  display: "grid",
+                  gridTemplateColumns: "1fr 1fr",
+                  gap: "10px 14px"
+                }}
+              >
+                {DIMS.map((d) => {
+                  const val = card.vibe[d.key];
+                  const percentage = Math.round((val / 5) * 100);
+                  return (
+                    <div key={d.key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--muted)", fontWeight: 600 }}>
+                        <span>{d.label}</span>
+                        <span style={{ color: "var(--text)" }}>{val}/5</span>
+                      </div>
+                      <div 
+                        className="bar-track" 
+                        style={{ 
+                          height: 5, 
+                          background: "rgba(255, 255, 255, 0.08)",
+                          borderRadius: 999,
+                          overflow: "hidden"
+                        }}
+                      >
+                        <div 
+                          className="bar-fill" 
+                          style={{ 
+                            width: `${percentage}%`,
+                            height: "100%",
+                            background: "linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%)",
+                            borderRadius: 999
+                          }} 
+                        />
+                      </div>
+                    </div>
+                  );
+                })}
               </div>
+
               {accepted ? (
-                <div className="left" style={{ marginTop: "auto", paddingTop: 12, borderTop: "1px solid #d1fae5" }}>
-                  <p className="status-line" style={{ color: "#10b981", fontWeight: 700 }}>
-                    ● Partnership active
+                <div 
+                  className="left" 
+                  style={{ 
+                    marginTop: "auto", 
+                    paddingTop: 14, 
+                    borderTop: "1px solid rgba(16, 185, 129, 0.3)" 
+                  }}
+                >
+                  <p 
+                    className="status-line" 
+                    style={{ 
+                      color: "#10b981", 
+                      fontWeight: 700, 
+                      display: "flex", 
+                      alignItems: "center", 
+                      gap: 6,
+                      margin: 0
+                    }}
+                  >
+                    <span 
+                      style={{
+                        width: 8,
+                        height: 8,
+                        borderRadius: "50%",
+                        background: "#10b981",
+                        boxShadow: "0 0 8px rgba(16, 185, 129, 0.8)",
+                        display: "inline-block"
+                      }}
+                    />
+                    Partnership active
                   </p>
                   {card.contactUrl ? (
-                    <p className="sub" style={{ marginTop: 6, fontSize: "0.9rem" }}>
-                      Contact:{" "}
+                    <div 
+                      style={{ 
+                        marginTop: 8, 
+                        padding: "8px 12px", 
+                        background: "rgba(16, 185, 129, 0.08)", 
+                        border: "1px solid rgba(16, 185, 129, 0.25)",
+                        borderRadius: "var(--radius-sm)",
+                        fontSize: "0.88rem"
+                      }}
+                    >
+                      <span style={{ color: "var(--muted)", marginRight: 6 }}>Direct Contact:</span>
                       <a
                         href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
-                        style={{ color: "#3b82f6", fontWeight: 600, textDecoration: "underline" }}
+                        style={{ 
+                          color: "var(--accent-3)", 
+                          fontWeight: 700, 
+                          textDecoration: "underline",
+                          wordBreak: "break-all"
+                        }}
                       >
-                        {card.contactUrl}
+                        {card.contactUrl} ↗
                       </a>
-                    </p>
+                    </div>
                   ) : (
-                    <p className="sub" style={{ marginTop: 4 }}>No contact info added yet</p>
+                    <p className="sub" style={{ marginTop: 4, fontSize: "0.85rem" }}>
+                      No direct contact link provided yet.
+                    </p>
                   )}
                 </div>
               ) : outgoing ? (
-                <p className="status-line left" style={{ marginTop: "auto", fontWeight: 600, color: "var(--accent)" }}>
-                  ✓ Request sent
-                </p>
+                <div 
+                  className="status-line left" 
+                  style={{ 
+                    marginTop: "auto", 
+                    fontWeight: 700, 
+                    color: "var(--accent)",
+                    display: "flex",
+                    alignItems: "center",
+                    gap: 6,
+                    paddingTop: 12
+                  }}
+                >
+                  <span>✓</span>
+                  <span>Request sent</span>
+                </div>
               ) : incoming ? (
-                <div className="btn-row left" style={{ marginTop: "auto" }}>
+                <div className="btn-row left" style={{ marginTop: "auto", paddingTop: 12 }}>
                   <button
                     className="pill-btn skip"
                     type="button"
@@ -201,10 +396,19 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                   </button>
                 </div>
               ) : declined ? (
-                <p className="status-line left sub" style={{ marginTop: "auto" }}>Request declined</p>
+                <p 
+                  className="status-line left sub" 
+                  style={{ marginTop: "auto", paddingTop: 12 }}
+                >
+                  Request declined
+                </p>
               ) : (
-                <div className="btn-row left" style={{ marginTop: "auto" }}>
-                  <button className="pill-btn skip" type="button" onClick={() => skip(card.profile.id)}>
+                <div className="btn-row left" style={{ marginTop: "auto", paddingTop: 12 }}>
+                  <button 
+                    className="pill-btn skip" 
+                    type="button" 
+                    onClick={() => skip(card.profile.id)}
+                  >
                     Skip
                   </button>
                   <button
@@ -224,3 +428,4 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
     </div>
   );
 }
+

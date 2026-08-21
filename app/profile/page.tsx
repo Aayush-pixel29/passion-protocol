@@ -1,10 +1,10 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
-// formatRole removed
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
 import { ProjectForm } from "@/components/ProjectForm";
+import { CATEGORY_ICONS } from "@/lib/types";
 
 const DIMS: Array<{ key: "pace" | "comms" | "risk" | "energy"; label: string }> = [
   { key: "pace", label: "Pace" },
@@ -34,7 +34,7 @@ export default async function ProfilePage() {
     row.from_id === user.id ? row.to_id : row.from_id
   );
 
-          const { data: partnerProfiles } = partnerIds.length
+  const { data: partnerProfiles } = partnerIds.length
     ? await supabase.from("profiles").select("id, codename, industry_category, professional_title").in("id", partnerIds)
     : { data: [] };
 
@@ -47,30 +47,95 @@ export default async function ProfilePage() {
     if (link.contact_url) linkByUserId.set(link.user_id, link.contact_url);
   }
 
+  const categoryIcon = CATEGORY_ICONS[profile.industry_category || ""] || "🧑‍💻";
+
   return (
     <div className="site">
       <SiteHeader current="profile" signedIn />
       <main className="wrap">
-        <div className="page-intro">
-          <p className="kicker">Your profile</p>
-          <h2>{profile.codename}</h2>
+        {/* Page Header */}
+        <div className="page-intro" style={{ marginBottom: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 10, marginBottom: 8 }}>
+            <span className="kicker" style={{ margin: 0 }}>OPERATOR DOSSIER</span>
+            <span style={{ display: "inline-flex", alignItems: "center", gap: 6, fontSize: "12px", color: "var(--success)", background: "rgba(16, 185, 129, 0.12)", border: "1px solid rgba(16, 185, 129, 0.3)", padding: "2px 10px", borderRadius: 999 }}>
+              <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--success)", boxShadow: "0 0 8px var(--success)" }} />
+              Verified Active
+            </span>
+          </div>
+          <h1 className="gradient-text" style={{ fontSize: "clamp(2rem, 5vw, 2.75rem)", fontWeight: 800, margin: 0, letterSpacing: "-0.02em" }}>
+            {profile.codename}
+          </h1>
         </div>
+
+        {/* Profile Grid: Identity + Vibe Fingerprint */}
         <div className="profile-grid">
+          {/* Left Column: Identity Card */}
           <section className="identity">
-            <p className="rank">
-              {profile.professional_title} · looking for {profile.looking_for_title}
+            <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 12 }}>
+              <span className="role-tag" style={{ fontSize: "12px", padding: "4px 10px" }}>
+                {categoryIcon} {profile.industry_category}
+              </span>
+            </div>
+
+            <h3 style={{ fontSize: "20px", color: "var(--text-bright)", margin: "0 0 6px", fontWeight: 700 }}>
+              {profile.professional_title}
+            </h3>
+
+            <p style={{ color: "var(--accent-3)", fontSize: "14px", fontWeight: 600, margin: "0 0 16px" }}>
+              Seeking: <span style={{ color: "var(--text-bright)" }}>{profile.looking_for_title}</span> ({profile.looking_for_category})
             </p>
-            {profile.full_name ? <p className="sub">Name: {profile.full_name}</p> : null}
-            {profile.location ? <p className="sub">Location: {profile.location}</p> : null}
-            {profile.spoken_languages?.length ? <p className="sub">Languages: {profile.spoken_languages.join(", ")}</p> : null}
-            
-            {profile.linkedin_url || profile.phone_number ? (
-              <div style={{ marginTop: 12, padding: 12, background: "#f8fafc", borderRadius: 8 }}>
-                {profile.linkedin_url ? <p className="sub">LinkedIn: <a href={profile.linkedin_url} target="_blank">{profile.linkedin_url}</a></p> : null}
-                {profile.phone_number ? <p className="sub">Phone: {profile.phone_number}</p> : null}
+
+            {profile.full_name ? (
+              <p className="sub" style={{ margin: "6px 0", fontSize: "14px", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ color: "var(--dim)" }}>Name:</span>
+                <span style={{ color: "var(--text-bright)", fontWeight: 500 }}>{profile.full_name}</span>
+              </p>
+            ) : null}
+
+            {profile.location ? (
+              <p className="sub" style={{ margin: "6px 0", fontSize: "14px", display: "flex", alignItems: "center", gap: 8 }}>
+                <span style={{ color: "var(--dim)" }}>Location:</span>
+                <span style={{ color: "var(--text-bright)", fontWeight: 500 }}>📍 {profile.location}</span>
+              </p>
+            ) : null}
+
+            {profile.spoken_languages?.length ? (
+              <div style={{ margin: "8px 0", display: "flex", alignItems: "center", flexWrap: "wrap", gap: 6 }}>
+                <span style={{ color: "var(--dim)", fontSize: "14px" }}>Languages:</span>
+                {profile.spoken_languages.map((lang) => (
+                  <span key={lang} style={{ fontSize: "12px", padding: "2px 8px", background: "var(--surface-inset)", border: "1px solid var(--stroke-subtle)", borderRadius: "var(--radius-sm)", color: "var(--text)" }}>
+                    🌐 {lang}
+                  </span>
+                ))}
               </div>
             ) : null}
 
+            {profile.bio ? (
+              <p className="sub" style={{ marginTop: 12, padding: "10px 14px", background: "var(--surface-inset)", borderRadius: "var(--radius-sm)", border: "1px solid var(--stroke-subtle)", fontSize: "13px", fontStyle: "italic", lineHeight: 1.5 }}>
+                &ldquo;{profile.bio}&rdquo;
+              </p>
+            ) : null}
+            
+            {profile.linkedin_url || profile.phone_number ? (
+              <div className="glass-inset" style={{ marginTop: 16, padding: 14 }}>
+                {profile.linkedin_url ? (
+                  <p className="sub" style={{ margin: "4px 0", fontSize: "13px" }}>
+                    <span style={{ color: "var(--dim)" }}>LinkedIn:</span>{" "}
+                    <a href={profile.linkedin_url} target="_blank" rel="noopener noreferrer" style={{ color: "var(--accent-3)", textDecoration: "underline", fontWeight: 500 }}>
+                      {profile.linkedin_url} ↗
+                    </a>
+                  </p>
+                ) : null}
+                {profile.phone_number ? (
+                  <p className="sub" style={{ margin: "4px 0", fontSize: "13px" }}>
+                    <span style={{ color: "var(--dim)" }}>Phone:</span>{" "}
+                    <span style={{ color: "var(--text-bright)", fontWeight: 500 }}>📱 {profile.phone_number}</span>
+                  </p>
+                ) : null}
+              </div>
+            ) : null}
+
+            {/* Glowing Stats Strip */}
             <div className="stats">
               <div>
                 <div className="stat-value">{partnerIds.length}</div>
@@ -81,22 +146,37 @@ export default async function ProfilePage() {
                 <div className="stat-label">Inbound</div>
               </div>
               <div>
-                <div className="stat-value" style={{ fontSize: "1rem" }}>{profile.industry_category}</div>
-                <div className="stat-label">Category</div>
+                <div className="stat-value" style={{ fontSize: "1.1rem", display: "flex", alignItems: "center", gap: 4 }}>
+                  <span>{categoryIcon}</span>
+                </div>
+                <div className="stat-label">{profile.industry_category?.split(" ")[0] || "Category"}</div>
               </div>
             </div>
-            <p style={{ marginTop: 20 }}>
-              <Link href="/onboarding">Edit identity</Link>
-            </p>
+
+            <div style={{ marginTop: 24 }}>
+              <Link href="/onboarding" className="outline-btn" style={{ display: "inline-flex", alignItems: "center", gap: 8, fontSize: "14px", padding: "10px 18px" }}>
+                <span>✏️</span> Edit identity
+              </Link>
+            </div>
           </section>
+
+          {/* Right Column: Vibe Fingerprint Panel */}
           <section className="fingerprint">
-            <p className="label plain">Vibe fingerprint</p>
+            <div style={{ marginBottom: 4 }}>
+              <p className="label plain" style={{ margin: 0, fontSize: "18px", color: "var(--text-bright)" }}>
+                Vibe fingerprint
+              </p>
+              <p className="sub" style={{ margin: "4px 0 16px", fontSize: "13px", color: "var(--muted)" }}>
+                4-dimensional behavioral chemistry calibration.
+              </p>
+            </div>
+
             {vibe ? (
               DIMS.map((d) => (
-                <div key={d.key}>
-                  <div className="slider-meta">
-                    <span>{d.label}</span>
-                    <span>{vibe[d.key]} / 5</span>
+                <div key={d.key} style={{ marginBottom: 8 }}>
+                  <div className="slider-meta" style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: "13px" }}>
+                    <span style={{ fontWeight: 600, color: "var(--text-bright)" }}>{d.label}</span>
+                    <span style={{ fontWeight: 700, color: "var(--accent-3)", fontFamily: "monospace" }}>{vibe[d.key]} / 5</span>
                   </div>
                   <div className="bar-track">
                     <div className="bar-fill" style={{ width: `${(vibe[d.key] / 5) * 100}%` }} />
@@ -109,63 +189,101 @@ export default async function ProfilePage() {
           </section>
         </div>
 
-        <div style={{ marginTop: 40, padding: 24, border: "1px solid #eaeaea", borderRadius: 12 }}>
-          <h3>Project Pitch</h3>
-          <p className="sub" style={{ marginBottom: 24 }}>
-            Describe what you are building to help potential partners decide if they want to collaborate.
-          </p>
+        {/* Project Pitch Section */}
+        <section className="glass-panel" style={{ marginTop: 40, padding: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 20 }}>
+            <span style={{ fontSize: "28px" }}>🚀</span>
+            <div>
+              <h3 style={{ margin: 0, fontSize: "20px", color: "var(--text-bright)" }}>Project Pitch</h3>
+              <p className="sub" style={{ margin: "4px 0 0", fontSize: "14px" }}>
+                Broadcast what you are building to attract synergistic co-founders and collaborators across the protocol.
+              </p>
+            </div>
+          </div>
           <ProjectForm project={project} />
-        </div>
+        </section>
 
+        {/* Active Partnerships Grid */}
         {partnerProfiles && partnerProfiles.length > 0 ? (
-          <div style={{ marginTop: 40 }}>
-            <h3>Active Partnerships ({partnerProfiles.length})</h3>
-            <div className="match-grid" style={{ marginTop: 16 }}>
+          <section style={{ marginTop: 48 }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 16 }}>
+              <h3 style={{ margin: 0, fontSize: "20px", color: "var(--text-bright)", display: "flex", alignItems: "center", gap: 8 }}>
+                <span>🤝</span> Active Partnerships ({partnerProfiles.length})
+              </h3>
+              <Link href="/messages" className="pill-btn" style={{ fontSize: "13px", padding: "6px 14px" }}>
+                Open Messages →
+              </Link>
+            </div>
+            <div className="match-grid">
               {partnerProfiles.map((p) => {
                 const contact = linkByUserId.get(p.id);
+                const partnerIcon = CATEGORY_ICONS[p.industry_category || ""] || "🧑‍💻";
                 return (
-                  <article key={p.id} className="match-card success">
-                    <div className="match-card-top">
-                      <div>
-                        <h3>{p.codename}</h3>
-                        <p className="card-skill">{p.professional_title}</p>
+                  <article key={p.id} className="match-card success" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <div className="match-card-top">
+                        <div>
+                          <div style={{ display: "flex", alignItems: "center", gap: 8, marginBottom: 4 }}>
+                            <span className="role-tag" style={{ fontSize: "11px", padding: "2px 8px" }}>
+                              {partnerIcon} {p.industry_category}
+                            </span>
+                          </div>
+                          <h3 style={{ fontSize: "18px", color: "var(--text-bright)", margin: "4px 0" }}>{p.codename}</h3>
+                          <p className="card-skill">{p.professional_title}</p>
+                        </div>
+                      </div>
+                      <div style={{ marginTop: 12, padding: "10px 12px", background: "rgba(16, 185, 129, 0.08)", border: "1px solid rgba(16, 185, 129, 0.2)", borderRadius: "var(--radius-sm)" }}>
+                        <p style={{ color: "var(--success)", fontWeight: 700, fontSize: "13px", margin: 0, display: "flex", alignItems: "center", gap: 6 }}>
+                          <span style={{ width: 6, height: 6, borderRadius: "50%", background: "var(--success)" }} />
+                          Partnership active
+                        </p>
+                        {contact ? (
+                          <p className="sub" style={{ marginTop: 6, marginBottom: 0, fontSize: "13px" }}>
+                            Contact:{" "}
+                            <a
+                              href={contact.startsWith("http") ? contact : `https://${contact}`}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              style={{ color: "var(--accent-3)", textDecoration: "underline", fontWeight: 600 }}
+                            >
+                              {contact} ↗
+                            </a>
+                          </p>
+                        ) : (
+                          <p className="sub" style={{ marginTop: 6, marginBottom: 0, fontSize: "13px", color: "var(--dim)" }}>
+                            No contact info added
+                          </p>
+                        )}
                       </div>
                     </div>
-                    <div style={{ marginTop: 12 }}>
-                      <p className="status-line" style={{ color: "#10b981", fontWeight: 600 }}>
-                        Partnership active
-                      </p>
-                      {contact ? (
-                        <p className="sub" style={{ marginTop: 4 }}>
-                          Contact:{" "}
-                          <a
-                            href={contact.startsWith("http") ? contact : `https://${contact}`}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            style={{ color: "#3b82f6", textDecoration: "underline" }}
-                          >
-                            {contact}
-                          </a>
-                        </p>
-                      ) : (
-                        <p className="sub" style={{ marginTop: 4 }}>No contact info added</p>
-                      )}
+                    <div style={{ marginTop: 16 }}>
+                      <Link href="/messages" className="pill-btn" style={{ width: "100%", textAlign: "center", display: "block", fontSize: "13px" }}>
+                        Chat with {p.codename}
+                      </Link>
                     </div>
                   </article>
                 );
               })}
             </div>
-          </div>
+          </section>
         ) : null}
 
-        <div style={{ marginTop: 60, borderTop: "1px solid #eaeaea", paddingTop: 40 }}>
-          <h3 style={{ color: "#ef4444" }}>Danger Zone</h3>
-          <p className="sub" style={{ marginTop: 8, marginBottom: 16 }}>
-            Permanently delete your account and all associated data. This action cannot be undone.
-          </p>
-          <DeleteAccountButton />
-        </div>
+        {/* Danger Zone */}
+        <section className="glass-card" style={{ marginTop: 56, padding: "28px 32px", border: "1px solid rgba(244, 63, 94, 0.25)", background: "rgba(244, 63, 94, 0.04)" }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 20 }}>
+            <div>
+              <h3 style={{ color: "var(--danger)", margin: "0 0 6px", fontSize: "18px", display: "flex", alignItems: "center", gap: 8 }}>
+                <span>⚠️</span> Danger Zone
+              </h3>
+              <p className="sub" style={{ margin: 0, maxWidth: "560px", fontSize: "14px", lineHeight: 1.5 }}>
+                Permanently delete your account, operator identity, project pitches, vibe calibration, and all associated messages. This action is irreversible.
+              </p>
+            </div>
+            <DeleteAccountButton />
+          </div>
+        </section>
       </main>
     </div>
   );
 }
+

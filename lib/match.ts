@@ -5,6 +5,7 @@ export type RankedMatch = {
   vibe: VibeAnswers;
   project: import("@/lib/types").Project | null;
   score: number;
+  intentMatch: boolean;
 };
 
 const VIBE_KEYS = ["pace", "comms", "risk", "energy"] as const;
@@ -16,7 +17,7 @@ export function vibeScore(a: VibeAnswers, b: VibeAnswers): number {
 }
 
 export function rankMatches(
-  me: { industry_category: string; looking_for_category: string; spoken_languages: string[]; vibe: VibeAnswers; id: string },
+  me: { industry_category: string; looking_for_category: string; spoken_languages: string[]; intent_filter: string | null; vibe: VibeAnswers; id: string },
   others: Array<{ profile: Profile; vibe: VibeAnswers; project: import("@/lib/types").Project | null }>
 ): RankedMatch[] {
   return others
@@ -39,11 +40,28 @@ export function rankMatches(
       
       return true;
     })
-    .map((row) => ({
-      profile: row.profile,
-      vibe: row.vibe,
-      project: row.project,
-      score: vibeScore(me.vibe, row.vibe),
-    }))
-    .sort((a, b) => b.score - a.score);
+    .map((row) => {
+      const baseScore = vibeScore(me.vibe, row.vibe);
+      
+      // Intent match bonus: if both specify intent and they match, +5 score (capped at 100)
+      const intentMatch = Boolean(
+        me.intent_filter &&
+        row.profile.intent_filter &&
+        me.intent_filter === row.profile.intent_filter
+      );
+      const adjustedScore = intentMatch ? Math.min(100, baseScore + 5) : baseScore;
+
+      return {
+        profile: row.profile,
+        vibe: row.vibe,
+        project: row.project,
+        score: adjustedScore,
+        intentMatch,
+      };
+    })
+    .sort((a, b) => {
+      // Intent-matched profiles bubble up first, then by score
+      if (a.intentMatch !== b.intentMatch) return a.intentMatch ? -1 : 1;
+      return b.score - a.score;
+    });
 }

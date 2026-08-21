@@ -21,10 +21,26 @@ export function DeleteAccountButton() {
     <button 
       onClick={handleDelete}
       disabled={isPending}
-      className="button" 
-      style={{ backgroundColor: "#ef4444", color: "#fff", borderColor: "#ef4444" }}
+      className="button"
+      style={{
+        background: "rgba(244, 63, 94, 0.12)",
+        color: "#f43f5e",
+        border: "1.5px solid rgba(244, 63, 94, 0.35)",
+        padding: "10px 20px",
+        borderRadius: "var(--radius-sm)",
+        fontWeight: 700,
+        fontSize: "14px",
+        cursor: isPending ? "not-allowed" : "pointer",
+        transition: "all 0.2s cubic-bezier(0.16, 1, 0.3, 1)",
+        display: "inline-flex",
+        alignItems: "center",
+        gap: 8,
+        boxShadow: "0 0 14px rgba(244, 63, 94, 0.15)",
+      }}
     >
-      {isPending ? "Deleting..." : "Delete my account"}
+      <span>🗑️</span>
+      <span>{isPending ? "Deleting..." : "Delete my account"}</span>
     </button>
   );
 }
+

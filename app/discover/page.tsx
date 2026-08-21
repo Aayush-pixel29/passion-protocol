@@ -19,6 +19,7 @@ export default async function DiscoverPage() {
       industry_category: profile.industry_category, 
       looking_for_category: profile.looking_for_category,
       spoken_languages: profile.spoken_languages || [],
+      intent_filter: profile.intent_filter ?? null,
       vibe 
     },
     pool
@@ -67,11 +68,42 @@ export default async function DiscoverPage() {
       <main className="wrap">
         <div className="page-intro spread">
           <div>
-            <p className="kicker">Discover</p>
-            <h2>People who match your vibe</h2>
+            <div className="badge-pill" style={{ marginBottom: 12 }}>
+              <span style={{ color: "#ff3d6e" }}>⚡</span>
+              <span>DISCOVER OPERATORS</span>
+            </div>
+            <h2>
+              People who match your <span className="gradient-text">vibe</span>
+            </h2>
             <p className="sub">
-              {profile.codename} · looking for {profile.looking_for_title} · ranked in a grid
+              <strong>{profile.codename}</strong> · seeking <strong>{profile.looking_for_title}</strong> · ranked by 4D synergy & reciprocal discipline
             </p>
+          </div>
+          <div 
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: 8,
+              padding: "8px 16px",
+              background: "var(--surface-card)",
+              border: "1px solid var(--stroke)",
+              borderRadius: "var(--radius-full)",
+              fontSize: "13px",
+              fontWeight: 700,
+              color: "var(--muted)",
+              boxShadow: "var(--shadow-sm)"
+            }}
+          >
+            <span 
+              style={{
+                width: 8,
+                height: 8,
+                borderRadius: "50%",
+                background: "#10b981",
+                boxShadow: "0 0 8px rgba(16, 185, 129, 0.7)"
+              }} 
+            />
+            <span>{cards.length} {cards.length === 1 ? "operator" : "operators"} available</span>
           </div>
         </div>
         <DiscoverDeck cards={cards} />
@@ -79,3 +111,4 @@ export default async function DiscoverPage() {
     </div>
   );
 }
+

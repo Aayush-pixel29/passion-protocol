@@ -5,10 +5,12 @@ import { LandingHeroPreview } from "@/components/LandingHeroPreview";
 import { LandingBentoGrid } from "@/components/LandingBentoGrid";
 import { LandingSimulator } from "@/components/LandingSimulator";
 import { LandingFaq } from "@/components/LandingFaq";
-import { getSessionUser } from "@/lib/data";
+import { SneakPeekMarquee } from "@/components/SneakPeekMarquee";
+import { getSessionUser, loadSneakPeekProfiles } from "@/lib/data";
 
 export default async function HomePage() {
   const { user } = await getSessionUser();
+  const sneakProfiles = await loadSneakPeekProfiles();
   const ctaHref = user ? "/discover" : "/login";
   const ctaLabel = user ? "Explore Discover Deck" : "Find Your Partner";
 
@@ -94,6 +96,9 @@ export default async function HomePage() {
           {/* Interactive Hero Preview (hero-panel, hero-sample, score-badge 94%, Real-time Match, Sample match: RIYA_DESIGNS 🎨 Designer looking for a Coder 💻, hero-list) */}
           <LandingHeroPreview ctaHref={ctaHref} ctaLabel={ctaLabel} />
         </section>
+
+        {/* SNEAK PEEK MARQUEE — Active Builder Profiles */}
+        <SneakPeekMarquee profiles={sneakProfiles} />
 
         {/* SECTION 3: SOCIAL PROOF & METRICS RIBBON */}
         <section className="metrics-ribbon-section">

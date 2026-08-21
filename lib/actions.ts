@@ -53,7 +53,7 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   const rawName = String(formData.get("codename") ?? "").trim();
   const codename = rawName.replace(/\s+/g, "_").toUpperCase();
   
-  // New fields
+  // Identity fields
   const full_name = String(formData.get("full_name") ?? "").trim() || null;
   const location = String(formData.get("location") ?? "").trim() || null;
   const phone_number = String(formData.get("phone_number") ?? "").trim() || null;
@@ -66,6 +66,10 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   const professional_title = String(formData.get("professional_title") ?? "").trim();
   const looking_for_category = String(formData.get("looking_for_category") ?? "");
   const looking_for_title = String(formData.get("looking_for_title") ?? "").trim();
+
+  // Intent filter
+  const rawIntent = String(formData.get("intent_filter") ?? "").trim();
+  const intent_filter = rawIntent || null;
 
   const bioRaw = String(formData.get("bio") ?? "").trim();
   const bio = bioRaw ? bioRaw.slice(0, 280) : null;
@@ -100,6 +104,7 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
     professional_title,
     looking_for_category,
     looking_for_title,
+    intent_filter,
     bio,
     onboarding_complete: true,
   });
@@ -306,9 +311,15 @@ export async function proposePartnership(
   const proposedTo = String(formData.get("proposed_to"));
   const priceAmount = Number(formData.get("price_amount"));
   const deliverables = String(formData.get("deliverables")).trim();
+  const contractType = String(formData.get("contract_type") || "custom").trim();
+  const revenueSplitA = Number(formData.get("revenue_split_a") || 50);
+  const revenueSplitB = Number(formData.get("revenue_split_b") || 50);
+  const platformFeePct = Number(formData.get("platform_fee_pct") || 20);
 
   if (priceAmount < 0) return { error: "Price cannot be negative." };
   if (!deliverables) return { error: "Deliverables are required." };
+  if (revenueSplitA + revenueSplitB > 100) return { error: "Revenue splits cannot exceed 100%." };
+  if (platformFeePct < 0 || platformFeePct > 100) return { error: "Platform fee must be 0-100%." };
 
   const { error } = await supabase.from("partnership_contracts").insert({
     connect_request_id: connectRequestId,
@@ -316,6 +327,10 @@ export async function proposePartnership(
     proposed_to: proposedTo,
     price_amount: priceAmount,
     deliverables,
+    contract_type: contractType,
+    revenue_split_a: revenueSplitA,
+    revenue_split_b: revenueSplitB,
+    platform_fee_pct: platformFeePct,
   });
 
   if (error) return { error: error.message };
