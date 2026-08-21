@@ -1,7 +1,7 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED = ["/onboarding", "/discover", "/profile"];
+const PROTECTED = ["/onboarding", "/discover", "/profile", "/messages", "/workspace"];
 
 export async function updateSession(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -54,8 +54,11 @@ export async function updateSession(request: NextRequest) {
       !complete &&
       (path === "/discover" ||
         path === "/profile" ||
+        path === "/messages" ||
         path.startsWith("/discover/") ||
-        path.startsWith("/profile/"))
+        path.startsWith("/profile/") ||
+        path.startsWith("/messages/") ||
+        path.startsWith("/workspace/"))
     ) {
       const redirect = request.nextUrl.clone();
       redirect.pathname = "/onboarding";

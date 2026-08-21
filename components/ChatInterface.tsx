@@ -473,7 +473,7 @@ export function ChatInterface({
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 6 }}>
                     <span style={{ fontSize: 20 }}>🤝</span>
                     <h4 style={{ margin: 0, fontSize: 18, color: "var(--text-bright)", fontFamily: "var(--font-display)" }}>
-                      Partnership Proposed
+                      {ctr.status === "accepted" ? "Workspace unlocked" : "Partnership Proposed"}
                     </h4>
                   </div>
                   {ctr.contract_type && ctr.contract_type !== "custom" && (
@@ -562,6 +562,15 @@ export function ChatInterface({
                           Accept
                         </button>
                       </div>
+                    ) : null}
+                    {ctr.status === "accepted" ? (
+                      <a
+                        href={`/workspace/${ctr.id}`}
+                        className="pill-btn accept"
+                        style={{ display: "inline-block", marginTop: 14, textDecoration: "none" }}
+                      >
+                        Open workspace
+                      </a>
                     ) : null}
                     {ctr.status === "pending" && String(ctr.proposed_by) === String(currentUserId) ? (
                       <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--muted)" }}>

@@ -47,6 +47,19 @@ export default async function ProfilePage() {
     if (link.contact_url) linkByUserId.set(link.user_id, link.contact_url);
   }
 
+  const { data: acceptedContracts } = await supabase
+    .from("partnership_contracts")
+    .select("id, deliverables, price_amount, status, proposed_by, proposed_to")
+    .or(`proposed_by.eq.${user.id},proposed_to.eq.${user.id}`)
+    .eq("status", "accepted");
+
+  const contractPartnerIds = (acceptedContracts ?? []).map((c) =>
+    c.proposed_by === user.id ? c.proposed_to : c.proposed_by
+  );
+  const { data: contractPartners } = contractPartnerIds.length
+    ? await supabase.from("profiles").select("id, codename").in("id", contractPartnerIds)
+    : { data: [] };
+  const contractPartnerName = new Map((contractPartners ?? []).map((p) => [p.id, p.codename]));
   const categoryIcon = CATEGORY_ICONS[profile.industry_category || ""] || "🧑‍💻";
 
   return (
@@ -261,6 +274,31 @@ export default async function ProfilePage() {
                         Chat with {p.codename}
                       </Link>
                     </div>
+                  </article>
+                );
+              })}
+            </div>
+          </section>
+        ) : null}
+
+        {acceptedContracts && acceptedContracts.length > 0 ? (
+          <section style={{ marginTop: 48 }}>
+            <h3 style={{ margin: "0 0 16px", fontSize: "20px", color: "var(--text-bright)" }}>
+              Active work
+            </h3>
+            <div className="match-grid">
+              {acceptedContracts.map((c) => {
+                const otherId = c.proposed_by === user.id ? c.proposed_to : c.proposed_by;
+                return (
+                  <article key={c.id} className="match-card success">
+                    <h3 style={{ margin: "0 0 8px", fontSize: 18 }}>
+                      {contractPartnerName.get(otherId) ?? "Partner"}
+                    </h3>
+                    <p className="card-skill">{c.deliverables}</p>
+                    <p className="sub" style={{ marginBottom: 14 }}>${c.price_amount} · accepted</p>
+                    <Link href={`/workspace/${c.id}`} className="pill-btn accept" style={{ textAlign: "center", display: "block" }}>
+                      Open workspace
+                    </Link>
                   </article>
                 );
               })}

@@ -128,3 +128,14 @@ export type PartnershipContract = {
   status: PartnershipStatus;
   created_at: string;
 };
+
+export type WorkspaceFile = {
+  id: string;
+  contract_id: string;
+  uploaded_by: string;
+  path: string;
+  file_name: string;
+  mime_type: string;
+  size_bytes: number;
+  created_at: string;
+};

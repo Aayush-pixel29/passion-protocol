@@ -380,5 +380,7 @@ export async function respondToPartnership(
 
   if (error) return { error: error.message };
   revalidatePath("/messages");
+  revalidatePath("/profile");
+  revalidatePath(`/workspace/${contractId}`);
   return {};
 }
