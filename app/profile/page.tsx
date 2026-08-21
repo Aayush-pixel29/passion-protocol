@@ -4,6 +4,7 @@ import { getOwnProfile } from "@/lib/data";
 import { formatRole } from "@/lib/types";
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
+import { ProjectForm } from "@/components/ProjectForm";
 
 const DIMS: Array<{ key: "pace" | "comms" | "risk" | "energy"; label: string }> = [
   { key: "pace", label: "Pace" },
@@ -13,7 +14,7 @@ const DIMS: Array<{ key: "pace" | "comms" | "risk" | "energy"; label: string }> 
 ];
 
 export default async function ProfilePage() {
-  const { user, profile, vibe, supabase } = await getOwnProfile();
+  const { user, profile, vibe, project, supabase } = await getOwnProfile();
   if (!user) redirect("/login");
   if (!profile?.onboarding_complete) redirect("/onboarding");
 
@@ -101,6 +102,14 @@ export default async function ProfilePage() {
               <p className="sub">No vibe answers yet.</p>
             )}
           </section>
+        </div>
+
+        <div style={{ marginTop: 40, padding: 24, border: "1px solid #eaeaea", borderRadius: 12 }}>
+          <h3>Project Pitch</h3>
+          <p className="sub" style={{ marginBottom: 24 }}>
+            Describe what you are building to help potential partners decide if they want to collaborate.
+          </p>
+          <ProjectForm project={project} />
         </div>
 
         {partnerProfiles && partnerProfiles.length > 0 ? (

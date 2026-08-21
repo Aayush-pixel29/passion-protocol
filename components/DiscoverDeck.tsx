@@ -7,6 +7,7 @@ import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState }
 export type DiscoverCard = {
   profile: Profile;
   vibe: VibeAnswers;
+  project: import("@/lib/types").Project | null;
   score: number;
   connectStatus: ConnectState;
   contactUrl?: string | null;
@@ -133,8 +134,22 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                 </div>
                 <div className="score-badge">{card.score}%</div>
               </div>
-              {card.profile.bio ? <p className="sub" style={{ marginTop: 12 }}>{card.profile.bio}</p> : null}
-              <div className="dims">
+              
+              {card.project ? (
+                <div style={{ marginTop: 16, padding: 12, background: "rgba(0,0,0,0.03)", borderRadius: 8 }}>
+                  <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem" }}>{card.project.title}</h4>
+                  <p className="sub" style={{ margin: 0, fontSize: "0.85rem" }}>{card.project.description}</p>
+                  {card.project.budget_range ? (
+                    <p style={{ margin: "8px 0 0 0", fontSize: "0.8rem", fontWeight: 600, color: "var(--accent)" }}>
+                      Budget: {card.project.budget_range}
+                    </p>
+                  ) : null}
+                </div>
+              ) : card.profile.bio ? (
+                <p className="sub" style={{ marginTop: 12 }}>{card.profile.bio}</p>
+              ) : null}
+              
+              <div className="dims" style={{ marginTop: 16 }}>
                 {DIMS.map((d) => (
                   <span key={d.key}>
                     {d.label} {card.vibe[d.key]}/5

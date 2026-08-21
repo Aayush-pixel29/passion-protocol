@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/actions";
 
 type Props = {
-  current: "discover" | "profile" | "none";
+  current: "discover" | "profile" | "messages" | "none";
   signedIn: boolean;
 };
 
@@ -19,6 +19,9 @@ export function SiteHeader({ current, signedIn }: Props) {
             <>
               <Link href="/discover" className={current === "discover" ? "active" : ""}>
                 Discover
+              </Link>
+              <Link href="/messages" className={current === "messages" ? "active" : ""}>
+                Messages
               </Link>
               <Link href="/profile" className={current === "profile" ? "active" : ""}>
                 Profile

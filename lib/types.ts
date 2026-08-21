@@ -53,3 +53,34 @@ export function formatRoleWithIcon(role: OperatorRole | null | undefined): strin
   if (!role || !isOperatorRole(role)) return "UNSET";
   return `${ROLE_ICONS[role]} ${ROLE_LABELS[role]}`;
 }
+
+export type Project = {
+  id: string;
+  user_id: string;
+  title: string;
+  description: string;
+  budget_range: string | null;
+  created_at: string;
+};
+
+export type Message = {
+  id: string;
+  sender_id: string;
+  receiver_id: string;
+  content: string;
+  read_status: boolean;
+  created_at: string;
+};
+
+export type PartnershipStatus = "pending" | "accepted" | "declined" | "paid";
+
+export type PartnershipContract = {
+  id: string;
+  connect_request_id: string;
+  proposed_by: string;
+  proposed_to: string;
+  price_amount: number;
+  deliverables: string;
+  status: PartnershipStatus;
+  created_at: string;
+};

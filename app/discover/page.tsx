@@ -48,6 +48,7 @@ export default async function DiscoverPage() {
         contact_url: linkByUser.get(row.profile.id) ?? null,
       },
       vibe: row.vibe,
+      project: row.project,
       score: row.score,
       connectStatus: status,
       contactUrl: status === "accepted" ? linkByUser.get(row.profile.id) ?? null : null,

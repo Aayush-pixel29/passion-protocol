@@ -231,3 +231,74 @@ export async function respondToConnect(
   revalidatePath("/profile");
   return { status: decision };
 }
+
+export async function saveProject(formData: FormData): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const title = String(formData.get("title") ?? "").trim();
+  const description = String(formData.get("description") ?? "").trim();
+  const budget_range = String(formData.get("budget_range") ?? "").trim();
+
+  if (title.length < 3 || title.length > 100) return { error: "Title must be 3-100 characters." };
+  if (description.length < 10 || description.length > 1000) return { error: "Description must be 10-1000 characters." };
+
+  const { error } = await supabase.from("projects").upsert({
+    user_id: user.id,
+    title,
+    description,
+    budget_range: budget_range || null,
+  });
+
+  if (error) return { error: error.message };
+  revalidatePath("/profile");
+  revalidatePath("/discover");
+  return {};
+}
+
+export async function sendMessage(receiverId: string, content: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+  
+  if (!content.trim()) return { error: "Message cannot be empty." };
+
+  const { error } = await supabase.from("messages").insert({
+    sender_id: user.id,
+    receiver_id: receiverId,
+    content: content.trim(),
+  });
+
+  if (error) return { error: error.message };
+  revalidatePath("/messages");
+  return {};
+}
+
+export async function proposePartnership(
+  formData: FormData
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const connectRequestId = String(formData.get("connect_request_id"));
+  const proposedTo = String(formData.get("proposed_to"));
+  const priceAmount = Number(formData.get("price_amount"));
+  const deliverables = String(formData.get("deliverables")).trim();
+
+  if (priceAmount < 0) return { error: "Price cannot be negative." };
+  if (!deliverables) return { error: "Deliverables are required." };
+
+  const { error } = await supabase.from("partnership_contracts").insert({
+    connect_request_id: connectRequestId,
+    proposed_by: user.id,
+    proposed_to: proposedTo,
+    price_amount: priceAmount,
+    deliverables,
+  });
+
+  if (error) return { error: error.message };
+  revalidatePath("/messages");
+  return {};
+}

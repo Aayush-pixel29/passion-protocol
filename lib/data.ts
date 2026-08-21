@@ -54,10 +54,17 @@ export async function getOwnProfile() {
     .eq("user_id", user.id)
     .maybeSingle();
 
+  const { data: projectRow } = await supabase
+    .from("projects")
+    .select("*")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   return {
     user,
     profile: profileRow ? asProfile(profileRow, linkRow?.contact_url) : null,
     vibe: (vibeRow as VibeAnswers | null) ?? null,
+    project: (projectRow as import("@/lib/types").Project | null) ?? null,
     supabase,
   };
 }
@@ -70,6 +77,7 @@ export async function loadCompletedOperators() {
     .eq("onboarding_complete", true);
 
   const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
+  const { data: projects } = await supabase.from("projects").select("*");
 
   const vibeByUser = new Map<string, VibeAnswers>();
   for (const row of vibes ?? []) {
@@ -81,6 +89,11 @@ export async function loadCompletedOperators() {
     });
   }
 
+  const projectByUser = new Map<string, import("@/lib/types").Project>();
+  for (const row of projects ?? []) {
+    projectByUser.set(row.user_id, row);
+  }
+
   return (profiles ?? [])
     .map((p) => asProfile(p))
     .filter((p): p is Profile & { role: OperatorRole; looking_for: OperatorRole } =>
@@ -88,6 +101,7 @@ export async function loadCompletedOperators() {
     )
     .flatMap((profile) => {
       const vibe = vibeByUser.get(profile.id);
-      return vibe ? [{ profile, vibe }] : [];
+      const project = projectByUser.get(profile.id) ?? null;
+      return vibe ? [{ profile, vibe, project }] : [];
     });
 }

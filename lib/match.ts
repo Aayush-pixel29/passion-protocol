@@ -3,6 +3,7 @@ import type { OperatorRole, Profile, VibeAnswers } from "@/lib/types";
 export type RankedMatch = {
   profile: Profile;
   vibe: VibeAnswers;
+  project: import("@/lib/types").Project | null;
   score: number;
 };
 
@@ -16,7 +17,7 @@ export function vibeScore(a: VibeAnswers, b: VibeAnswers): number {
 
 export function rankMatches(
   me: { role: OperatorRole; looking_for: OperatorRole; vibe: VibeAnswers; id: string },
-  others: Array<{ profile: Profile; vibe: VibeAnswers }>
+  others: Array<{ profile: Profile; vibe: VibeAnswers; project: import("@/lib/types").Project | null }>
 ): RankedMatch[] {
   return others
     .filter(
@@ -29,6 +30,7 @@ export function rankMatches(
     .map((row) => ({
       profile: row.profile,
       vibe: row.vibe,
+      project: row.project,
       score: vibeScore(me.vibe, row.vibe),
     }))
     .sort((a, b) => b.score - a.score);
