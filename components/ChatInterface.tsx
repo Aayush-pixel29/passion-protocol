@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { sendMessage, proposePartnership } from "@/lib/actions";
+import { sendMessage, proposePartnership, respondToPartnership } from "@/lib/actions";
 import type { Message, PartnershipContract } from "@/lib/types";
 import { CONTRACT_TEMPLATES } from "@/lib/types";
 
@@ -53,6 +53,27 @@ export function ChatInterface({
         .eq("connect_request_id", activePartner.connect_request_id);
 
       if (ctrs) setContracts(ctrs as PartnershipContract[]);
+      // #region agent log
+      fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+        body: JSON.stringify({
+          sessionId: "7345ba",
+          runId: "pre-fix",
+          hypothesisId: "D",
+          location: "ChatInterface.tsx:fetchChat",
+          message: "loaded contracts for thread",
+          data: {
+            count: (ctrs ?? []).length,
+            pendingAsRecipient: (ctrs ?? []).filter(
+              (c: PartnershipContract) => c.status === "pending" && c.proposed_to === currentUserId
+            ).length,
+            hasAcceptAction: false,
+          },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
     };
 
     fetchChat();
@@ -64,11 +85,30 @@ export function ChatInterface({
         { event: "INSERT", schema: "public", table: "messages" },
         (payload) => {
           const newMsg = payload.new as Message;
-          if (
+          const matches =
             (newMsg.sender_id === currentUserId && newMsg.receiver_id === activePartner.partner.id) ||
-            (newMsg.sender_id === activePartner.partner.id && newMsg.receiver_id === currentUserId)
-          ) {
-            setMessages((prev) => [...prev, newMsg]);
+            (newMsg.sender_id === activePartner.partner.id && newMsg.receiver_id === currentUserId);
+          // #region agent log
+          fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+            body: JSON.stringify({
+              sessionId: "7345ba",
+              runId: "pre-fix",
+              hypothesisId: "B",
+              location: "ChatInterface.tsx:messages-insert",
+              message: "realtime messages INSERT",
+              data: {
+                matches,
+                hasId: Boolean(newMsg?.id),
+                senderIsMe: newMsg.sender_id === currentUserId,
+              },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {});
+          // #endregion
+          if (matches) {
+            setMessages((prev) => (prev.some((m) => m.id === newMsg.id) ? prev : [...prev, newMsg]));
           }
         }
       )
@@ -77,12 +117,70 @@ export function ChatInterface({
         { event: "INSERT", schema: "public", table: "partnership_contracts" },
         (payload) => {
           const newCtr = payload.new as PartnershipContract;
+          // #region agent log
+          fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+            body: JSON.stringify({
+              sessionId: "7345ba",
+              runId: "pre-fix",
+              hypothesisId: "E",
+              location: "ChatInterface.tsx:contracts-insert",
+              message: "realtime contracts INSERT",
+              data: {
+                sameConnect: newCtr.connect_request_id === activePartner.connect_request_id,
+                iAmRecipient: newCtr.proposed_to === currentUserId,
+                status: newCtr.status,
+              },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {});
+          // #endregion
           if (newCtr.connect_request_id === activePartner.connect_request_id) {
-            setContracts((prev) => [...prev, newCtr]);
+            setContracts((prev) => (prev.some((c) => c.id === newCtr.id) ? prev : [...prev, newCtr]));
           }
         }
       )
-      .subscribe();
+      .on(
+        "postgres_changes",
+        { event: "UPDATE", schema: "public", table: "partnership_contracts" },
+        (payload) => {
+          const next = payload.new as PartnershipContract;
+          // #region agent log
+          fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+            method: "POST",
+            headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+            body: JSON.stringify({
+              sessionId: "7345ba",
+              runId: "post-fix",
+              hypothesisId: "E",
+              location: "ChatInterface.tsx:contracts-update",
+              message: "realtime contracts UPDATE",
+              data: { id: next.id, status: next.status },
+              timestamp: Date.now(),
+            }),
+          }).catch(() => {});
+          // #endregion
+          setContracts((prev) => prev.map((c) => (c.id === next.id ? next : c)));
+        }
+      )
+      .subscribe((status, err) => {
+        // #region agent log
+        fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+          method: "POST",
+          headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+          body: JSON.stringify({
+            sessionId: "7345ba",
+            runId: "pre-fix",
+            hypothesisId: "A",
+            location: "ChatInterface.tsx:subscribe",
+            message: "realtime subscribe status",
+            data: { status, err: err ? String(err) : null, channel: `chat_${activePartner.connect_request_id}` },
+            timestamp: Date.now(),
+          }),
+        }).catch(() => {});
+        // #endregion
+      });
 
     return () => {
       supabase.removeChannel(channel);
@@ -99,7 +197,27 @@ export function ChatInterface({
     const txt = inputText;
     setInputText("");
     startTransition(async () => {
-      await sendMessage(activePartner.partner.id, txt);
+      const result = await sendMessage(activePartner.partner.id, txt);
+      if (result.message) {
+        setMessages((prev) =>
+          prev.some((m) => m.id === result.message!.id) ? prev : [...prev, result.message!]
+        );
+      }
+      // #region agent log
+      fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+        body: JSON.stringify({
+          sessionId: "7345ba",
+          runId: "post-fix",
+          hypothesisId: "C",
+          location: "ChatInterface.tsx:handleSend",
+          message: "sendMessage finished",
+          data: { ok: !result?.error, error: result?.error ?? null, localAppend: Boolean(result.message) },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
     });
   };
 
@@ -109,7 +227,36 @@ export function ChatInterface({
     startTransition(async () => {
       const res = await proposePartnership(formData);
       if (res?.error) alert(res.error);
+      if (res?.contract) {
+        setContracts((prev) => (prev.some((c) => c.id === res.contract!.id) ? prev : [...prev, res.contract!]));
+      }
       setShowPropose(false);
+    });
+  };
+
+  const handleContractDecision = (contractId: string, decision: "accepted" | "declined") => {
+    startTransition(async () => {
+      const res = await respondToPartnership(contractId, decision);
+      // #region agent log
+      fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+        body: JSON.stringify({
+          sessionId: "7345ba",
+          runId: "post-fix",
+          hypothesisId: "D",
+          location: "ChatInterface.tsx:handleContractDecision",
+          message: "respondToPartnership finished",
+          data: { ok: !res?.error, error: res?.error ?? null, decision },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      if (res?.error) {
+        alert(res.error);
+        return;
+      }
+      setContracts((prev) => prev.map((c) => (c.id === contractId ? { ...c, status: decision } : c)));
     });
   };
 
@@ -366,6 +513,26 @@ export function ChatInterface({
                     >
                       Status: {ctr.status}
                     </span>
+                    {ctr.status === "pending" && ctr.proposed_to === currentUserId ? (
+                      <div className="btn-row left" style={{ marginTop: 14, justifyContent: "center" }}>
+                        <button
+                          type="button"
+                          className="pill-btn skip"
+                          disabled={isPending}
+                          onClick={() => handleContractDecision(ctr.id, "declined")}
+                        >
+                          Decline
+                        </button>
+                        <button
+                          type="button"
+                          className="pill-btn accept"
+                          disabled={isPending}
+                          onClick={() => handleContractDecision(ctr.id, "accepted")}
+                        >
+                          Accept
+                        </button>
+                      </div>
+                    ) : null}
                   </div>
                 </div>
               ))}

@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { type ConnectState } from "@/lib/types";
+import { type ConnectState, type Message, type PartnershipContract, type PartnershipStatus } from "@/lib/types";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -282,27 +282,34 @@ export async function saveProject(formData: FormData): Promise<{ error?: string 
   return {};
 }
 
-export async function sendMessage(receiverId: string, content: string): Promise<{ error?: string }> {
+export async function sendMessage(
+  receiverId: string,
+  content: string
+): Promise<{ error?: string; message?: Message }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Session expired." };
   
   if (!content.trim()) return { error: "Message cannot be empty." };
 
-  const { error } = await supabase.from("messages").insert({
-    sender_id: user.id,
-    receiver_id: receiverId,
-    content: content.trim(),
-  });
+  const { data, error } = await supabase
+    .from("messages")
+    .insert({
+      sender_id: user.id,
+      receiver_id: receiverId,
+      content: content.trim(),
+    })
+    .select("*")
+    .single();
 
   if (error) return { error: error.message };
   revalidatePath("/messages");
-  return {};
+  return { message: data as Message };
 }
 
 export async function proposePartnership(
   formData: FormData
-): Promise<{ error?: string }> {
+): Promise<{ error?: string; contract?: PartnershipContract }> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Session expired." };
@@ -321,7 +328,9 @@ export async function proposePartnership(
   if (revenueSplitA + revenueSplitB > 100) return { error: "Revenue splits cannot exceed 100%." };
   if (platformFeePct < 0 || platformFeePct > 100) return { error: "Platform fee must be 0-100%." };
 
-  const { error } = await supabase.from("partnership_contracts").insert({
+  const { data, error } = await supabase
+    .from("partnership_contracts")
+    .insert({
     connect_request_id: connectRequestId,
     proposed_by: user.id,
     proposed_to: proposedTo,
@@ -331,7 +340,43 @@ export async function proposePartnership(
     revenue_split_a: revenueSplitA,
     revenue_split_b: revenueSplitB,
     platform_fee_pct: platformFeePct,
-  });
+  })
+    .select("*")
+    .single();
+
+  if (error) return { error: error.message };
+  revalidatePath("/messages");
+  return { contract: data as PartnershipContract };
+}
+
+export async function respondToPartnership(
+  contractId: string,
+  decision: Extract<PartnershipStatus, "accepted" | "declined">
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+  if (!isUuid(contractId)) return { error: "Invalid contract." };
+
+  const { data: row, error: loadError } = await supabase
+    .from("partnership_contracts")
+    .select("id, proposed_to, status")
+    .eq("id", contractId)
+    .maybeSingle();
+
+  if (loadError) return { error: loadError.message };
+  if (!row) return { error: "Contract not found." };
+  if (row.proposed_to !== user.id) return { error: "Only the recipient can accept or decline." };
+  if (row.status !== "pending") return { error: "This proposal is no longer pending." };
+
+  const { error } = await supabase
+    .from("partnership_contracts")
+    .update({ status: decision })
+    .eq("id", contractId)
+    .eq("proposed_to", user.id)
+    .eq("status", "pending");
 
   if (error) return { error: error.message };
   revalidatePath("/messages");
