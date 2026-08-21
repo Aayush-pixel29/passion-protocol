@@ -78,7 +78,33 @@ export function ChatInterface({
 
     fetchChat();
 
-    const channel = supabase
+    let channel: ReturnType<typeof supabase.channel> | null = null;
+    let cancelled = false;
+
+    const startRealtime = async () => {
+      const { data: sessionData } = await supabase.auth.getSession();
+      const hasAccessToken = Boolean(sessionData.session?.access_token);
+      if (sessionData.session?.access_token) {
+        await supabase.realtime.setAuth(sessionData.session.access_token);
+      }
+      // #region agent log
+      fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
+        method: "POST",
+        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
+        body: JSON.stringify({
+          sessionId: "7345ba",
+          runId: "post-fix",
+          hypothesisId: "A",
+          location: "ChatInterface.tsx:startRealtime",
+          message: "attaching auth before subscribe",
+          data: { hasAccessToken },
+          timestamp: Date.now(),
+        }),
+      }).catch(() => {});
+      // #endregion
+      if (cancelled) return;
+
+      channel = supabase
       .channel(`chat_${activePartner.connect_request_id}`)
       .on(
         "postgres_changes",
@@ -181,9 +207,13 @@ export function ChatInterface({
         }).catch(() => {});
         // #endregion
       });
+    };
+
+    void startRealtime();
 
     return () => {
-      supabase.removeChannel(channel);
+      cancelled = true;
+      if (channel) supabase.removeChannel(channel);
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePartner, currentUserId]);
@@ -513,7 +543,7 @@ export function ChatInterface({
                     >
                       Status: {ctr.status}
                     </span>
-                    {ctr.status === "pending" && ctr.proposed_to === currentUserId ? (
+                    {ctr.status === "pending" && String(ctr.proposed_to) === String(currentUserId) ? (
                       <div className="btn-row left" style={{ marginTop: 14, justifyContent: "center" }}>
                         <button
                           type="button"
@@ -533,7 +563,7 @@ export function ChatInterface({
                         </button>
                       </div>
                     ) : null}
-                    {ctr.status === "pending" && ctr.proposed_by === currentUserId ? (
+                    {ctr.status === "pending" && String(ctr.proposed_by) === String(currentUserId) ? (
                       <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--muted)" }}>
                         Waiting for {activePartner.partner.codename} to accept. You cannot accept your own proposal.
                       </p>
