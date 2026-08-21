@@ -19,8 +19,8 @@ const SLIDERS: Array<{
 import type { Profile } from "@/lib/types";
 
 export function OnboardingForm({ profile }: { profile?: Profile | null }) {
-  const [category, setCategory] = useState<IndustryCategory | "">(profile?.industry_category ?? "");
-  const [lookingCategory, setLookingCategory] = useState<IndustryCategory | "">(profile?.looking_for_category ?? "");
+  const [category, setCategory] = useState<IndustryCategory | "">((profile?.industry_category as IndustryCategory) ?? "");
+  const [lookingCategory, setLookingCategory] = useState<IndustryCategory | "">((profile?.looking_for_category as IndustryCategory) ?? "");
   
   const [state, action, pending] = useActionState(
     async (_prev: { error: string } | void, formData: FormData) => {

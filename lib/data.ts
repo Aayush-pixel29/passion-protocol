@@ -32,7 +32,7 @@ function asProfile(
     professional_title: row.professional_title || null,
     looking_for_category: row.looking_for_category && isValidCategory(row.looking_for_category) ? row.looking_for_category : null,
     looking_for_title: row.looking_for_title || null,
-    bio: row.bio,
+    bio: row.bio || null,
     contact_url: contactUrl ?? null,
     onboarding_complete: row.onboarding_complete,
   };
