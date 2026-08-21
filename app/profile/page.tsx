@@ -22,11 +22,28 @@ export default async function ProfilePage() {
     .eq("to_id", user.id)
     .eq("status", "pending");
 
-  const { count: acceptedCount } = await supabase
+  const { data: acceptedRows } = await supabase
     .from("connect_requests")
-    .select("*", { count: "exact", head: true })
+    .select("from_id, to_id")
     .or(`from_id.eq.${user.id},to_id.eq.${user.id}`)
     .eq("status", "accepted");
+
+  const partnerIds = (acceptedRows ?? []).map((row) =>
+    row.from_id === user.id ? row.to_id : row.from_id
+  );
+
+  const { data: partnerProfiles } = partnerIds.length
+    ? await supabase.from("profiles").select("id, codename, role").in("id", partnerIds)
+    : { data: [] };
+
+  const { data: partnerLinks } = partnerIds.length
+    ? await supabase.from("profile_links").select("user_id, contact_url").in("user_id", partnerIds)
+    : { data: [] };
+
+  const linkByUserId = new Map<string, string>();
+  for (const link of partnerLinks ?? []) {
+    if (link.contact_url) linkByUserId.set(link.user_id, link.contact_url);
+  }
 
   return (
     <div className="site">
@@ -42,9 +59,14 @@ export default async function ProfilePage() {
               {formatRole(profile.role)} · looking for {formatRole(profile.looking_for)}
             </p>
             {profile.bio ? <p className="sub">{profile.bio}</p> : null}
+            {profile.contact_url ? (
+              <p className="sub" style={{ marginTop: 8 }}>
+                Contact link: <strong>{profile.contact_url}</strong>
+              </p>
+            ) : null}
             <div className="stats">
               <div>
-                <div className="stat-value">{acceptedCount ?? 0}</div>
+                <div className="stat-value">{partnerIds.length}</div>
                 <div className="stat-label">Partners</div>
               </div>
               <div>
@@ -79,6 +101,47 @@ export default async function ProfilePage() {
             )}
           </section>
         </div>
+
+        {partnerProfiles && partnerProfiles.length > 0 ? (
+          <div style={{ marginTop: 40 }}>
+            <h3>Active Partnerships ({partnerProfiles.length})</h3>
+            <div className="match-grid" style={{ marginTop: 16 }}>
+              {partnerProfiles.map((p) => {
+                const contact = linkByUserId.get(p.id);
+                return (
+                  <article key={p.id} className="match-card success">
+                    <div className="match-card-top">
+                      <div>
+                        <h3>{p.codename}</h3>
+                        <p className="card-skill">{formatRole(p.role)}</p>
+                      </div>
+                    </div>
+                    <div style={{ marginTop: 12 }}>
+                      <p className="status-line" style={{ color: "#10b981", fontWeight: 600 }}>
+                        Partnership active
+                      </p>
+                      {contact ? (
+                        <p className="sub" style={{ marginTop: 4 }}>
+                          Contact:{" "}
+                          <a
+                            href={contact.startsWith("http") ? contact : `https://${contact}`}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{ color: "#3b82f6", textDecoration: "underline" }}
+                          >
+                            {contact}
+                          </a>
+                        </p>
+                      ) : (
+                        <p className="sub" style={{ marginTop: 4 }}>No contact info added</p>
+                      )}
+                    </div>
+                  </article>
+                );
+              })}
+            </div>
+          </div>
+        ) : null}
       </main>
     </div>
   );

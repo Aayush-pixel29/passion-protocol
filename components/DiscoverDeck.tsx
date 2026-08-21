@@ -1,14 +1,15 @@
 "use client";
 
 import { useState, useTransition } from "react";
-import { sendConnect } from "@/lib/actions";
-import { formatRole, type Profile, type VibeAnswers } from "@/lib/types";
+import { sendConnect, respondToConnect } from "@/lib/actions";
+import { formatRole, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
 
 export type DiscoverCard = {
   profile: Profile;
   vibe: VibeAnswers;
   score: number;
-  connectStatus: "none" | "pending" | "accepted" | "declined";
+  connectStatus: ConnectState;
+  contactUrl?: string | null;
 };
 
 const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
@@ -51,7 +52,24 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
         setError(result.error);
         return;
       }
-      const status = (result.status as DiscoverCard["connectStatus"]) ?? "pending";
+      const status = result.status ?? "outgoing_pending";
+      setLocal((rows) =>
+        rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row))
+      );
+    });
+  }
+
+  function respond(id: string, decision: "accepted" | "declined") {
+    setError("");
+    setBusyId(id);
+    startTransition(async () => {
+      const result = await respondToConnect(id, decision);
+      setBusyId(null);
+      if (result.error) {
+        setError(result.error);
+        return;
+      }
+      const status = result.status ?? decision;
       setLocal((rows) =>
         rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row))
       );
@@ -64,7 +82,9 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
       <div className="match-grid">
         {visible.map((card) => {
           const accepted = card.connectStatus === "accepted";
-          const waiting = card.connectStatus === "pending";
+          const outgoing = card.connectStatus === "outgoing_pending";
+          const incoming = card.connectStatus === "incoming_pending";
+          const declined = card.connectStatus === "declined";
           const pending = busyId === card.profile.id;
 
           return (
@@ -87,9 +107,49 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                 ))}
               </div>
               {accepted ? (
-                <p className="status-line left">Partnership active</p>
-              ) : waiting ? (
+                <div className="left">
+                  <p className="status-line" style={{ color: "#10b981", fontWeight: 600 }}>
+                    Partnership active
+                  </p>
+                  {card.contactUrl ? (
+                    <p className="sub" style={{ marginTop: 4 }}>
+                      Contact:{" "}
+                      <a
+                        href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ color: "#3b82f6", textDecoration: "underline" }}
+                      >
+                        {card.contactUrl}
+                      </a>
+                    </p>
+                  ) : (
+                    <p className="sub" style={{ marginTop: 4 }}>No contact info added yet</p>
+                  )}
+                </div>
+              ) : outgoing ? (
                 <p className="status-line left">Request sent</p>
+              ) : incoming ? (
+                <div className="btn-row left">
+                  <button
+                    className="pill-btn skip"
+                    type="button"
+                    onClick={() => respond(card.profile.id, "declined")}
+                    disabled={pending}
+                  >
+                    Decline
+                  </button>
+                  <button
+                    className="pill-btn accept"
+                    type="button"
+                    onClick={() => respond(card.profile.id, "accepted")}
+                    disabled={pending}
+                  >
+                    {pending ? "Accepting…" : "Accept"}
+                  </button>
+                </div>
+              ) : declined ? (
+                <p className="status-line left sub">Request declined</p>
               ) : (
                 <div className="btn-row left">
                   <button className="pill-btn skip" type="button" onClick={() => skip(card.profile.id)}>

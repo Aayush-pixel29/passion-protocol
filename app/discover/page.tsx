@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";
-import { formatRole } from "@/lib/types";
+import { formatRole, type ConnectState } from "@/lib/types";
 
 export default async function DiscoverPage() {
   const { user, profile, vibe, supabase } = await getOwnProfile();
@@ -23,18 +23,36 @@ export default async function DiscoverPage() {
     .select("from_id, to_id, status")
     .or(`from_id.eq.${user.id},to_id.eq.${user.id}`);
 
-  const statusByUser = new Map<string, DiscoverCard["connectStatus"]>();
+  const statusByUser = new Map<string, ConnectState>();
   for (const row of connects ?? []) {
     const otherId = row.from_id === user.id ? row.to_id : row.from_id;
-    statusByUser.set(otherId, row.status as DiscoverCard["connectStatus"]);
+    let state: ConnectState;
+    if (row.status === "accepted") state = "accepted";
+    else if (row.status === "declined") state = "declined";
+    else state = row.from_id === user.id ? "outgoing_pending" : "incoming_pending";
+    statusByUser.set(otherId, state);
   }
 
-  const cards: DiscoverCard[] = ranked.map((row) => ({
-    profile: row.profile,
-    vibe: row.vibe,
-    score: row.score,
-    connectStatus: statusByUser.get(row.profile.id) ?? "none",
-  }));
+  // RLS on profile_links will automatically return links for accepted partners and self
+  const { data: links } = await supabase.from("profile_links").select("user_id, contact_url");
+  const linkByUser = new Map<string, string>();
+  for (const row of links ?? []) {
+    if (row.contact_url) linkByUser.set(row.user_id, row.contact_url);
+  }
+
+  const cards: DiscoverCard[] = ranked.map((row) => {
+    const status = statusByUser.get(row.profile.id) ?? "none";
+    return {
+      profile: {
+        ...row.profile,
+        contact_url: linkByUser.get(row.profile.id) ?? null,
+      },
+      vibe: row.vibe,
+      score: row.score,
+      connectStatus: status,
+      contactUrl: status === "accepted" ? linkByUser.get(row.profile.id) ?? null : null,
+    };
+  });
 
   return (
     <div className="site">

@@ -2,20 +2,24 @@ import { createClient } from "@/lib/supabase/server";
 import type { OperatorRole, Profile, VibeAnswers } from "@/lib/types";
 import { isOperatorRole } from "@/lib/types";
 
-function asProfile(row: {
-  id: string;
-  codename: string;
-  role: string | null;
-  looking_for: string | null;
-  bio: string | null;
-  onboarding_complete: boolean;
-}): Profile {
+function asProfile(
+  row: {
+    id: string;
+    codename: string;
+    role: string | null;
+    looking_for: string | null;
+    bio: string | null;
+    onboarding_complete: boolean;
+  },
+  contactUrl?: string | null
+): Profile {
   return {
     id: row.id,
     codename: row.codename,
     role: row.role && isOperatorRole(row.role) ? row.role : null,
     looking_for: row.looking_for && isOperatorRole(row.looking_for) ? row.looking_for : null,
     bio: row.bio,
+    contact_url: contactUrl ?? null,
     onboarding_complete: row.onboarding_complete,
   };
 }
@@ -44,9 +48,15 @@ export async function getOwnProfile() {
     .eq("user_id", user.id)
     .maybeSingle();
 
+  const { data: linkRow } = await supabase
+    .from("profile_links")
+    .select("contact_url")
+    .eq("user_id", user.id)
+    .maybeSingle();
+
   return {
     user,
-    profile: profileRow ? asProfile(profileRow) : null,
+    profile: profileRow ? asProfile(profileRow, linkRow?.contact_url) : null,
     vibe: (vibeRow as VibeAnswers | null) ?? null,
     supabase,
   };
@@ -72,7 +82,7 @@ export async function loadCompletedOperators() {
   }
 
   return (profiles ?? [])
-    .map(asProfile)
+    .map((p) => asProfile(p))
     .filter((p): p is Profile & { role: OperatorRole; looking_for: OperatorRole } =>
       Boolean(p.role && p.looking_for)
     )

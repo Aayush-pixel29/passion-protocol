@@ -24,6 +24,7 @@ export default async function OnboardingPage() {
             defaultRole={profile?.role}
             defaultLookingFor={profile?.looking_for}
             defaultBio={profile?.bio}
+            defaultContactUrl={profile?.contact_url}
           />
         </div>
       </main>

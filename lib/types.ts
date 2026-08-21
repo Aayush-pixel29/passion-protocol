@@ -9,12 +9,20 @@ export type VibeAnswers = {
   energy: number;
 };
 
+export type ConnectState =
+  | "none"
+  | "outgoing_pending"
+  | "incoming_pending"
+  | "accepted"
+  | "declined";
+
 export type Profile = {
   id: string;
   codename: string;
   role: OperatorRole | null;
   looking_for: OperatorRole | null;
   bio: string | null;
+  contact_url?: string | null;
   onboarding_complete: boolean;
 };
 

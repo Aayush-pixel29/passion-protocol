@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isOperatorRole } from "@/lib/types";
+import { isOperatorRole, type ConnectState } from "@/lib/types";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -35,6 +35,8 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   const lookingFor = String(formData.get("lookingFor") ?? "");
   const bioRaw = String(formData.get("bio") ?? "").trim();
   const bio = bioRaw ? bioRaw.slice(0, 280) : null;
+  const contactUrlRaw = String(formData.get("contactUrl") ?? "").trim();
+  const contactUrl = contactUrlRaw ? contactUrlRaw.slice(0, 200) : null;
 
   if (!CODENAME_RE.test(codename)) {
     return { error: "Codename must be 2–32 letters, numbers, or underscores." };
@@ -80,12 +82,22 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
     return { error: vibeError.message };
   }
 
+  const { error: linkError } = await supabase.from("profile_links").upsert({
+    user_id: user.id,
+    contact_url: contactUrl,
+  });
+
+  if (linkError) {
+    // If profile_links table doesn't exist yet, don't block onboarding
+    console.warn("profile_links upsert:", linkError.message);
+  }
+
   revalidatePath("/discover");
   revalidatePath("/profile");
   redirect("/discover");
 }
 
-export async function sendConnect(toId: string): Promise<{ error?: string; status?: string }> {
+export async function sendConnect(toId: string): Promise<{ error?: string; status?: ConnectState }> {
   const supabase = await createClient();
   const {
     data: { user },
@@ -118,6 +130,9 @@ export async function sendConnect(toId: string): Promise<{ error?: string; statu
     if (existing.status === "accepted") {
       return { status: "accepted" };
     }
+    if (existing.status === "declined") {
+      return { status: "declined" };
+    }
     if (existing.from_id === toId && existing.status === "pending") {
       const { error } = await supabase
         .from("connect_requests")
@@ -128,7 +143,7 @@ export async function sendConnect(toId: string): Promise<{ error?: string; statu
       revalidatePath("/profile");
       return { status: "accepted" };
     }
-    return { status: existing.status };
+    return { status: "outgoing_pending" };
   }
 
   const { error } = await supabase.from("connect_requests").insert({
@@ -143,5 +158,40 @@ export async function sendConnect(toId: string): Promise<{ error?: string; statu
 
   revalidatePath("/discover");
   revalidatePath("/profile");
-  return { status: "pending" };
+  return { status: "outgoing_pending" };
+}
+
+export async function respondToConnect(
+  fromId: string,
+  decision: "accepted" | "declined"
+): Promise<{ error?: string; status?: ConnectState }> {
+  const supabase = await createClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) return { error: "Session expired." };
+  if (!isUuid(fromId) || user.id === fromId) return { error: "Invalid partner." };
+
+  const { data: existing } = await supabase
+    .from("connect_requests")
+    .select("id, status")
+    .eq("from_id", fromId)
+    .eq("to_id", user.id)
+    .maybeSingle();
+
+  if (!existing || existing.status !== "pending") {
+    return { error: "No pending request from that operator." };
+  }
+
+  const { error } = await supabase
+    .from("connect_requests")
+    .update({ status: decision })
+    .eq("id", existing.id);
+
+  if (error) return { error: error.message };
+
+  revalidatePath("/discover");
+  revalidatePath("/profile");
+  return { status: decision };
 }

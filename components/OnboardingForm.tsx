@@ -21,6 +21,7 @@ type Props = {
   defaultRole?: OperatorRole | null;
   defaultLookingFor?: OperatorRole | null;
   defaultBio?: string | null;
+  defaultContactUrl?: string | null;
 };
 
 export function OnboardingForm({
@@ -28,6 +29,7 @@ export function OnboardingForm({
   defaultRole = null,
   defaultLookingFor = null,
   defaultBio = "",
+  defaultContactUrl = "",
 }: Props) {
   const [role, setRole] = useState<OperatorRole | "">(defaultRole ?? "");
   const [lookingFor, setLookingFor] = useState<OperatorRole | "">(defaultLookingFor ?? "");
@@ -100,6 +102,18 @@ export function OnboardingForm({
           defaultValue={defaultBio ?? ""}
           placeholder="What you want to build together"
           maxLength={280}
+        />
+
+        <label className="label" htmlFor="contactUrl" style={{ marginTop: 16 }}>
+          Contact link <span style={{ fontWeight: 400, opacity: 0.7 }}>(only revealed to active partners)</span>
+        </label>
+        <input
+          id="contactUrl"
+          name="contactUrl"
+          className="input"
+          defaultValue={defaultContactUrl ?? ""}
+          placeholder="e.g. twitter.com/username or discord / email"
+          maxLength={200}
         />
       </div>
 

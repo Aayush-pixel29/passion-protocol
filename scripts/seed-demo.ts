@@ -8,6 +8,7 @@ type DemoUser = {
   role: "coder" | "designer" | "writer" | "maker";
   looking_for: "coder" | "designer" | "writer" | "maker";
   bio: string;
+  contact_url: string;
   pace: number;
   comms: number;
   risk: number;
@@ -21,6 +22,7 @@ const DEMOS: DemoUser[] = [
     role: "designer",
     looking_for: "coder",
     bio: "Interfaces that feel like a product, not a mock.",
+    contact_url: "x.com/riya_designs",
     pace: 3,
     comms: 4,
     risk: 3,
@@ -32,6 +34,7 @@ const DEMOS: DemoUser[] = [
     role: "coder",
     looking_for: "designer",
     bio: "Full-stack, ships weekly, hates giant specs.",
+    contact_url: "github.com/devarjun",
     pace: 4,
     comms: 3,
     risk: 4,
@@ -43,6 +46,7 @@ const DEMOS: DemoUser[] = [
     role: "writer",
     looking_for: "maker",
     bio: "Narrative and docs for weird tools.",
+    contact_url: "kai.substack.com",
     pace: 2,
     comms: 5,
     risk: 2,
@@ -54,6 +58,7 @@ const DEMOS: DemoUser[] = [
     role: "maker",
     looking_for: "writer",
     bio: "Hardware-ish prototypes and physical installs.",
+    contact_url: "x.com/neo_maker",
     pace: 3,
     comms: 2,
     risk: 5,
@@ -65,6 +70,7 @@ const DEMOS: DemoUser[] = [
     role: "coder",
     looking_for: "maker",
     bio: "ML tinkerer looking for someone who builds in the real world.",
+    contact_url: "github.com/luna-code",
     pace: 5,
     comms: 2,
     risk: 4,
@@ -76,6 +82,7 @@ const DEMOS: DemoUser[] = [
     role: "designer",
     looking_for: "writer",
     bio: "Growth experiments with a design brain.",
+    contact_url: "alexgrowth@example.com",
     pace: 4,
     comms: 5,
     risk: 3,
@@ -162,6 +169,14 @@ async function main() {
     });
     if (vibeError) {
       console.error(`Vibe ${demo.codename}:`, vibeError.message);
+    }
+
+    const { error: linkError } = await supabase.from("profile_links").upsert({
+      user_id: userId,
+      contact_url: demo.contact_url,
+    });
+    if (linkError) {
+      console.error(`Link ${demo.codename}:`, linkError.message);
     }
   }
 
