@@ -77,6 +77,7 @@ export function ChatInterface({ currentUserId, connections }: { currentUserId: s
     return () => {
       supabase.removeChannel(channel);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activePartner, currentUserId]);
 
   useEffect(() => {

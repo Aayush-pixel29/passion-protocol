@@ -16,7 +16,9 @@ const SLIDERS: Array<{
   { name: "energy", label: "Energy", left: "Deep solo", right: "Social collab" },
 ];
 
-export function OnboardingForm({ profile }: { profile?: any }) {
+import type { Profile } from "@/lib/types";
+
+export function OnboardingForm({ profile }: { profile?: Profile | null }) {
   const [category, setCategory] = useState<IndustryCategory | "">(profile?.industry_category ?? "");
   const [lookingCategory, setLookingCategory] = useState<IndustryCategory | "">(profile?.looking_for_category ?? "");
   

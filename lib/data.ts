@@ -1,9 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
-import type { Profile, VibeAnswers, IndustryCategory } from "@/lib/types";
+import type { Profile, VibeAnswers } from "@/lib/types";
 import { isValidCategory } from "@/lib/types";
 
 function asProfile(
-  row: any,
+  row: {
+    id: string;
+    codename: string;
+    full_name?: string | null;
+    location?: string | null;
+    phone_number?: string | null;
+    linkedin_url?: string | null;
+    spoken_languages?: string[];
+    industry_category?: string | null;
+    professional_title?: string | null;
+    looking_for_category?: string | null;
+    looking_for_title?: string | null;
+    bio?: string | null;
+    onboarding_complete: boolean;
+  },
   contactUrl?: string | null
 ): Profile {
   return {
