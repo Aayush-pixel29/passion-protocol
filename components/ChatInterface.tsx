@@ -533,6 +533,11 @@ export function ChatInterface({
                         </button>
                       </div>
                     ) : null}
+                    {ctr.status === "pending" && ctr.proposed_by === currentUserId ? (
+                      <p style={{ margin: "12px 0 0", fontSize: 13, color: "var(--muted)" }}>
+                        Waiting for {activePartner.partner.codename} to accept. You cannot accept your own proposal.
+                      </p>
+                    ) : null}
                   </div>
                 </div>
               ))}
