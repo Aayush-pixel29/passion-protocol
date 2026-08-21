@@ -128,7 +128,7 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                   <div>
                     <h3>{card.profile.codename}</h3>
                     <p className="card-skill">
-                      {formatRoleWithIcon(card.profile.role)} · needs {formatRoleWithIcon(card.profile.looking_for)}
+                      {formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)} · needs {formatRoleWithIcon(card.profile.looking_for_category, card.profile.looking_for_title)}
                     </p>
                   </div>
                 </div>

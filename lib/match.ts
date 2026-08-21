@@ -1,4 +1,4 @@
-import type { OperatorRole, Profile, VibeAnswers } from "@/lib/types";
+import type { Profile, VibeAnswers } from "@/lib/types";
 
 export type RankedMatch = {
   profile: Profile;
@@ -16,17 +16,29 @@ export function vibeScore(a: VibeAnswers, b: VibeAnswers): number {
 }
 
 export function rankMatches(
-  me: { role: OperatorRole; looking_for: OperatorRole; vibe: VibeAnswers; id: string },
+  me: { industry_category: string; looking_for_category: string; spoken_languages: string[]; vibe: VibeAnswers; id: string },
   others: Array<{ profile: Profile; vibe: VibeAnswers; project: import("@/lib/types").Project | null }>
 ): RankedMatch[] {
   return others
-    .filter(
-      (row) =>
-        row.profile.id !== me.id &&
-        row.profile.onboarding_complete &&
-        row.profile.role === me.looking_for &&
-        row.profile.looking_for === me.role
-    )
+    .filter((row) => {
+      if (row.profile.id === me.id || !row.profile.onboarding_complete) return false;
+      
+      // Category match
+      if (row.profile.industry_category !== me.looking_for_category || row.profile.looking_for_category !== me.industry_category) {
+        return false;
+      }
+      
+      // Language match: if both have languages specified, they must overlap.
+      // If either has no languages specified, assume they are open.
+      const myLangs = me.spoken_languages.map(l => l.toLowerCase());
+      const theirLangs = row.profile.spoken_languages.map(l => l.toLowerCase());
+      if (myLangs.length > 0 && theirLangs.length > 0) {
+        const intersection = myLangs.filter(l => theirLangs.includes(l));
+        if (intersection.length === 0) return false;
+      }
+      
+      return true;
+    })
     .map((row) => ({
       profile: row.profile,
       vibe: row.vibe,

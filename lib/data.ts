@@ -1,23 +1,23 @@
 import { createClient } from "@/lib/supabase/server";
-import type { OperatorRole, Profile, VibeAnswers } from "@/lib/types";
-import { isOperatorRole } from "@/lib/types";
+import type { Profile, VibeAnswers, IndustryCategory } from "@/lib/types";
+import { isValidCategory } from "@/lib/types";
 
 function asProfile(
-  row: {
-    id: string;
-    codename: string;
-    role: string | null;
-    looking_for: string | null;
-    bio: string | null;
-    onboarding_complete: boolean;
-  },
+  row: any,
   contactUrl?: string | null
 ): Profile {
   return {
     id: row.id,
     codename: row.codename,
-    role: row.role && isOperatorRole(row.role) ? row.role : null,
-    looking_for: row.looking_for && isOperatorRole(row.looking_for) ? row.looking_for : null,
+    full_name: row.full_name || null,
+    location: row.location || null,
+    phone_number: row.phone_number || null,
+    linkedin_url: row.linkedin_url || null,
+    spoken_languages: row.spoken_languages || [],
+    industry_category: row.industry_category && isValidCategory(row.industry_category) ? row.industry_category : null,
+    professional_title: row.professional_title || null,
+    looking_for_category: row.looking_for_category && isValidCategory(row.looking_for_category) ? row.looking_for_category : null,
+    looking_for_title: row.looking_for_title || null,
     bio: row.bio,
     contact_url: contactUrl ?? null,
     onboarding_complete: row.onboarding_complete,
@@ -38,7 +38,7 @@ export async function getOwnProfile() {
 
   const { data: profileRow } = await supabase
     .from("profiles")
-    .select("id, codename, role, looking_for, bio, onboarding_complete")
+    .select("id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title")
     .eq("id", user.id)
     .maybeSingle();
 
@@ -73,7 +73,7 @@ export async function loadCompletedOperators() {
   const supabase = await createClient();
   const { data: profiles } = await supabase
     .from("profiles")
-    .select("id, codename, role, looking_for, bio, onboarding_complete")
+    .select("id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title")
     .eq("onboarding_complete", true);
 
   const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
@@ -96,8 +96,8 @@ export async function loadCompletedOperators() {
 
   return (profiles ?? [])
     .map((p) => asProfile(p))
-    .filter((p): p is Profile & { role: OperatorRole; looking_for: OperatorRole } =>
-      Boolean(p.role && p.looking_for)
+    .filter((p): p is Profile & { industry_category: string; professional_title: string; looking_for_category: string; looking_for_title: string } =>
+      Boolean(p.industry_category && p.professional_title && p.looking_for_category && p.looking_for_title)
     )
     .flatMap((profile) => {
       const vibe = vibeByUser.get(profile.id);

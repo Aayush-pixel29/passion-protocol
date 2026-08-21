@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
-import { formatRole } from "@/lib/types";
+// formatRole removed
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
 import { ProjectForm } from "@/components/ProjectForm";
@@ -34,8 +34,8 @@ export default async function ProfilePage() {
     row.from_id === user.id ? row.to_id : row.from_id
   );
 
-  const { data: partnerProfiles } = partnerIds.length
-    ? await supabase.from("profiles").select("id, codename, role").in("id", partnerIds)
+          const { data: partnerProfiles } = partnerIds.length
+    ? await supabase.from("profiles").select("id, codename, industry_category, professional_title").in("id", partnerIds)
     : { data: [] };
 
   const { data: partnerLinks } = partnerIds.length
@@ -58,14 +58,19 @@ export default async function ProfilePage() {
         <div className="profile-grid">
           <section className="identity">
             <p className="rank">
-              {formatRole(profile.role)} · looking for {formatRole(profile.looking_for)}
+              {profile.professional_title} · looking for {profile.looking_for_title}
             </p>
-            {profile.bio ? <p className="sub">{profile.bio}</p> : null}
-            {profile.contact_url ? (
-              <p className="sub" style={{ marginTop: 8 }}>
-                Contact link: <strong>{profile.contact_url}</strong>
-              </p>
+            {profile.full_name ? <p className="sub">Name: {profile.full_name}</p> : null}
+            {profile.location ? <p className="sub">Location: {profile.location}</p> : null}
+            {profile.spoken_languages?.length ? <p className="sub">Languages: {profile.spoken_languages.join(", ")}</p> : null}
+            
+            {profile.linkedin_url || profile.phone_number ? (
+              <div style={{ marginTop: 12, padding: 12, background: "#f8fafc", borderRadius: 8 }}>
+                {profile.linkedin_url ? <p className="sub">LinkedIn: <a href={profile.linkedin_url} target="_blank">{profile.linkedin_url}</a></p> : null}
+                {profile.phone_number ? <p className="sub">Phone: {profile.phone_number}</p> : null}
+              </div>
             ) : null}
+
             <div className="stats">
               <div>
                 <div className="stat-value">{partnerIds.length}</div>
@@ -76,8 +81,8 @@ export default async function ProfilePage() {
                 <div className="stat-label">Inbound</div>
               </div>
               <div>
-                <div className="stat-value">{formatRole(profile.role)}</div>
-                <div className="stat-label">Role</div>
+                <div className="stat-value" style={{ fontSize: "1rem" }}>{profile.industry_category}</div>
+                <div className="stat-label">Category</div>
               </div>
             </div>
             <p style={{ marginTop: 20 }}>
@@ -123,7 +128,7 @@ export default async function ProfilePage() {
                     <div className="match-card-top">
                       <div>
                         <h3>{p.codename}</h3>
-                        <p className="card-skill">{formatRole(p.role)}</p>
+                        <p className="card-skill">{p.professional_title}</p>
                       </div>
                     </div>
                     <div style={{ marginTop: 12 }}>

@@ -1,19 +1,21 @@
-export const ROLES = ["coder", "designer", "writer", "maker"] as const;
+export const INDUSTRY_CATEGORIES = [
+  "Software & IT",
+  "Engineering & Hardware",
+  "Creative & Design",
+  "Business & Sales",
+  "Marketing & Content",
+  "Other"
+] as const;
 
-export type OperatorRole = (typeof ROLES)[number];
+export type IndustryCategory = (typeof INDUSTRY_CATEGORIES)[number];
 
-export const ROLE_ICONS: Record<OperatorRole, string> = {
-  coder: "💻",
-  designer: "🎨",
-  writer: "✍️",
-  maker: "🛠️",
-};
-
-export const ROLE_LABELS: Record<OperatorRole, string> = {
-  coder: "Coder",
-  designer: "Designer",
-  writer: "Writer",
-  maker: "Maker",
+export const CATEGORY_ICONS: Record<string, string> = {
+  "Software & IT": "💻",
+  "Engineering & Hardware": "⚙️",
+  "Creative & Design": "🎨",
+  "Business & Sales": "📈",
+  "Marketing & Content": "✍️",
+  "Other": "🛠️",
 };
 
 export type VibeAnswers = {
@@ -33,25 +35,28 @@ export type ConnectState =
 export type Profile = {
   id: string;
   codename: string;
-  role: OperatorRole | null;
-  looking_for: OperatorRole | null;
+  full_name: string | null;
+  location: string | null;
+  phone_number: string | null;
+  linkedin_url: string | null;
+  spoken_languages: string[];
+  industry_category: string | null;
+  professional_title: string | null;
+  looking_for_category: string | null;
+  looking_for_title: string | null;
   bio: string | null;
   contact_url?: string | null;
   onboarding_complete: boolean;
 };
 
-export function isOperatorRole(value: string): value is OperatorRole {
-  return (ROLES as readonly string[]).includes(value);
+export function isValidCategory(value: string): boolean {
+  return (INDUSTRY_CATEGORIES as readonly string[]).includes(value);
 }
 
-export function formatRole(role: OperatorRole | null | undefined): string {
-  if (!role) return "UNSET";
-  return role.toUpperCase();
-}
-
-export function formatRoleWithIcon(role: OperatorRole | null | undefined): string {
-  if (!role || !isOperatorRole(role)) return "UNSET";
-  return `${ROLE_ICONS[role]} ${ROLE_LABELS[role]}`;
+export function formatRoleWithIcon(category: string | null | undefined, title: string | null | undefined): string {
+  if (!category || !title) return "UNSET";
+  const icon = CATEGORY_ICONS[category] || "🧑‍💻";
+  return `${icon} ${title}`;
 }
 
 export type Project = {

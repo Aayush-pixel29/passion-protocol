@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { isOperatorRole, type ConnectState } from "@/lib/types";
+import { type ConnectState } from "@/lib/types";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -52,8 +52,21 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
 
   const rawName = String(formData.get("codename") ?? "").trim();
   const codename = rawName.replace(/\s+/g, "_").toUpperCase();
-  const role = String(formData.get("role") ?? "");
-  const lookingFor = String(formData.get("lookingFor") ?? "");
+  
+  // New fields
+  const full_name = String(formData.get("full_name") ?? "").trim() || null;
+  const location = String(formData.get("location") ?? "").trim() || null;
+  const phone_number = String(formData.get("phone_number") ?? "").trim() || null;
+  const linkedin_url = String(formData.get("linkedin_url") ?? "").trim() || null;
+  
+  const rawLangs = String(formData.get("spoken_languages") ?? "").trim();
+  const spoken_languages = rawLangs ? rawLangs.split(",").map(l => l.trim()).filter(Boolean) : [];
+  
+  const industry_category = String(formData.get("industry_category") ?? "");
+  const professional_title = String(formData.get("professional_title") ?? "").trim();
+  const looking_for_category = String(formData.get("looking_for_category") ?? "");
+  const looking_for_title = String(formData.get("looking_for_title") ?? "").trim();
+
   const bioRaw = String(formData.get("bio") ?? "").trim();
   const bio = bioRaw ? bioRaw.slice(0, 280) : null;
   const contactUrlRaw = String(formData.get("contactUrl") ?? "").trim();
@@ -62,8 +75,8 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   if (!CODENAME_RE.test(codename)) {
     return { error: "Codename must be 2–32 letters, numbers, or underscores." };
   }
-  if (!isOperatorRole(role) || !isOperatorRole(lookingFor)) {
-    return { error: "Select both I AM and I NEED." };
+  if (!industry_category || !professional_title || !looking_for_category || !looking_for_title) {
+    return { error: "Professional details are required." };
   }
 
   const pace = Number(formData.get("pace"));
@@ -78,8 +91,15 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   const { error: profileError } = await supabase.from("profiles").upsert({
     id: user.id,
     codename,
-    role,
-    looking_for: lookingFor,
+    full_name,
+    location,
+    phone_number,
+    linkedin_url,
+    spoken_languages,
+    industry_category,
+    professional_title,
+    looking_for_category,
+    looking_for_title,
     bio,
     onboarding_complete: true,
   });

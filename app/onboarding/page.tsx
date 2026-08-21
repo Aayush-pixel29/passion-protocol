@@ -10,23 +10,12 @@ export default async function OnboardingPage() {
   return (
     <div className="site">
       <SiteHeader current="none" signedIn />
-      <main className="wrap">
+      <main className="wrap narrow">
         <div className="page-intro">
-          <p className="kicker">Set up your profile</p>
-          <h2>Tell us how you work</h2>
-          <p className="sub">
-            Identity on the left, vibe sliders on the right. Role is a filter. Vibe is the score.
-          </p>
+          <p className="kicker">Onboarding</p>
+          <h2>Who are you?</h2>
         </div>
-        <div className="panel">
-          <OnboardingForm
-            defaultCodename={profile?.codename ?? ""}
-            defaultRole={profile?.role}
-            defaultLookingFor={profile?.looking_for}
-            defaultBio={profile?.bio}
-            defaultContactUrl={profile?.contact_url}
-          />
-        </div>
+        <OnboardingForm profile={profile} />
       </main>
     </div>
   );

@@ -23,7 +23,7 @@ export default async function MessagesPage() {
   const partnerIds = partners.map(p => p.partner_id);
 
   const { data: partnerProfiles } = partnerIds.length
-    ? await supabase.from("profiles").select("id, codename, role").in("id", partnerIds)
+    ? await supabase.from("profiles").select("id, codename, professional_title").in("id", partnerIds)
     : { data: [] };
 
   const partnerMap = new Map(partnerProfiles?.map(p => [p.id, p]));

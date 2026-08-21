@@ -10,7 +10,7 @@ type Connection = {
   partner: {
     id: string;
     codename: string;
-    role: string | null;
+    professional_title: string | null;
   };
 };
 
@@ -118,7 +118,7 @@ export function ChatInterface({ currentUserId, connections }: { currentUserId: s
             }}
           >
             <h4 style={{ margin: 0 }}>{conn.partner.codename}</h4>
-            <p className="sub" style={{ margin: 0, fontSize: "0.85rem" }}>{conn.partner.role}</p>
+            <p className="sub" style={{ margin: 0, fontSize: "0.85rem" }}>{conn.partner.professional_title}</p>
           </div>
         ))}
       </div>

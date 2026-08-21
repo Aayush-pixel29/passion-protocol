@@ -3,18 +3,24 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";
-import { formatRole, type ConnectState } from "@/lib/types";
+import { type ConnectState } from "@/lib/types";
 
 export default async function DiscoverPage() {
   const { user, profile, vibe, supabase } = await getOwnProfile();
   if (!user) redirect("/login");
-  if (!profile?.onboarding_complete || !profile.looking_for || !profile.role || !vibe) {
+  if (!profile?.onboarding_complete || !profile.looking_for_category || !profile.industry_category || !vibe) {
     redirect("/onboarding");
   }
 
   const pool = await loadCompletedOperators();
   const ranked = rankMatches(
-    { id: user.id, role: profile.role, looking_for: profile.looking_for, vibe },
+    { 
+      id: user.id, 
+      industry_category: profile.industry_category, 
+      looking_for_category: profile.looking_for_category,
+      spoken_languages: profile.spoken_languages || [],
+      vibe 
+    },
     pool
   );
 
@@ -64,7 +70,7 @@ export default async function DiscoverPage() {
             <p className="kicker">Discover</p>
             <h2>People who match your vibe</h2>
             <p className="sub">
-              {profile.codename} · looking for {formatRole(profile.looking_for)} · ranked in a grid
+              {profile.codename} · looking for {profile.looking_for_title} · ranked in a grid
             </p>
           </div>
         </div>
