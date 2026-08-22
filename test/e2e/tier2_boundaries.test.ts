@@ -37,6 +37,7 @@ function createMockProfile(overrides: Partial<Profile> = {}): Profile {
     professional_title: null,
     looking_for_category: 'Creative & Design',
     looking_for_title: null,
+    intent_filter: null,
     bio: null,
     contact_url: null,
     onboarding_complete: true,
@@ -552,6 +553,7 @@ describe('Tier 2: Boundary & Corner Cases (F1 to F18)', () => {
         professional_title: 'Engineer',
         looking_for_category: 'Creative & Design',
         looking_for_title: 'UI Designer',
+        intent_filter: null,
         bio: null,
         contact_url: null,
         onboarding_complete: true,
@@ -790,6 +792,7 @@ describe('Tier 2: Boundary & Corner Cases (F1 to F18)', () => {
         industry_category: 'Software & IT',
         looking_for_category: 'Software & IT',
         spoken_languages: [],
+        intent_filter: null,
         vibe: { pace: 4, comms: 4, risk: 4, energy: 4 },
       };
       const candidate = {
@@ -815,6 +818,7 @@ describe('Tier 2: Boundary & Corner Cases (F1 to F18)', () => {
         industry_category: 'Software & IT',
         looking_for_category: 'Creative & Design',
         spoken_languages: [],
+        intent_filter: null,
         vibe: { pace: 3, comms: 3, risk: 3, energy: 3 },
       };
       const c1 = {

@@ -24,7 +24,7 @@ export default async function HomePage() {
           <div className="hero-content">
             <div className="hero-badge-pill">
               <span className="badge-spark">✨</span>
-              <span>Over 4,200+ Verified Builders · Zero-Spam Co-Founder Network</span>
+              <span>Now in Early Access · Zero-Spam Co-Founder Network</span>
             </div>
 
             <p className="kicker">Match on energy, not a resume</p>
@@ -88,7 +88,7 @@ export default async function HomePage() {
               </div>
               <div className="social-proof-text">
                 <span className="rating-stars">★★★★★</span>
-                <span className="rating-desc">Rated 4.9/5 by 1,200+ startup founders</span>
+                <span className="rating-desc">Built solo, shipped for real builders</span>
               </div>
             </div>
           </div>
@@ -104,20 +104,20 @@ export default async function HomePage() {
         <section className="metrics-ribbon-section">
           <div className="metrics-ribbon glass-panel">
             <div className="stat-card">
-              <div className="stat-value gradient-text">4,200+</div>
-              <div className="stat-label">Verified Builders</div>
+              <div className="stat-value gradient-text">4D</div>
+              <div className="stat-label">Vibe Dimensions</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value gradient-text">89%</div>
-              <div className="stat-label">Project Launch Rate</div>
+              <div className="stat-value gradient-text">100%</div>
+              <div className="stat-label">Reciprocal Matching</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value gradient-text">&lt;48h</div>
-              <div className="stat-label">Average Match Time</div>
+              <div className="stat-value gradient-text">&lt;2min</div>
+              <div className="stat-label">Onboarding Time</div>
             </div>
             <div className="stat-card">
-              <div className="stat-value gradient-text">$2.4M+</div>
-              <div className="stat-label">Milestone Volume</div>
+              <div className="stat-value gradient-text">Free</div>
+              <div className="stat-label">During Early Access</div>
             </div>
           </div>
         </section>
@@ -277,11 +277,11 @@ export default async function HomePage() {
                 <div className="score-badge sm">94% Synergy</div>
               </div>
               <p className="testimonial-quote">
-                &ldquo;Finding hardware-friendly business partners is notoriously difficult. Passion Protocol saved us 6 months of awkward networking and we raised $750k in seed funding.&rdquo;
+                &ldquo;Finding hardware-friendly business partners is notoriously difficult. Passion Protocol&apos;s vibe matching cut through months of awkward networking events.&rdquo;
               </p>
               <div className="testimonial-footer">
-                <span className="outcome-pill">💰 $750k Seed Raised</span>
-                <span className="verified-badge">● Verified Match</span>
+                <span className="outcome-pill">⚙️ Hardware × Business</span>
+                <span className="verified-badge">● Early Builder</span>
               </div>
             </article>
 
@@ -313,8 +313,8 @@ export default async function HomePage() {
                 &ldquo;Zero recruiter spam and zero ego. Pure builder energy with milestone contracts that locked in our deliverables and compensation upfront.&rdquo;
               </p>
               <div className="testimonial-footer">
-                <span className="outcome-pill">🤝 $15,000 Milestone Contract</span>
-                <span className="verified-badge">● Verified Match</span>
+                <span className="outcome-pill">🤝 Milestone Contract Signed</span>
+                <span className="verified-badge">● Early Builder</span>
               </div>
             </article>
           </div>
@@ -348,7 +348,7 @@ export default async function HomePage() {
               <span className="cta-pill">✨ Instant Onboarding · 100% Free for Builders</span>
               <h2 className="cta-title">Ready to Build Something Remarkable?</h2>
               <p className="cta-desc">
-                Join over 4,200+ ambitious builders and discover your complementary co-founder today.
+                Join the first wave of ambitious builders and discover your complementary co-founder today.
               </p>
               <div className="cta-actions">
                 <Link href={ctaHref} className="primary-btn lg">

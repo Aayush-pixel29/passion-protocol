@@ -670,6 +670,7 @@ describe('Tier 1: Feature Coverage (F1 to F18)', () => {
       industry_category: 'Software & IT',
       looking_for_category: 'Creative & Design',
       spoken_languages: ['English', 'German'],
+      intent_filter: null,
       vibe: { pace: 5, comms: 4, risk: 3, energy: 5 } as VibeAnswers,
     };
 
@@ -693,6 +694,7 @@ describe('Tier 1: Feature Coverage (F1 to F18)', () => {
         professional_title: 'Operator',
         looking_for_category: looking,
         looking_for_title: 'Partner',
+        intent_filter: null,
         bio: 'Hello',
         onboarding_complete: onboardingComplete,
       } as Profile,

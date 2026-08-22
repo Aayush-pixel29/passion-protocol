@@ -66,6 +66,7 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
       professional_title: 'Full Stack Dev',
       looking_for_category: 'Creative & Design',
       looking_for_title: 'Product Designer',
+      intent_filter: null,
       bio: 'Ready to build next-gen apps.',
       contact_url: 'https://t.me/neocoder',
       onboarding_complete: true,
@@ -77,6 +78,7 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
       industry_category: 'Creative & Design',
       looking_for_category: 'Software & IT',
       spoken_languages: ['English'],
+      intent_filter: null,
       vibe: { pace: 5, comms: 4, risk: 4, energy: 3 },
     };
 
@@ -138,6 +140,10 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
       proposed_to: 'user-b',
       price_amount: 3500,
       deliverables: 'Complete Smart Contract MVP & Frontend Integration',
+      contract_type: 'custom',
+      revenue_split_a: 50,
+      revenue_split_b: 50,
+      platform_fee_pct: 20,
       status: 'pending',
       created_at: new Date().toISOString(),
     };
@@ -242,6 +248,7 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
       industry_category: 'Business & Sales',
       looking_for_category: 'Software & IT',
       spoken_languages: ['English'],
+      intent_filter: null,
       vibe: { pace: 5, comms: 4, risk: 5, energy: 3 },
     };
 
@@ -291,6 +298,7 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
       industry_category: 'Software & IT',
       looking_for_category: 'Creative & Design',
       spoken_languages: ['Japanese'],
+      intent_filter: null,
       vibe: { pace: 3, comms: 3, risk: 3, energy: 3 },
     };
 
