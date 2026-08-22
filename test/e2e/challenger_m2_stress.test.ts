@@ -282,10 +282,10 @@ describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () =>
       assert.ok(content.includes('<LandingHeroPreview'), 'Missing LandingHeroPreview');
       // 3. Metrics Ribbon
       assert.ok(content.includes('metrics-ribbon'), 'Missing Metrics Ribbon');
-      assert.ok(content.includes('4,200+'), 'Missing 4,200+ stat');
-      assert.ok(content.includes('89%'), 'Missing 89% stat');
-      assert.ok(content.includes('&lt;48h') || content.includes('<48h'), 'Missing <48h stat');
-      assert.ok(content.includes('$2.4M+'), 'Missing $2.4M+ stat');
+      assert.ok(content.includes('4D'), 'Missing 4D stat');
+      assert.ok(content.includes('100%'), 'Missing 100% stat');
+      assert.ok(content.includes('&lt;2min') || content.includes('<2min'), 'Missing <2min stat');
+      assert.ok(content.includes('Free'), 'Missing Free stat');
       // 4. Bento Grid
       assert.ok(content.includes('<LandingBentoGrid'), 'Missing LandingBentoGrid');
       // 5. How It Works
