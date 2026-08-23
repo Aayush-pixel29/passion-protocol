@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { WorkspaceFile, WorkspaceEmbed } from "@/lib/types";
-import { createCheckoutSession } from "@/lib/actions";
+import { markContractAsPaid } from "@/lib/actions";
 
 const ALLOWED = new Set([
   "image/jpeg",
@@ -30,6 +30,7 @@ export function WorkspaceBoard({
   initialEmbeds,
   paymentStatus,
   categories,
+  partnerPaymentLink,
 }: {
   contractId: string;
   currentUserId: string;
@@ -37,6 +38,7 @@ export function WorkspaceBoard({
   initialEmbeds: WorkspaceEmbed[];
   paymentStatus: "paid" | "unpaid";
   categories: string[];
+  partnerPaymentLink?: string | null;
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -160,11 +162,9 @@ export function WorkspaceBoard({
   async function handlePayment() {
     setError("");
     startTransition(async () => {
-      const { url, error: paymentError } = await createCheckoutSession(contractId);
+      const { error: paymentError } = await markContractAsPaid(contractId);
       if (paymentError) {
         setError(paymentError);
-      } else if (url) {
-        window.location.href = url;
       }
     });
   }
@@ -176,18 +176,34 @@ export function WorkspaceBoard({
           <div>
             <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Milestone Payment</h3>
             <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-              Securely release funds to your partner&apos;s connected Stripe account.
+              Directly pay your partner via their provided UPI or payment link.
             </p>
           </div>
-          {paymentStatus === "paid" ? (
-            <button className="pill-btn accept" disabled style={{ background: "#10b981", borderColor: "#10b981" }}>
-              ✔ Paid
-            </button>
-          ) : (
-            <button className="pill-btn accept" onClick={handlePayment} disabled={pending}>
-              {pending ? "Loading..." : "Pay via Stripe"}
-            </button>
-          )}
+          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+            {paymentStatus === "unpaid" && partnerPaymentLink && (
+              <a 
+                href={partnerPaymentLink.startsWith('http') ? partnerPaymentLink : `upi://pay?pa=${partnerPaymentLink}`}
+                target="_blank" 
+                rel="noopener noreferrer"
+                className="pill-btn"
+                style={{ background: "var(--surface-card)", color: "var(--text-bright)" }}
+              >
+                Pay via Link / UPI
+              </a>
+            )}
+            {paymentStatus === "unpaid" && !partnerPaymentLink && (
+              <span className="sub" style={{ fontSize: 13 }}>No payment link provided by partner.</span>
+            )}
+            {paymentStatus === "paid" ? (
+              <button className="pill-btn accept" disabled style={{ background: "#10b981", borderColor: "#10b981", opacity: 0.8 }}>
+                ✔ Paid
+              </button>
+            ) : (
+              <button className="pill-btn accept" onClick={handlePayment} disabled={pending}>
+                {pending ? "Loading..." : "Mark as Paid"}
+              </button>
+            )}
+          </div>
         </div>
         {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
       </section>

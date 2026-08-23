@@ -74,9 +74,10 @@ export type Profile = {
   professional_title: string | null;
   looking_for_category: string | null;
   looking_for_title: string | null;
-  intent_filter: string | null;
-  bio: string | null;
+  intent_filter?: string | null;
+  bio?: string | null;
   contact_url?: string | null;
+  payment_link?: string | null;
   onboarding_complete: boolean;
 };
 
