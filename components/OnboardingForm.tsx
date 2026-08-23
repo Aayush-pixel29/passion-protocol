@@ -51,9 +51,8 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
       <form action={action} style={{ position: "relative", zIndex: 10 }}>
         
         {/* Step 1: Identity */}
-        {step === 1 && (
-          <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <div style={{ textAlign: "center", marginBottom: 16 }}>
+        <div className="animate-slide-up" style={{ display: step === 1 ? "flex" : "none", flexDirection: "column", gap: 24 }}>
+          <div style={{ textAlign: "center", marginBottom: 16 }}>
               <AvatarSVG name={codename || "New User"} size={80} className="mx-auto mb-4" />
               <h2 style={{ margin: 0, fontSize: 24 }}>1. Identity</h2>
             </div>
@@ -86,14 +85,17 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
                 <input name="phone_number" className="input" defaultValue={profile?.phone_number ?? ""} />
               </label>
             </div>
-            <button type="button" className="pill-btn accept" style={{ marginTop: 16 }} onClick={() => setStep(2)}>Next Step →</button>
+            <button type="button" className="pill-btn accept" style={{ marginTop: 16 }} onClick={() => {
+              if (codename.length < 2) {
+                alert("Please enter a valid codename (2-32 characters) before proceeding.");
+                return;
+              }
+              setStep(2);
+            }}>Next Step →</button>
           </div>
-        )}
-
         {/* Step 2: Vibe Sliders */}
-        {step === 2 && (
-          <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 32 }}>
-            <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Vibe Sliders</h2>
+        <div className="animate-slide-up" style={{ display: step === 2 ? "flex" : "none", flexDirection: "column", gap: 32 }}>
+          <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Vibe Sliders</h2>
             <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {SLIDERS.map((s) => (
                 <div key={s.name}>
@@ -119,12 +121,10 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
               <button type="button" className="pill-btn accept" style={{ flex: 1 }} onClick={() => setStep(3)}>Next Step →</button>
             </div>
           </div>
-        )}
 
         {/* Step 3: Preferences */}
-        {step === 3 && (
-          <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Professional Stack</h2>
+        <div className="animate-slide-up" style={{ display: step === 3 ? "flex" : "none", flexDirection: "column", gap: 24 }}>
+          <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Professional Stack</h2>
             
             <div>
               <p className="label plain">Industry Category</p>
@@ -165,12 +165,10 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
               <button type="button" className="pill-btn accept" style={{ flex: 1 }} onClick={() => setStep(4)}>Next Step →</button>
             </div>
           </div>
-        )}
 
         {/* Step 4: Ready */}
-        {step === 4 && (
-          <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
-            <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Intent & Finalize</h2>
+        <div className="animate-slide-up" style={{ display: step === 4 ? "flex" : "none", flexDirection: "column", gap: 24 }}>
+          <h2 style={{ margin: 0, fontSize: 24, textAlign: "center" }}>Intent & Finalize</h2>
             
             <div>
               <p className="label plain">Primary Intent</p>
@@ -205,7 +203,6 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
               </button>
             </div>
           </div>
-        )}
       </form>
     </div>
   );
