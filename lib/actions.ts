@@ -417,6 +417,7 @@ export async function createCheckoutSession(contractId: string): Promise<{ error
 
   if (contractError || !contract) return { error: "Contract not found." };
   if (contract.status !== "accepted") return { error: "Contract must be accepted first." };
+  if (contract.payment_status === "paid") return { error: "Contract is already paid." };
 
   // Determine who the recipient is. Usually it's the proposer receiving money from the acceptor, or vice versa.
   // For simplicity, we assume the person calling this function is the payer, and the other party is the recipient.
@@ -467,6 +468,8 @@ export async function createCheckoutSession(contractId: string): Promise<{ error
       },
       success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/workspace/${contract.id}?payment=success`,
       cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/workspace/${contract.id}?payment=canceled`,
+    }, {
+      idempotencyKey: `checkout_${contract.id}`,
     });
 
     return { url: session.url! };
