@@ -2824,3 +2824,39 @@ textarea::placeholder {
   box-shadow: 4px 4px 0px #000000;
   background: rgba(0, 255, 179, 0.05);
 }
+
+/* Onboarding Step Tracker */
+.step-tracker-container { display: flex; justify-content: center; align-items: center; gap: 16px; margin: 32px 0 48px; font-family: var(--font-mono); font-size: 11px; }
+.step-circle { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--stroke); display: flex; align-items: center; justify-content: center; font-weight: 700; color: var(--muted); transition: all 0.3s ease; position: relative; background: var(--surface); }
+.step-circle.active-1 { border-color: var(--accent-emerald); color: var(--accent-emerald); box-shadow: var(--glow-emerald); }
+.step-circle.active-2 { border-color: var(--accent-purple); color: var(--accent-purple); box-shadow: var(--glow-purple); }
+.step-circle.active-3 { border-color: var(--accent-rose); color: var(--accent-rose); box-shadow: var(--glow-rose); }
+.step-circle.active-4 { border-color: var(--accent-cyan); color: var(--accent-cyan); box-shadow: 0 0 20px rgba(0, 212, 255, 0.4); }
+.step-line { height: 1px; width: 48px; background: var(--stroke); }
+.step-line.active { background: rgba(255,255,255,0.4); }
+
+/* Custom Checkbox (Pink Theme) */
+.custom-checkbox { appearance: none; width: 18px; height: 18px; border: 2px solid var(--stroke); border-radius: 4px; background-color: transparent; cursor: pointer; transition: all 0.2s ease; display: flex; align-items: center; justify-content: center; position: relative; }
+.custom-checkbox:checked { background-color: var(--accent-rose); border-color: var(--accent-rose); }
+.custom-checkbox:checked::after { content: '?'; color: #fff; font-size: 12px; position: absolute; top: -1px; left: 2px; }
+.trait-card { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--stroke); border-radius: 12px; background: rgba(255,255,255,0.02); cursor: pointer; transition: all 0.2s ease; }
+.trait-card:hover { background: rgba(255,255,255,0.05); border-color: rgba(255,255,255,0.15); }
+.trait-card.selected { border-color: var(--accent-rose); background: rgba(255, 61, 120, 0.08); }
+
+/* Vibe Range Slider */
+.vibe-slider-wrapper { background: rgba(255,255,255,0.02); border: 1px solid var(--stroke); border-radius: 16px; padding: 24px; margin-bottom: 16px; }
+.vibe-slider-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; }
+.vibe-slider-title { font-weight: 700; font-size: 16px; }
+.vibe-slider-value { width: 32px; height: 32px; border-radius: 50%; border: 1px solid rgba(255,255,255,0.1); background: rgba(255,255,255,0.05); display: flex; align-items: center; justify-content: center; font-family: var(--font-mono); font-size: 14px; }
+.cyber-range { -webkit-appearance: none; width: 100%; height: 4px; background: var(--stroke); border-radius: 2px; outline: none; }
+.cyber-range::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 24px; height: 24px; border-radius: 50%; background: var(--accent-emerald); cursor: pointer; box-shadow: 0 0 16px rgba(0, 255, 179, 0.6); border: 2px solid #fff; transition: all 0.2s ease; }
+.cyber-range::-webkit-slider-thumb:hover { transform: scale(1.15); }
+
+/* Mobile Responsiveness */
+@media (max-width: 768px) {
+  .step-line { width: 24px; }
+  .trait-card-grid { grid-template-columns: 1fr !important; }
+  .vibe-slider-wrapper { padding: 16px; }
+  .onboarding-card { padding: 24px !important; }
+}
+

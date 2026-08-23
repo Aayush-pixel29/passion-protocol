@@ -170,52 +170,62 @@ export function WorkspaceBoard({
   }
 
   return (
-    <>
-      <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
-        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+    <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
+      {/* Milestone Payment Widget */}
+      <section className="" style={{ padding: 32, borderRadius: 24, position: "relative", overflow: "hidden" }}>
+        {paymentStatus === "unpaid" ? (
+          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--glow-rose)" }} />
+        ) : (
+          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--glow-emerald)" }} />
+        )}
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Milestone Payment</h3>
-            <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-              Directly pay your partner via their provided UPI or payment link.
+            <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 24, fontWeight: 800 }}>
+              Milestone Treasury
+            </h3>
+            <p className="sub" style={{ margin: 0, fontSize: 14, fontFamily: "var(--font-mono)" }}>
+              Directly fund this milestone via the partner&apos;s secure gateway.
             </p>
           </div>
-          <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
+          <div style={{ display: "flex", gap: 16, alignItems: "center" }}>
             {paymentStatus === "unpaid" && partnerPaymentLink && (
               <a 
                 href={partnerPaymentLink.startsWith('http') ? partnerPaymentLink : `upi://pay?pa=${partnerPaymentLink}`}
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="pill-btn"
-                style={{ background: "var(--surface-card)", color: "var(--text-bright)" }}
+                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid #000000", color: "#000000", fontWeight: 700 }}
               >
-                Pay via Link / UPI
+                Initiate Transfer ↗
               </a>
             )}
             {paymentStatus === "unpaid" && !partnerPaymentLink && (
-              <span className="sub" style={{ fontSize: 13 }}>No payment link provided by partner.</span>
+              <span className="sub" style={{ fontSize: 13, padding: "8px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 32, border: "1px solid #000000" }}>
+                Awaiting Routing Link
+              </span>
             )}
             {paymentStatus === "paid" ? (
-              <button className="pill-btn accept" disabled style={{ background: "#10b981", borderColor: "#10b981", opacity: 0.8 }}>
-                ✔ Paid
+              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: "#000000", border: "1px solid #000000", opacity: 1, boxShadow: "0 0 16px rgba(0, 255, 179, 0.2)", cursor: "default" }}>
+                Funds Secured ✔
               </button>
             ) : (
-              <button className="pill-btn accept" onClick={handlePayment} disabled={pending}>
-                {pending ? "Loading..." : "Mark as Paid"}
+              <button className="pill-btn" onClick={handlePayment} disabled={pending} style={{ background: "#000000", color: "#000", fontWeight: 800 }}>
+                {pending ? "Syncing..." : "Mark as Transferred"}
               </button>
             )}
           </div>
         </div>
-        {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
+        {error ? <p className="error" style={{ marginTop: 16, padding: "12px", background: "rgba(255,61,120,0.1)", borderRadius: 8, border: "1px solid #000000" }}>{error}</p> : null}
       </section>
 
       {/* Role-based Dynamic Hub Blocks */}
       {categories.includes("Software & IT") && (
-        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 16 : 0 }}>
+        <section className="" style={{ padding: 32, borderRadius: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Developer Hub</h3>
-              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-                Provision a shared GitHub repository or link your Linear ticket board.
+              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Developer Terminal</h3>
+              <p className="sub" style={{ margin: 0, fontSize: 14 }}>
+                Provision a shared codebase or ticket board.
               </p>
             </div>
             <button 
@@ -224,17 +234,18 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter GitHub Repository URL:");
                 if (url) handleAddEmbed("github", url);
               }}
+              style={{ background: "rgba(255,255,255,0.05)" }}
             >
-              Link GitHub
+              + Link Repository
             </button>
           </div>
           {embeds.filter(e => e.embed_type === 'github').length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'github').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
-                  <span style={{ marginRight: 12 }}>💻</span>
-                  <span style={{ flexGrow: 1 }}>{e.url.replace("https://github.com/", "")}</span>
-                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: "1px solid #000000", borderRadius: 16, color: "#000000", textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-cyan-500 hover:bg-cyan-900/10">
+                  <span style={{ marginRight: 16, fontSize: 20 }}>💻</span>
+                  <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace("https://github.com/", "")}</span>
+                  <span style={{ color: "#000000", fontSize: 13, fontWeight: 700 }}>EXECUTE ↗</span>
                 </a>
               ))}
             </div>
@@ -243,12 +254,12 @@ export function WorkspaceBoard({
       )}
 
       {categories.includes("Creative & Design") && (
-        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 16 : 0 }}>
+        <section className="" style={{ padding: 32, borderRadius: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Design Studio</h3>
-              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-                Embed a live Figma canvas or Miro board for real-time collaboration.
+              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Design Studio</h3>
+              <p className="sub" style={{ margin: 0, fontSize: 14 }}>
+                Embed a live Figma canvas for real-time collaboration.
               </p>
             </div>
             <button 
@@ -257,21 +268,22 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter Figma Share URL:");
                 if (url) handleAddEmbed("figma", url);
               }}
+              style={{ background: "rgba(255,255,255,0.05)" }}
             >
-              Embed Figma
+              + Mount Canvas
             </button>
           </div>
           {embeds.filter(e => e.embed_type === 'figma').length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 24 }}>
               {embeds.filter(e => e.embed_type === 'figma').map(e => {
                 const isFigmaUrl = e.url.includes('figma.com');
                 const embedUrl = isFigmaUrl ? `https://www.figma.com/embed?embed_host=passionprotocol&url=${encodeURIComponent(e.url)}` : e.url;
                 
                 return (
-                  <div key={e.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--stroke)" }}>
+                  <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #000000", boxShadow: "0 0 32px rgba(180, 77, 255, 0.15)" }}>
                     <iframe 
                       src={embedUrl}
-                      style={{ width: "100%", height: 400, border: "none" }}
+                      style={{ width: "100%", height: 500, border: "none", background: "#000" }}
                       allowFullScreen
                       sandbox="allow-same-origin allow-scripts allow-popups"
                     />
@@ -284,12 +296,12 @@ export function WorkspaceBoard({
       )}
 
       {(categories.includes("Business & Sales") || categories.includes("Marketing & Content")) && (
-        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 16 : 0 }}>
+        <section className="" style={{ padding: 32, borderRadius: 24 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Operations Hub</h3>
-              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-                Pin your Notion PRD, Google Sheets CRM, or Strategy documents.
+              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Operations Hub</h3>
+              <p className="sub" style={{ margin: 0, fontSize: 14 }}>
+                Pin your Notion PRD, Strategy, or Analytics docs.
               </p>
             </div>
             <button 
@@ -298,17 +310,18 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter Notion or Google Doc URL:");
                 if (url) handleAddEmbed("notion", url);
               }}
+              style={{ background: "rgba(255,255,255,0.05)" }}
             >
-              Link Doc
+              + Link Blueprint
             </button>
           </div>
           {embeds.filter(e => e.embed_type === 'notion').length > 0 && (
-            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'notion').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
-                  <span style={{ marginRight: 12 }}>📝</span>
-                  <span style={{ flexGrow: 1 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: "1px solid #000000", borderRadius: 16, color: "#000000", textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-purple-500 hover:bg-purple-900/10">
+                  <span style={{ marginRight: 16, fontSize: 20 }}>📝</span>
+                  <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                  <span style={{ color: "#000000", fontSize: 13, fontWeight: 700 }}>OPEN ↗</span>
                 </a>
               ))}
             </div>
@@ -317,25 +330,33 @@ export function WorkspaceBoard({
       )}
 
       <section 
-        className="" 
-        style={{ padding: 28, position: "relative" }}
-        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+        style={{ 
+          padding: 32, 
+          borderRadius: 24,
+          background: "#f4f4f5",
+          border: "2px dashed #000000",
+          position: "relative",
+          transition: "all 0.2s"
+        }}
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "rgba(0,255,179,0.05)"; }}
+        onDragLeave={(e) => { e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "#f4f4f5"; }}
         onDrop={(e) => {
           e.preventDefault();
           e.stopPropagation();
+          e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "#f4f4f5";
           const file = e.dataTransfer.files?.[0];
           if (file) startTransition(() => onUpload(file));
         }}
       >
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: files.length > 0 ? 24 : 0 }}>
         <div>
-          <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Shared files (File Drop)</h3>
-          <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-            Images, PDFs, and docs. Drag & drop here or click below.
+          <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Asset Dropzone</h3>
+          <p className="sub" style={{ margin: 0, fontSize: 14 }}>
+            Images, PDFs, docs. Drag & drop to securely transfer.
           </p>
         </div>
-        <label className="pill-btn accept" style={{ cursor: pending ? "wait" : "pointer" }}>
-          {pending ? "Uploading…" : "Upload file"}
+        <label className="pill-btn" style={{ cursor: pending ? "wait" : "pointer", background: "#000000", color: "#000", fontWeight: 800 }}>
+          {pending ? "Encrypting Upload..." : "Upload Asset ☁"}
           <input
             type="file"
             hidden
@@ -349,41 +370,47 @@ export function WorkspaceBoard({
           />
         </label>
       </div>
-      {error ? <p className="error">{error}</p> : null}
+      {error ? <p className="error" style={{ marginBottom: 16 }}>{error}</p> : null}
       {files.length === 0 ? (
-        <div className="empty" style={{ padding: 32 }}>
-          No files yet. Drop the mock, spec, or screenshot you need to start.
+        <div style={{ padding: 48, textAlign: "center", color: "var(--dim)" }}>
+          <div style={{ fontSize: 48, marginBottom: 16, opacity: 0.5 }}>📁</div>
+          <p style={{ margin: 0, fontFamily: "var(--font-mono)", fontSize: 14 }}>Drop secure assets here to mount to workspace.</p>
         </div>
       ) : (
-        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 10 }}>
+        <ul style={{ listStyle: "none", margin: 0, padding: 0, display: "grid", gap: 12 }}>
           {files.map((f) => (
             <li
               key={f.id}
               style={{
                 display: "flex",
                 justifyContent: "space-between",
-                gap: 12,
+                gap: 16,
                 alignItems: "center",
-                padding: "12px 14px",
-                background: "var(--surface-inset)",
-                border: "1px solid var(--stroke-subtle)",
-                borderRadius: 12,
+                padding: "16px 20px",
+                background: "rgba(255,255,255,0.02)",
+                border: "1px solid #000000",
+                borderRadius: 16,
               }}
             >
-              <div>
-                <div style={{ fontWeight: 700, color: "var(--text-bright)" }}>{f.file_name}</div>
-                <div className="sub" style={{ fontSize: 12, margin: 0 }}>
-                  {(f.size_bytes / 1024).toFixed(0)} KB · {new Date(f.created_at).toLocaleString()}
+              <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: "1px solid #000000" }}>
+                  📄
+                </div>
+                <div>
+                  <div style={{ fontWeight: 700, color: "#000000", fontSize: 15, marginBottom: 4 }}>{f.file_name}</div>
+                  <div className="sub" style={{ fontSize: 12, margin: 0, fontFamily: "var(--font-mono)" }}>
+                    {(f.size_bytes / 1024).toFixed(0)} KB • {new Date(f.created_at).toLocaleString()}
+                  </div>
                 </div>
               </div>
-              <button type="button" className="pill-btn skip" onClick={() => openFile(f.path)}>
-                Open
+              <button type="button" className="pill-btn skip" onClick={() => openFile(f.path)} style={{ background: "rgba(255,255,255,0.05)" }}>
+                View ↗
               </button>
             </li>
           ))}
         </ul>
       )}
     </section>
-    </>
+    </div>
   );
 }
