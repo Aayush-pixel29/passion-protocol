@@ -2865,3 +2865,163 @@ textarea::placeholder {
   border-radius: var(--radius-full);
   white-space: nowrap;
 }
+/* ==========================================================================
+   CYBERPUNK UI SUPPLEMENTAL CLASSES (From Figma AI Blueprint)
+   ========================================================================== */
+
+/* Glassmorphism Utilities */
+.glass {
+  background: rgba(18, 18, 31, 0.75);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.glass-emerald {
+  background: rgba(0, 255, 179, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(0, 255, 179, 0.2);
+}
+
+.glass-rose {
+  background: rgba(255, 61, 120, 0.08);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(255, 61, 120, 0.2);
+}
+
+/* Glow and Neon Utilities */
+.glow-emerald {
+  box-shadow: 0 0 20px rgba(0, 255, 179, 0.4);
+}
+.text-glow-emerald {
+  text-shadow: 0 0 10px rgba(0, 255, 179, 0.7);
+}
+.glow-rose {
+  box-shadow: 0 0 20px rgba(255, 61, 120, 0.4);
+}
+.text-glow-rose {
+  text-shadow: 0 0 10px rgba(255, 61, 120, 0.7);
+}
+.glow-purple {
+  box-shadow: 0 0 20px rgba(180, 77, 255, 0.4);
+}
+.text-glow-purple {
+  text-shadow: 0 0 10px rgba(180, 77, 255, 0.7);
+}
+
+/* Backgrounds */
+.grid-bg {
+  background-image: 
+    linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+  background-size: 32px 32px;
+}
+
+.mesh-bg {
+  background: radial-gradient(circle at top right, rgba(180, 77, 255, 0.15), transparent 40%),
+              radial-gradient(circle at bottom left, rgba(0, 255, 179, 0.15), transparent 40%);
+}
+
+/* Keyframe Animations */
+@keyframes float {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-15px); }
+  100% { transform: translateY(0px); }
+}
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+@keyframes pulse-dot {
+  0%, 100% { opacity: 0.4; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+.animate-pulse-dot {
+  animation: pulse-dot 2s infinite ease-in-out;
+}
+
+@keyframes bar-dance {
+  0% { transform: scaleY(0.3); }
+  50% { transform: scaleY(1); }
+  100% { transform: scaleY(0.3); }
+}
+.animate-bar-dance {
+  animation: bar-dance 1.5s infinite ease-in-out;
+}
+
+@keyframes shimmer {
+  0% { background-position: -200% 0; }
+  100% { background-position: 200% 0; }
+}
+.animate-shimmer {
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.05) 50%, rgba(255,255,255,0) 100%);
+  background-size: 200% 100%;
+  animation: shimmer 3s infinite linear;
+}
+
+@keyframes slide-up {
+  0% { opacity: 0; transform: translateY(20px); }
+  100% { opacity: 1; transform: translateY(0); }
+}
+.animate-slide-up {
+  animation: slide-up 0.5s ease-out forwards;
+}
+
+@keyframes animate-connect {
+  0% { stroke-dashoffset: 100; opacity: 0; }
+  50% { opacity: 1; }
+  100% { stroke-dashoffset: 0; opacity: 0; }
+}
+.animate-connect-line {
+  stroke-dasharray: 100;
+  animation: animate-connect 2s linear infinite;
+}
+
+/* Base Variable Overrides */
+:root {
+  --bg: #080810;
+  --text: #f0f0ff;
+  --accent-emerald: #00ffb3;
+  --accent-rose: #ff3d78;
+  --accent-purple: #b44dff;
+  --accent-cyan: #00d4ff;
+  --accent-yellow: #ffe033;
+}
+/* Messages UI Utilities */
+.bubble-me {
+  background: var(--surface-inset);
+  border: 1px solid var(--accent-emerald);
+  color: var(--text-bright);
+  padding: 12px 18px;
+  border-radius: 18px;
+  border-bottom-right-radius: 4px;
+  box-shadow: 0 4px 16px rgba(0, 255, 179, 0.2);
+}
+
+.bubble-them {
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid var(--stroke);
+  color: var(--text);
+  padding: 12px 18px;
+  border-radius: 18px;
+  border-bottom-left-radius: 4px;
+}
+
+.contract-widget {
+  background: var(--surface-card);
+  backdrop-filter: blur(20px);
+  border: 1px solid var(--stroke);
+  border-radius: var(--radius-md);
+  padding: 24px;
+  text-align: center;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s ease;
+}
+
+.contract-widget.accepted {
+  border-color: var(--accent-emerald);
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.6), var(--glow-emerald);
+  background: rgba(0, 255, 179, 0.05);
+}

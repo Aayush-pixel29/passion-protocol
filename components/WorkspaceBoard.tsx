@@ -316,12 +316,22 @@ export function WorkspaceBoard({
         </section>
       )}
 
-      <section className="glass-panel" style={{ padding: 28 }}>
+      <section 
+        className="glass" 
+        style={{ padding: 28, position: "relative" }}
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
+        onDrop={(e) => {
+          e.preventDefault();
+          e.stopPropagation();
+          const file = e.dataTransfer.files?.[0];
+          if (file) startTransition(() => onUpload(file));
+        }}
+      >
         <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
         <div>
-          <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Shared files</h3>
+          <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Shared files (File Drop)</h3>
           <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
-            Images, PDFs, and docs — only the two of you can see these.
+            Images, PDFs, and docs. Drag & drop here or click below.
           </p>
         </div>
         <label className="pill-btn accept" style={{ cursor: pending ? "wait" : "pointer" }}>

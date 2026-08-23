@@ -433,21 +433,7 @@ export function ChatInterface({
                 const isMe = msg.sender_id === currentUserId;
                 return (
                   <div key={msg.id} style={{ alignSelf: isMe ? "flex-end" : "flex-start", maxWidth: "70%" }}>
-                    <div
-                      style={{
-                        background: isMe ? "linear-gradient(135deg, #ff3d6e 0%, #8b5cf6 100%)" : "rgba(255, 255, 255, 0.07)",
-                        border: isMe ? "none" : "1px solid var(--stroke)",
-                        color: isMe ? "#ffffff" : "var(--text)",
-                        padding: "12px 18px",
-                        borderRadius: 18,
-                        borderBottomRightRadius: isMe ? 4 : 18,
-                        borderBottomLeftRadius: !isMe ? 4 : 18,
-                        boxShadow: isMe ? "0 4px 16px rgba(255, 61, 110, 0.28)" : "var(--shadow-sm)",
-                        fontSize: 15,
-                        lineHeight: 1.5,
-                        wordBreak: "break-word",
-                      }}
-                    >
+                    <div className={isMe ? "bubble-me" : "bubble-them"} style={{ fontSize: 15, lineHeight: 1.5, wordBreak: "break-word" }}>
                       {msg.content}
                     </div>
                   </div>
@@ -458,17 +444,11 @@ export function ChatInterface({
               {contracts.map((ctr) => (
                 <div
                   key={ctr.id}
+                  className={`contract-widget ${ctr.status === "accepted" ? "accepted" : ""}`}
                   style={{
                     alignSelf: "center",
                     width: "100%",
                     maxWidth: 440,
-                    background: "rgba(18, 20, 32, 0.90)",
-                    backdropFilter: "blur(20px)",
-                    border: "1.5px solid var(--stroke-cyan)",
-                    borderRadius: "var(--radius-md)",
-                    padding: 20,
-                    textAlign: "center",
-                    boxShadow: "0 12px 36px rgba(0, 0, 0, 0.6), var(--glow-cyan)",
                   }}
                 >
                   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 8, marginBottom: 6 }}>

@@ -1,93 +1,104 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { vibeScore } from "@/lib/match";
 import type { VibeAnswers } from "@/lib/types";
-import styles from "./SynergyProof.module.css";
+import { AvatarSVG } from "./Avatar";
 
-type Axis = { key: keyof VibeAnswers; label: string; icon: string };
-
-const AXES: Axis[] = [
-  { key: "pace", label: "Pace", icon: "⚡" },
-  { key: "comms", label: "Comms", icon: "💬" },
-  { key: "risk", label: "Risk", icon: "🎲" },
-  { key: "energy", label: "Energy", icon: "🔥" },
+const AXES: { key: keyof VibeAnswers; label: string }[] = [
+  { key: "pace", label: "Pace" },
+  { key: "comms", label: "Comms" },
+  { key: "risk", label: "Risk" },
+  { key: "energy", label: "Energy" },
 ];
 
-function tier(score: number): string {
-  if (score >= 90) return "Exceptional match";
-  if (score >= 75) return "Strong match";
-  if (score >= 55) return "Workable match";
-  return "Low compatibility";
-}
+const MOCK_POOL = [
+  { name: "Neo", role: "Full Stack Engineer", vibe: { pace: 5, comms: 3, risk: 4, energy: 5 } },
+  { name: "Trinity", role: "Product Designer", vibe: { pace: 4, comms: 4, risk: 4, energy: 4 } },
+  { name: "Morpheus", role: "Growth Lead", vibe: { pace: 2, comms: 5, risk: 2, energy: 3 } },
+  { name: "Smith", role: "Sales", vibe: { pace: 5, comms: 2, risk: 5, energy: 5 } },
+];
 
 export function SynergyProof() {
-  const [you, setYou] = useState<VibeAnswers>({ pace: 4, comms: 3, risk: 4, energy: 3 });
-  const [them, setThem] = useState<VibeAnswers>({ pace: 4, comms: 4, risk: 3, energy: 4 });
+  const [you, setYou] = useState<VibeAnswers>({ pace: 4, comms: 3, risk: 4, energy: 4 });
+  const [bestMatch, setBestMatch] = useState(MOCK_POOL[0]);
+  const [score, setScore] = useState(0);
 
-  const deltas = useMemo(
-    () => AXES.map((a) => ({ ...a, delta: Math.abs(you[a.key] - them[a.key]) })),
-    [you, them]
-  );
-  const totalDistance = deltas.reduce((sum, d) => sum + d.delta, 0);
-  const score = vibeScore(you, them);
+  useEffect(() => {
+    let max = 0;
+    let best = MOCK_POOL[0];
+    MOCK_POOL.forEach(p => {
+      const s = vibeScore(you, p.vibe);
+      if (s > max) { max = s; best = p; }
+    });
+    setBestMatch(best);
+    setScore(max);
+  }, [you]);
 
   return (
-    <div className={styles.card}>
-      <div className={styles.cardHeader}>
-        <span className={styles.eyebrow}>Try the actual formula</span>
-        <div className={styles.scoreWrap}>
-          <span className={styles.scoreValue}>{score}%</span>
-          <span className={styles.scoreTier}>{tier(score)}</span>
+    <div className="glass" style={{ padding: '32px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '480px', margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
+      
+      {/* Mesh Background */}
+      <div className="mesh-bg" style={{ position: 'absolute', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
+
+      {/* Connect Widget */}
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
+        
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <AvatarSVG name="You" size={64} className="glow-emerald animate-float" />
+          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)' }}>YOU</span>
+        </div>
+
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0 16px' }}>
+          <span className="text-glow-emerald" style={{ fontSize: '28px', fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--accent-emerald)', zIndex: 10, marginBottom: '8px' }}>
+            {score}%
+          </span>
+          <svg style={{ position: 'absolute', top: '50%', width: '100%', height: '32px', transform: 'translateY(-50%)', zIndex: 0 }} preserveAspectRatio="none">
+            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="rgba(0, 255, 179, 0.3)" strokeWidth="2" strokeDasharray="4 4" />
+            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="var(--accent-emerald)" strokeWidth="2" className="animate-connect-line" />
+          </svg>
+          <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10, background: 'var(--bg)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--stroke)' }}>
+            Synergy
+          </span>
+        </div>
+
+        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+          <AvatarSVG name={bestMatch.name} size={64} className="glow-purple animate-float" />
+          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)' }}>{bestMatch.name}</span>
         </div>
       </div>
 
-      <div className={styles.axes}>
-        {deltas.map((axis) => (
-          <div key={axis.key} className={styles.axisRow}>
-            <div className={styles.axisLabel}>
-              <span aria-hidden="true">{axis.icon}</span>
-              <span>{axis.label}</span>
-            </div>
-            <div className={styles.sliderCol}>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={you[axis.key]}
-                onChange={(e) =>
-                  setYou((prev) => ({ ...prev, [axis.key]: Number(e.target.value) }))
-                }
-                className={`${styles.slider} ${styles.sliderYou}`}
-                aria-label={`Your ${axis.label}, 1 to 5`}
-              />
-              <span className={styles.sliderTag}>You: {you[axis.key]}</span>
-            </div>
-            <div className={styles.sliderCol}>
-              <input
-                type="range"
-                min={1}
-                max={5}
-                value={them[axis.key]}
-                onChange={(e) =>
-                  setThem((prev) => ({ ...prev, [axis.key]: Number(e.target.value) }))
-                }
-                className={`${styles.slider} ${styles.sliderThem}`}
-                aria-label={`Their ${axis.label}, 1 to 5`}
-              />
-              <span className={styles.sliderTag}>Them: {them[axis.key]}</span>
-            </div>
-            <span className={styles.delta}>Δ{axis.delta}</span>
+      {/* Best Match Info */}
+      <div className="glass-emerald animate-slide-up" key={bestMatch.name} style={{ padding: '12px', borderRadius: '12px', textAlign: 'center', zIndex: 10 }}>
+        <span style={{ fontSize: '11px', color: 'var(--accent-emerald)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
+          Top Match Found
+        </span>
+        <span style={{ fontSize: '14px', color: 'var(--text-bright)' }}>{bestMatch.role}</span>
+      </div>
+
+      {/* Vibe Widget Sliders */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
+        <h4 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', margin: 0 }}>
+          Your Calibration
+        </h4>
+        {AXES.map((axis) => (
+          <div key={axis.key} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+            <span style={{ width: '64px', fontSize: '12px', color: 'var(--text-bright)', fontFamily: 'var(--font-mono)' }}>{axis.label}</span>
+            <input
+              type="range"
+              min={1}
+              max={5}
+              value={you[axis.key]}
+              onChange={(e) => setYou(prev => ({ ...prev, [axis.key]: Number(e.target.value) }))}
+              style={{ flex: 1, height: '4px', background: 'var(--surface-inset)', borderRadius: '2px', appearance: 'none', cursor: 'pointer', outline: 'none' }}
+            />
+            <span style={{ width: '16px', fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', textAlign: 'right' }}>
+              {you[axis.key]}
+            </span>
           </div>
         ))}
       </div>
 
-      <div className={styles.formula}>
-        <span>
-          Score = 100 − (Σ|Δ| ÷ 16) × 100 = 100 − ({totalDistance} ÷ 16) × 100 ={" "}
-          <strong>{score}</strong>
-        </span>
-      </div>
     </div>
   );
 }

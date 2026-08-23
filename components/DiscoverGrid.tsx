@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { sendConnect, respondToConnect } from "@/lib/actions";
+import { AvatarSVG } from "./Avatar";
 import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
 
 export type DiscoverCard = {
@@ -252,38 +253,17 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
           const declined = card.connectStatus === "declined";
           const pending = busyId === card.profile.id;
 
-          const avatarSrc = getAvatarImage(card.profile.codename, card.profile.industry_category);
-          const initial = card.profile.codename ? card.profile.codename[0].toUpperCase() : "O";
-          const avatarBg = getAvatarGradient(card.profile.id || card.profile.codename);
           const isHighSynergy = card.score >= 90;
 
           return (
             <article 
               key={card.profile.id} 
-              className={accepted ? "match-card success" : "match-card"}
+              className={`glass ${accepted ? "border-emerald-500/50" : ""}`}
+              style={{ padding: 24, borderRadius: 20, display: 'flex', flexDirection: 'column', gap: 16 }}
             >
-              <div className="match-card-top">
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <div 
-                    className="avatar-badge ring-glow md" 
-                    style={{ 
-                      position: "relative", 
-                      overflow: "hidden",
-                      background: avatarBg,
-                      width: 44,
-                      height: 44,
-                      boxShadow: isHighSynergy ? "0 0 0 2px var(--surface-solid), var(--glow-cyan)" : undefined
-                    }}
-                  >
-                    <Image
-                      src={avatarSrc}
-                      alt={`${card.profile.codename} avatar`}
-                      width={44}
-                      height={44}
-                      style={{ objectFit: "cover", width: "100%", height: "100%" }}
-                    />
-                    <span className="avatar-initial" style={{ position: "absolute", zIndex: -1 }}>{initial}</span>
-                  </div>
+                  <AvatarSVG name={card.profile.codename} size={48} className={isHighSynergy ? "glow-cyan" : ""} />
                   <div>
                     <h3 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{card.profile.codename}</h3>
                     <p className="card-skill" style={{ margin: 0, fontSize: "13px" }}>
@@ -354,18 +334,30 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   marginTop: 16,
                   paddingTop: 16,
                   borderTop: "1px solid var(--stroke-subtle)",
-                  display: "grid",
-                  gridTemplateColumns: "1fr 1fr",
-                  gap: "8px 16px"
+                  display: "flex",
+                  alignItems: "flex-end",
+                  gap: "12px",
+                  height: "40px"
                 }}
               >
-                {DIMS.map((d) => {
+                {DIMS.map((d, i) => {
                   const val = card.vibe[d.key];
+                  const heightPct = (val / 5) * 100;
                   return (
-                    <div key={d.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-                      <span style={{ fontSize: "12px", color: "var(--muted)" }}>{d.label}</span>
-                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "var(--accent-2)", fontWeight: 600 }}>
-                        {val}/5
+                    <div key={d.key} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", gap: 4, height: "100%" }} title={`${d.label}: ${val}/5`}>
+                      <div 
+                        style={{ 
+                          width: "100%", 
+                          height: `${heightPct}%`, 
+                          background: `var(--accent-${i+2 > 4 ? 'amber' : i+2})`, 
+                          borderRadius: 4,
+                          opacity: 0.8,
+                          animationDelay: `${i * 0.15}s`
+                        }} 
+                        className="animate-bar-dance"
+                      />
+                      <span style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>
+                        {d.label.slice(0,3)}
                       </span>
                     </div>
                   );
