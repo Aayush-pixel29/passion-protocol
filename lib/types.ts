@@ -140,3 +140,13 @@ export type WorkspaceFile = {
   size_bytes: number;
   created_at: string;
 };
+
+export type WorkspaceEmbed = {
+  id: string;
+  contract_id: string;
+  added_by: string;
+  embed_type: "figma" | "github" | "notion" | "other";
+  url: string;
+  title: string | null;
+  created_at: string;
+};

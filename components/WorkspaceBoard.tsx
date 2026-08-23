@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import type { WorkspaceFile } from "@/lib/types";
+import type { WorkspaceFile, WorkspaceEmbed } from "@/lib/types";
 import { createCheckoutSession } from "@/lib/actions";
 
 const ALLOWED = new Set([
@@ -27,16 +27,21 @@ export function WorkspaceBoard({
   contractId,
   currentUserId,
   initialFiles,
+  initialEmbeds,
   paymentStatus,
+  categories,
 }: {
   contractId: string;
   currentUserId: string;
   initialFiles: WorkspaceFile[];
+  initialEmbeds: WorkspaceEmbed[];
   paymentStatus: "paid" | "unpaid";
+  categories: string[];
 }) {
   const router = useRouter();
   const supabase = createClient();
   const [files, setFiles] = useState(initialFiles);
+  const [embeds, setEmbeds] = useState<WorkspaceEmbed[]>(initialEmbeds);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
 
@@ -90,6 +95,28 @@ export function WorkspaceBoard({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
+  async function handleAddEmbed(type: "figma" | "github" | "notion", url: string) {
+    if (!url) return;
+    setError("");
+    const { data, error: insertError } = await supabase
+      .from("workspace_embeds")
+      .insert({
+        contract_id: contractId,
+        added_by: currentUserId,
+        embed_type: type,
+        url,
+        title: `${type} Link`
+      })
+      .select("*")
+      .single();
+      
+    if (insertError) {
+      setError(insertError.message);
+    } else if (data) {
+      setEmbeds(prev => [data as WorkspaceEmbed, ...prev]);
+    }
+  }
+
   async function handlePayment() {
     setError("");
     startTransition(async () => {
@@ -124,6 +151,113 @@ export function WorkspaceBoard({
         </div>
         {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
       </section>
+
+      {/* Role-based Dynamic Hub Blocks */}
+      {categories.includes("Software & IT") && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 16 : 0 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Developer Hub</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Provision a shared GitHub repository or link your Linear ticket board.
+              </p>
+            </div>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter GitHub Repository URL:");
+                if (url) handleAddEmbed("github", url);
+              }}
+            >
+              Link GitHub
+            </button>
+          </div>
+          {embeds.filter(e => e.embed_type === 'github').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {embeds.filter(e => e.embed_type === 'github').map(e => (
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
+                  <span style={{ marginRight: 12 }}>💻</span>
+                  <span style={{ flexGrow: 1 }}>{e.url.replace("https://github.com/", "")}</span>
+                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
+
+      {categories.includes("Creative & Design") && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 16 : 0 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Design Studio</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Embed a live Figma canvas or Miro board for real-time collaboration.
+              </p>
+            </div>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter Figma Share URL:");
+                if (url) handleAddEmbed("figma", url);
+              }}
+            >
+              Embed Figma
+            </button>
+          </div>
+          {embeds.filter(e => e.embed_type === 'figma').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {embeds.filter(e => e.embed_type === 'figma').map(e => {
+                const isFigmaUrl = e.url.includes('figma.com');
+                const embedUrl = isFigmaUrl ? `https://www.figma.com/embed?embed_host=passionprotocol&url=${encodeURIComponent(e.url)}` : e.url;
+                
+                return (
+                  <div key={e.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--stroke)" }}>
+                    <iframe 
+                      src={embedUrl}
+                      style={{ width: "100%", height: 400, border: "none" }}
+                      allowFullScreen
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </section>
+      )}
+
+      {(categories.includes("Business & Sales") || categories.includes("Marketing & Content")) && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 16 : 0 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Operations Hub</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Pin your Notion PRD, Google Sheets CRM, or Strategy documents.
+              </p>
+            </div>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter Notion or Google Doc URL:");
+                if (url) handleAddEmbed("notion", url);
+              }}
+            >
+              Link Doc
+            </button>
+          </div>
+          {embeds.filter(e => e.embed_type === 'notion').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {embeds.filter(e => e.embed_type === 'notion').map(e => (
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
+                  <span style={{ marginRight: 12 }}>📝</span>
+                  <span style={{ flexGrow: 1 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                </a>
+              ))}
+            </div>
+          )}
+        </section>
+      )}
 
       <section className="glass-panel" style={{ padding: 28 }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
