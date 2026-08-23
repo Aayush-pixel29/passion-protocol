@@ -3,7 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";
-import { type ConnectState } from "@/lib/types";
+import { type ConnectState, INDUSTRY_CATEGORIES } from "@/lib/types";
 
 export default async function DiscoverPage() {
   const { user, profile, vibe, supabase } = await getOwnProfile();
@@ -59,8 +59,14 @@ export default async function DiscoverPage() {
       score: row.score,
       connectStatus: status,
       contactUrl: status === "accepted" ? linkByUser.get(row.profile.id) ?? null : null,
+      reciprocalMatch: row.reciprocalMatch,
     };
   });
+
+  // Collect unique categories that exist in the pool for filter pills
+  const presentCategories = [...new Set(ranked.map(r => r.profile.industry_category).filter(Boolean))] as string[];
+  // Use the full list but only show ones that actually exist
+  const allCategories = INDUSTRY_CATEGORIES.filter(cat => presentCategories.includes(cat));
 
   return (
     <div className="site">
@@ -106,7 +112,7 @@ export default async function DiscoverPage() {
             <span>{cards.length} {cards.length === 1 ? "operator" : "operators"} available</span>
           </div>
         </div>
-        <DiscoverGrid cards={cards} />
+        <DiscoverGrid cards={cards} allCategories={allCategories} />
       </main>
     </div>
   );

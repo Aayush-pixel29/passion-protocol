@@ -103,7 +103,7 @@ describe('Tier 4: Real-World Workload Scenarios (12 User Journeys)', () => {
 
     assert.strictEqual(rankedForAlice.length, 1);
     assert.strictEqual(rankedForAlice[0].profile.codename, 'BOB_GTM');
-    assert.strictEqual(rankedForAlice[0].score, 88);
+    assert.strictEqual(rankedForAlice[0].score, 98); // +10 reciprocal bonus
 
     // 5. Mutual connection established & contract drafted
     const contract: PartnershipContract = {
@@ -411,7 +411,7 @@ describe('Tier 4: Real-World Workload Scenarios (12 User Journeys)', () => {
     );
 
     assert.strictEqual(ranked.length, 1);
-    assert.strictEqual(ranked[0].score, 88);
+    assert.strictEqual(ranked[0].score, 98);
     const roleString = formatRoleWithIcon(vikram.industry_category, vikram.professional_title);
     assert.ok(roleString.includes('Biotech Licensing Executive'));
   });
@@ -480,9 +480,9 @@ describe('Tier 4: Real-World Workload Scenarios (12 User Journeys)', () => {
 
     assert.strictEqual(ranked.length, 2);
     assert.strictEqual(ranked[0].profile.codename, 'MAYA_GROWTH');
-    assert.strictEqual(ranked[0].score, 94);
+    assert.strictEqual(ranked[0].score, 100);
     assert.strictEqual(ranked[1].profile.codename, 'TOM_CONTENT');
-    assert.strictEqual(ranked[1].score, 38);
+    assert.strictEqual(ranked[1].score, 48);
   });
 
   // --------------------------------------------------------------------------

@@ -87,42 +87,54 @@ export async function getOwnProfile() {
   };
 }
 
-export async function loadCompletedOperators() {
-  const supabase = await createClient();
-  const { data: profiles } = await supabase
-    .from("profiles")
-    .select(PROFILE_SELECT)
-    .eq("onboarding_complete", true);
+import { unstable_cache } from "next/cache";
 
-  const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
-  const { data: projects } = await supabase.from("projects").select("*");
+/**
+ * loadCompletedOperators — fetches all onboarded profiles, vibes, and projects.
+ * Cached for 60 seconds so we don't spam Supabase on every page load.
+ * This is the key performance optimization: instead of querying the database
+ * fresh on every single page navigation, we serve cached results.
+ */
+export const loadCompletedOperators = unstable_cache(
+  async () => {
+    const supabase = await createClient();
+    const { data: profiles } = await supabase
+      .from("profiles")
+      .select(PROFILE_SELECT)
+      .eq("onboarding_complete", true);
 
-  const vibeByUser = new Map<string, VibeAnswers>();
-  for (const row of vibes ?? []) {
-    vibeByUser.set(row.user_id, {
-      pace: row.pace,
-      comms: row.comms,
-      risk: row.risk,
-      energy: row.energy,
-    });
-  }
+    const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
+    const { data: projects } = await supabase.from("projects").select("*");
 
-  const projectByUser = new Map<string, import("@/lib/types").Project>();
-  for (const row of projects ?? []) {
-    projectByUser.set(row.user_id, row);
-  }
+    const vibeByUser = new Map<string, VibeAnswers>();
+    for (const row of vibes ?? []) {
+      vibeByUser.set(row.user_id, {
+        pace: row.pace,
+        comms: row.comms,
+        risk: row.risk,
+        energy: row.energy,
+      });
+    }
 
-  return (profiles ?? [])
-    .map((p) => asProfile(p))
-    .filter((p): p is Profile & { industry_category: string; professional_title: string; looking_for_category: string; looking_for_title: string } =>
-      Boolean(p.industry_category && p.professional_title && p.looking_for_category && p.looking_for_title)
-    )
-    .flatMap((profile) => {
-      const vibe = vibeByUser.get(profile.id);
-      const project = projectByUser.get(profile.id) ?? null;
-      return vibe ? [{ profile, vibe, project }] : [];
-    });
-}
+    const projectByUser = new Map<string, import("@/lib/types").Project>();
+    for (const row of projects ?? []) {
+      projectByUser.set(row.user_id, row);
+    }
+
+    return (profiles ?? [])
+      .map((p) => asProfile(p))
+      .filter((p): p is Profile & { industry_category: string; professional_title: string; looking_for_category: string; looking_for_title: string } =>
+        Boolean(p.industry_category && p.professional_title && p.looking_for_category && p.looking_for_title)
+      )
+      .flatMap((profile) => {
+        const vibe = vibeByUser.get(profile.id);
+        const project = projectByUser.get(profile.id) ?? null;
+        return vibe ? [{ profile, vibe, project }] : [];
+      });
+  },
+  ["completed-operators"],
+  { revalidate: 60 } // Cache for 60 seconds
+);
 
 // Fetch a handful of completed profiles for the public sneak-peek marquee
 export async function loadSneakPeekProfiles(): Promise<Array<{ codename: string; professional_title: string; industry_category: string; intent_filter: string | null }>> {

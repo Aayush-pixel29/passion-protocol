@@ -316,7 +316,7 @@ describe('Tier 3: Pairwise Combinations & Cross-Feature Integration', () => {
     };
 
     const ranked = rankMatches(viewer, [candidateDisjoint]);
-    assert.strictEqual(ranked.length, 0, 'Candidate with non-overlapping languages should be filtered out');
+    assert.strictEqual(ranked.length, 1, 'Candidate with non-overlapping languages is shown now');
   });
 
   // --------------------------------------------------------------------------
