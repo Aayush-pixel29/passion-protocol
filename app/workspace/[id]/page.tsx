@@ -39,22 +39,33 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
     <div className="site">
       <SiteHeader current="messages" signedIn />
       <main className="wrap" style={{ maxWidth: 880 }}>
-        <div className="page-intro">
-          <p className="kicker">Pod workspace</p>
-          <h2>
-            Working with {partner?.codename ?? "partner"}
-          </h2>
-          <p className="sub">
-            {row.deliverables} · ${row.price_amount}
-          </p>
-          <p className="sub" style={{ fontSize: 13, marginTop: 8 }}>
-            This is a working record between the two of you — not legal advice, and Passion Protocol does not hold funds.
-          </p>
+        <div className="page-intro" style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <p className="kicker">Pod workspace</p>
+            <h2>Working with {partner?.codename ?? "partner"}</h2>
+            <p className="sub">
+              {row.deliverables} &middot; ${row.price_amount}
+            </p>
+            <p className="sub" style={{ fontSize: 13, marginTop: 8 }}>
+              This is a working record between the two of you — not legal advice.
+            </p>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <div className="role-tag" style={{ 
+              display: "inline-block", 
+              background: row.payment_status === "paid" ? "rgba(16, 185, 129, 0.1)" : "rgba(234, 179, 8, 0.1)",
+              borderColor: row.payment_status === "paid" ? "rgba(16, 185, 129, 0.3)" : "rgba(234, 179, 8, 0.3)",
+              color: row.payment_status === "paid" ? "#10b981" : "#eab308"
+            }}>
+              {row.payment_status === "paid" ? "Contract Paid" : "Payment Pending"}
+            </div>
+          </div>
         </div>
         <WorkspaceBoard
           contractId={id}
           currentUserId={user.id}
           initialFiles={(files ?? []) as WorkspaceFile[]}
+          paymentStatus={row.payment_status as "paid" | "unpaid"}
         />
         <p style={{ marginTop: 20 }}>
           <Link href="/messages">Back to messages</Link>

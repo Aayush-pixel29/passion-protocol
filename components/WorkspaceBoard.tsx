@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import type { WorkspaceFile } from "@/lib/types";
+import { createCheckoutSession } from "@/lib/actions";
 
 const ALLOWED = new Set([
   "image/jpeg",
@@ -26,10 +27,12 @@ export function WorkspaceBoard({
   contractId,
   currentUserId,
   initialFiles,
+  paymentStatus,
 }: {
   contractId: string;
   currentUserId: string;
   initialFiles: WorkspaceFile[];
+  paymentStatus: "paid" | "unpaid";
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -87,9 +90,43 @@ export function WorkspaceBoard({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
+  async function handlePayment() {
+    setError("");
+    startTransition(async () => {
+      const { url, error: paymentError } = await createCheckoutSession(contractId);
+      if (paymentError) {
+        setError(paymentError);
+      } else if (url) {
+        window.location.href = url;
+      }
+    });
+  }
+
   return (
-    <section className="glass-panel" style={{ padding: 28 }}>
-      <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
+    <>
+      <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div>
+            <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Milestone Payment</h3>
+            <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+              Securely release funds to your partner&apos;s connected Stripe account.
+            </p>
+          </div>
+          {paymentStatus === "paid" ? (
+            <button className="pill-btn accept" disabled style={{ background: "#10b981", borderColor: "#10b981" }}>
+              ✔ Paid
+            </button>
+          ) : (
+            <button className="pill-btn accept" onClick={handlePayment} disabled={pending}>
+              {pending ? "Loading..." : "Pay via Stripe"}
+            </button>
+          )}
+        </div>
+        {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
+      </section>
+
+      <section className="glass-panel" style={{ padding: 28 }}>
+        <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
         <div>
           <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Shared files</h3>
           <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
@@ -146,5 +183,6 @@ export function WorkspaceBoard({
         </ul>
       )}
     </section>
+    </>
   );
 }

@@ -126,6 +126,7 @@ export type PartnershipContract = {
   revenue_split_b: number;
   platform_fee_pct: number;
   status: PartnershipStatus;
+  payment_status?: string;
   created_at: string;
 };
 
