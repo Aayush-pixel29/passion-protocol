@@ -23,7 +23,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
   const partnerId = contract.proposed_by === user.id ? contract.proposed_to : contract.proposed_by;
   const { data: partner } = await supabase
     .from("profiles")
-    .select("codename, professional_title")
+    .select("codename, professional_title, industry_category")
     .eq("id", partnerId)
     .maybeSingle();
 
@@ -66,6 +66,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
           currentUserId={user.id}
           initialFiles={(files ?? []) as WorkspaceFile[]}
           paymentStatus={row.payment_status as "paid" | "unpaid"}
+          categories={[profile?.industry_category, partner?.industry_category].filter(Boolean) as string[]}
         />
         <p style={{ marginTop: 20 }}>
           <Link href="/messages">Back to messages</Link>

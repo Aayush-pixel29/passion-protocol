@@ -28,11 +28,13 @@ export function WorkspaceBoard({
   currentUserId,
   initialFiles,
   paymentStatus,
+  categories,
 }: {
   contractId: string;
   currentUserId: string;
   initialFiles: WorkspaceFile[];
   paymentStatus: "paid" | "unpaid";
+  categories: string[];
 }) {
   const router = useRouter();
   const supabase = createClient();
@@ -124,6 +126,49 @@ export function WorkspaceBoard({
         </div>
         {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
       </section>
+
+      {/* Role-based Dynamic Hub Blocks */}
+      {categories.includes("Software & IT") && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Developer Hub</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Provision a shared GitHub repository or link your Linear ticket board.
+              </p>
+            </div>
+            <button className="pill-btn skip">Link GitHub</button>
+          </div>
+        </section>
+      )}
+
+      {categories.includes("Creative & Design") && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Design Studio</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Embed a live Figma canvas or Miro board for real-time collaboration.
+              </p>
+            </div>
+            <button className="pill-btn skip">Embed Figma</button>
+          </div>
+        </section>
+      )}
+
+      {(categories.includes("Business & Sales") || categories.includes("Marketing & Content")) && (
+        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+            <div>
+              <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Operations Hub</h3>
+              <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
+                Pin your Notion PRD, Google Sheets CRM, or Strategy documents.
+              </p>
+            </div>
+            <button className="pill-btn skip">Link Notion</button>
+          </div>
+        </section>
+      )}
 
       <section className="glass-panel" style={{ padding: 28 }}>
         <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: 18 }}>
