@@ -23,7 +23,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
   const partnerId = contract.proposed_by === user.id ? contract.proposed_to : contract.proposed_by;
   const { data: partner } = await supabase
     .from("profiles")
-    .select("codename, professional_title, industry_category")
+    .select("codename, professional_title, industry_category, stripe_account_id")
     .eq("id", partnerId)
     .maybeSingle();
 

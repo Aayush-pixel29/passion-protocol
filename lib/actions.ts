@@ -478,3 +478,33 @@ export async function createCheckoutSession(contractId: string): Promise<{ error
     return { error: (err as Error).message };
   }
 }
+export async function savePaymentLink(paymentLink: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const { error } = await supabase
+    .from("profiles")
+    .update({ stripe_account_id: paymentLink })
+    .eq("id", user.id);
+
+  if (error) return { error: error.message };
+  revalidatePath("/profile");
+  return {};
+}
+
+export async function markContractAsPaid(contractId: string): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const { error } = await supabase
+    .from("partnership_contracts")
+    .update({ payment_status: "paid" })
+    .eq("id", contractId)
+    .or(`proposed_by.eq.${user.id},proposed_to.eq.${user.id}`);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/workspace/${contractId}`);
+  return {};
+}

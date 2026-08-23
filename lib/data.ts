@@ -17,6 +17,7 @@ function asProfile(
     looking_for_title?: string | null;
     intent_filter?: string | null;
     bio?: string | null;
+    stripe_account_id?: string | null;
     onboarding_complete: boolean;
   },
   contactUrl?: string | null
@@ -36,11 +37,12 @@ function asProfile(
     intent_filter: row.intent_filter || null,
     bio: row.bio || null,
     contact_url: contactUrl ?? null,
+    payment_link: row.stripe_account_id || null,
     onboarding_complete: row.onboarding_complete,
   };
 }
 
-const PROFILE_SELECT = "id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title, intent_filter";
+const PROFILE_SELECT = "id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title, intent_filter, stripe_account_id";
 
 export async function getSessionUser() {
   const supabase = await createClient();
@@ -89,6 +91,8 @@ export async function getOwnProfile() {
 
 import { unstable_cache } from "next/cache";
 
+import { createClient as createPlainClient } from "@supabase/supabase-js";
+
 /**
  * loadCompletedOperators — fetches all onboarded profiles, vibes, and projects.
  * Cached for 60 seconds so we don't spam Supabase on every page load.
@@ -97,7 +101,10 @@ import { unstable_cache } from "next/cache";
  */
 export const loadCompletedOperators = unstable_cache(
   async () => {
-    const supabase = await createClient();
+    const supabase = createPlainClient(
+      process.env.NEXT_PUBLIC_SUPABASE_URL!,
+      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+    );
     const { data: profiles } = await supabase
       .from("profiles")
       .select(PROFILE_SELECT)

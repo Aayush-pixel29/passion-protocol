@@ -3,6 +3,7 @@ import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
+import { PaymentSettings } from "@/components/PaymentSettings";
 import { ProjectForm } from "@/components/ProjectForm";
 import { CATEGORY_ICONS } from "@/lib/types";
 
@@ -213,6 +214,20 @@ export default async function ProfilePage() {
             </div>
           </div>
           <ProjectForm project={project} />
+        </section>
+
+        {/* Payment Settings Section */}
+        <section className="glass-panel" style={{ marginTop: 40, padding: 32 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 12, marginBottom: 16 }}>
+            <span style={{ fontSize: "28px" }}>💳</span>
+            <div>
+              <h3 style={{ margin: 0, fontSize: "20px", color: "var(--text-bright)" }}>Payment Settings</h3>
+              <p className="sub" style={{ margin: "4px 0 0", fontSize: "14px" }}>
+                Add your UPI ID or Payment Link so partners can pay you directly for micro-contracts.
+              </p>
+            </div>
+          </div>
+          <PaymentSettings initialLink={profile.payment_link || null} />
         </section>
 
         {/* Active Partnerships Grid */}
