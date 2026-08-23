@@ -103,7 +103,7 @@ export const loadCompletedOperators = unstable_cache(
   async () => {
     const supabase = createPlainClient(
       process.env.NEXT_PUBLIC_SUPABASE_URL!,
-      process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+      process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     const { data: profiles } = await supabase
       .from("profiles")

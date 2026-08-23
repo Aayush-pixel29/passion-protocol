@@ -66,10 +66,10 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
             priority
           />
         </div>
-        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-bright)", margin: 0 }}>
+        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "#000000", margin: 0 }}>
           No operators with that role yet
         </p>
-        <p style={{ maxWidth: 480, margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
+        <p style={{ maxWidth: 480, margin: 0, color: "#52525b", lineHeight: 1.6 }}>
           You&apos;re one of the first here — invite a collaborator or check back soon!
         </p>
         <Link 
@@ -132,8 +132,8 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
         marginBottom: 24, 
         alignItems: "center",
         padding: "16px 20px",
-        background: "var(--surface-card)",
-        border: "1px solid var(--stroke)",
+        background: "#ffffff",
+        border: "1px solid #000000",
         borderRadius: "var(--radius-sm)"
       }}>
         {/* Search */}
@@ -147,8 +147,8 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
             flex: "1 1 200px", 
             margin: 0, 
             minWidth: 200,
-            background: "var(--surface-inset)",
-            border: "1px solid var(--stroke-subtle)",
+            background: "#f4f4f5",
+            border: "1px solid #000000",
           }}
         />
         
@@ -193,8 +193,8 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
       {error ? <p className="error">{error}</p> : null}
 
       {filtered.length === 0 ? (
-        <div className="glass-panel" style={{ padding: 40, textAlign: "center" }}>
-          <h3 style={{ margin: "0 0 8px", color: "var(--text-bright)" }}>No results found</h3>
+        <div className="match-card" style={{ padding: 40, textAlign: "center" }}>
+          <h3 style={{ margin: "0 0 8px", color: "#000000" }}>No results found</h3>
           <p className="sub" style={{ margin: 0 }}>Try adjusting your filters or search query.</p>
         </div>
       ) : (
@@ -211,12 +211,12 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
           return (
             <article 
               key={card.profile.id} 
-              className={`glass ${accepted ? "border-emerald-500/50" : ""}`}
+              className={`match-card ${accepted ? "success" : ""}`}
               style={{ padding: 24, borderRadius: 20, display: 'flex', flexDirection: 'column', gap: 16 }}
             >
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div style={{ display: "flex", alignItems: "center", gap: 14 }}>
-                  <AvatarSVG name={card.profile.codename} size={48} className={isHighSynergy ? "glow-cyan" : ""} />
+                  <AvatarSVG name={card.profile.codename} size={48} className={isHighSynergy ? "" : ""} />
                   <div>
                     <h3 style={{ margin: "0 0 4px", fontSize: "1.15rem" }}>{card.profile.codename}</h3>
                     <p className="card-skill" style={{ margin: 0, fontSize: "13px" }}>
@@ -234,16 +234,16 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
               
               {card.project ? (
                 <div 
-                  className="glass-inset" 
+                  className="inset-card" 
                   style={{ 
                     marginTop: 14, 
                     padding: "12px 14px",
-                    background: "var(--surface-inset)",
-                    border: "1px solid var(--stroke-subtle)",
+                    background: "#f4f4f5",
+                    border: "1px solid #000000",
                     borderRadius: "var(--radius-sm)"
                   }}
                 >
-                  <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "var(--text-bright)" }}>
+                  <h4 style={{ margin: "0 0 4px 0", fontSize: "0.95rem", color: "#000000" }}>
                     {card.project.title}
                   </h4>
                   <p className="sub" style={{ margin: 0, fontSize: "0.85rem", lineHeight: 1.5 }}>
@@ -256,9 +256,9 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                         style={{ 
                           fontSize: "11px", 
                           padding: "2px 8px", 
-                          color: "var(--accent-3)", 
-                          borderColor: "var(--stroke-cyan)",
-                          background: "rgba(6, 182, 212, 0.10)"
+                          color: "#000000", 
+                          borderColor: "#000000",
+                          background: "#000000"
                         }}
                       >
                         Budget: {card.project.budget_range}
@@ -286,7 +286,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                 style={{ 
                   marginTop: 16,
                   paddingTop: 16,
-                  borderTop: "1px solid var(--stroke-subtle)",
+                  borderTop: "1px solid #000000",
                   display: "flex",
                   alignItems: "flex-end",
                   gap: "12px",
@@ -302,14 +302,14 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                         style={{ 
                           width: "100%", 
                           height: `${heightPct}%`, 
-                          background: `var(--accent-${i+2 > 4 ? 'amber' : i+2})`, 
+                          background: `#000000`, 
                           borderRadius: 4,
                           opacity: 0.8,
                           animationDelay: `${i * 0.15}s`
                         }} 
                         className="animate-bar-dance"
                       />
-                      <span style={{ fontSize: "9px", textTransform: "uppercase", color: "var(--muted)", letterSpacing: "0.05em" }}>
+                      <span style={{ fontSize: "9px", textTransform: "uppercase", color: "#52525b", letterSpacing: "0.05em" }}>
                         {d.label.slice(0,3)}
                       </span>
                     </div>
@@ -323,13 +323,13 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   style={{ 
                     marginTop: "auto", 
                     paddingTop: 14, 
-                    borderTop: "1px solid rgba(16, 185, 129, 0.3)" 
+                    borderTop: "1px solid #000000" 
                   }}
                 >
                   <p 
                     className="status-line" 
                     style={{ 
-                      color: "#10b981", 
+                      color: "#000000", 
                       fontWeight: 700, 
                       display: "flex", 
                       alignItems: "center", 
@@ -342,8 +342,8 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                         width: 8,
                         height: 8,
                         borderRadius: "50%",
-                        background: "#10b981",
-                        boxShadow: "0 0 8px rgba(16, 185, 129, 0.8)",
+                        background: "#000000",
+                        boxShadow: "0 0 8px #000000",
                         display: "inline-block"
                       }}
                     />
@@ -354,19 +354,19 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                       style={{ 
                         marginTop: 8, 
                         padding: "8px 12px", 
-                        background: "rgba(16, 185, 129, 0.08)", 
-                        border: "1px solid rgba(16, 185, 129, 0.25)",
+                        background: "#000000", 
+                        border: "1px solid #000000",
                         borderRadius: "var(--radius-sm)",
                         fontSize: "0.88rem"
                       }}
                     >
-                      <span style={{ color: "var(--muted)", marginRight: 6 }}>Direct Contact:</span>
+                      <span style={{ color: "#52525b", marginRight: 6 }}>Direct Contact:</span>
                       <a
                         href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         style={{ 
-                          color: "var(--accent-3)", 
+                          color: "#000000", 
                           fontWeight: 700, 
                           textDecoration: "underline",
                           wordBreak: "break-all"

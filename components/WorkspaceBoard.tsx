@@ -171,7 +171,7 @@ export function WorkspaceBoard({
 
   return (
     <>
-      <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+      <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
           <div>
             <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Milestone Payment</h3>
@@ -210,7 +210,7 @@ export function WorkspaceBoard({
 
       {/* Role-based Dynamic Hub Blocks */}
       {categories.includes("Software & IT") && (
-        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Developer Hub</h3>
@@ -243,7 +243,7 @@ export function WorkspaceBoard({
       )}
 
       {categories.includes("Creative & Design") && (
-        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Design Studio</h3>
@@ -284,7 +284,7 @@ export function WorkspaceBoard({
       )}
 
       {(categories.includes("Business & Sales") || categories.includes("Marketing & Content")) && (
-        <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
+        <section className="match-card" style={{ padding: 28, marginBottom: 20 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Operations Hub</h3>
@@ -317,7 +317,7 @@ export function WorkspaceBoard({
       )}
 
       <section 
-        className="glass" 
+        className="" 
         style={{ padding: 28, position: "relative" }}
         onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); }}
         onDrop={(e) => {

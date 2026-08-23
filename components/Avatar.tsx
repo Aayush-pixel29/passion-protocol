@@ -10,11 +10,11 @@ function hashString(str: string): number {
 }
 
 // Configuration options
-const SKIN_COLORS = ['#ffdbac', '#f1c27d', '#e0ac69', '#8d5524', '#c68642', '#e5c298', '#9e674b'];
-const HAIR_COLORS = ['#090806', '#2c222b', '#71635a', '#b7a69e', '#d6c4c2', '#b55239', '#5b3b27', '#e29a36'];
+const SKIN_COLORS = ["#ffffff"];
+const HAIR_COLORS = ["#000000"];
 const HAIR_STYLES = ['short', 'long', 'afro', 'mohawk', 'bald'];
 const ACCESSORIES = ['none', 'glasses', 'sunglasses', 'earrings'];
-const BG_COLORS = ['#ff3d78', '#b44dff', '#00ffb3', '#00d4ff', '#ffe033', '#8b5cf6'];
+const BG_COLORS = ["#f4f4f5", "#ffffff", "#e4e4e7"];
 
 interface AvatarProps {
   name: string;
@@ -41,7 +41,7 @@ export function AvatarSVG({ name, size = 40, className = '' }: AvatarProps) {
       viewBox="0 0 100 100" 
       xmlns="http://www.w3.org/2000/svg"
       className={`rounded-full overflow-hidden ${className}`}
-      style={{ borderRadius: '50%', background: config.bg, border: '2px solid rgba(255,255,255,0.1)' }}
+      style={{ borderRadius: '50%', background: config.bg, border: "2px solid #000000", boxShadow: "2px 2px 0px #000000" }}
     >
       {/* Base Face */}
       <circle cx="50" cy="65" r="30" fill={config.skin} />
@@ -81,7 +81,7 @@ export function AvatarSVG({ name, size = 40, className = '' }: AvatarProps) {
         </g>
       )}
       {config.accessory === 'earrings' && (
-        <g fill="#ffe033">
+        <g fill="#000000">
           <circle cx="20" cy="65" r="3" />
           <circle cx="80" cy="65" r="3" />
         </g>

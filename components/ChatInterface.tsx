@@ -292,7 +292,7 @@ export function ChatInterface({
 
   return (
     <div
-      className="glass-panel"
+      className="match-card"
       style={{
         display: "flex",
         height: "100%",

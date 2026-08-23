@@ -104,7 +104,7 @@ export default async function HomePage() {
             <h2 className="section-title">From Vibe Calibration to First Message</h2>
           </div>
           <div className="how-it-works-grid">
-            <article className="step-card glass-panel">
+            <article className="step-card match-card">
               <div className="step-badge">01</div>
               <h3>Calibrate Your Vibe &amp; Role</h3>
               <p>
@@ -113,7 +113,7 @@ export default async function HomePage() {
               </p>
             </article>
 
-            <article className="step-card glass-panel">
+            <article className="step-card match-card">
               <div className="step-badge">02</div>
               <h3>Browse Discover Deck</h3>
               <p>
@@ -122,7 +122,7 @@ export default async function HomePage() {
               </p>
             </article>
 
-            <article className="step-card glass-panel">
+            <article className="step-card match-card">
               <div className="step-badge">03</div>
               <h3>Connect &amp; Lock Terms</h3>
               <p>
@@ -135,7 +135,7 @@ export default async function HomePage() {
 
         {/* HONEST NOTE — one real statement, not three invented case studies */}
         <section id="about">
-          <div className={`${styles.buildNote} glass-panel`}>
+          <div className={`${styles.buildNote} match-card`}>
             <p className={styles.buildNoteQuote}>
               &ldquo;I built Passion Protocol solo because I kept getting ghosted after finding
               people who looked perfect on paper. It&apos;s early — the matching math is real and
