@@ -94,11 +94,11 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
                     <span className="sub">{s.right}</span>
                   </div>
                   <input
-                    name={`vibe_${s.name}`}
+                    name={s.name}
                     type="range"
                     min={1}
                     max={5}
-                    defaultValue={profile?.vibe_answers?.[s.name] ?? 3}
+                    defaultValue={(profile as any)?.[s.name] ?? 3}
                     className="slider"
                     style={{ width: "100%" }}
                   />

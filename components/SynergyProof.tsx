@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { vibeScore } from "@/lib/match";
 import type { VibeAnswers } from "@/lib/types";
 import { AvatarSVG } from "./Avatar";

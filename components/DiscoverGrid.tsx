@@ -24,53 +24,6 @@ const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
   { key: "energy", label: "Energy" },
 ];
 
-function getAvatarImage(codename: string, category: string | null): string {
-  const upper = (codename || "").toUpperCase();
-  if (upper.includes("ALEX") || upper.includes("DEV") || upper.includes("ARJUN")) {
-    return "/images/avatar-alex-coder.png";
-  }
-  if (upper.includes("RIYA") || upper.includes("MAYA") || upper.includes("DESIGN")) {
-    return "/images/avatar-maya-designer.png";
-  }
-  if (upper.includes("NEO") || upper.includes("DAVID") || upper.includes("MAKER")) {
-    return "/images/avatar-david-hardware.png";
-  }
-  if (upper.includes("KAI") || upper.includes("CARLOS") || upper.includes("SCRIPT")) {
-    return "/images/avatar-carlos-writer.png";
-  }
-  if (upper.includes("LUNA") || upper.includes("PRIYA") || upper.includes("CODE")) {
-    return "/images/avatar-priya-fintech.png";
-  }
-  if (upper.includes("GROWTH") || upper.includes("ELENA")) {
-    return "/images/avatar-elena-growth.png";
-  }
-
-  switch (category) {
-    case "Software & IT":
-      return "/images/avatar-alex-coder.png";
-    case "Creative & Design":
-      return "/images/avatar-maya-designer.png";
-    case "Engineering & Hardware":
-      return "/images/avatar-david-hardware.png";
-    case "Business & Sales":
-      return "/images/avatar-elena-growth.png";
-    case "Marketing & Content":
-      return "/images/avatar-carlos-writer.png";
-    default:
-      return "/images/avatar-priya-fintech.png";
-  }
-}
-
-function getAvatarGradient(id: string) {
-  let hash = 0;
-  for (let i = 0; i < id.length; i++) {
-    hash = id.charCodeAt(i) + ((hash << 5) - hash);
-  }
-  const hue1 = Math.abs(hash) % 360;
-  const hue2 = (hue1 + 45) % 360;
-  return `linear-gradient(135deg, hsl(${hue1}, 80%, 60%), hsl(${hue2}, 90%, 48%))`;
-}
-
 export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; allCategories: string[] }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [local, setLocal] = useState(cards);
