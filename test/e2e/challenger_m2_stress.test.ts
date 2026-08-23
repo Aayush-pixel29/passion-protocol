@@ -133,14 +133,25 @@ describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () =>
     });
 
     test('when fill is used on <Image>, container has relative/absolute positioning and sizes attribute', () => {
-      const pageFile = path.join(APP_DIR, 'page.tsx');
-      const content = fs.readFileSync(pageFile, 'utf-8');
+      // Generic check across app/ and components/: any <Image fill> usage anywhere
+      // in the codebase must declare a sizes attribute, so this doesn't regress
+      // if the CTA backdrop (or any other fill-image) is added, removed, or moved.
+      const sourceFiles = [...getAllFiles(APP_DIR), ...getAllFiles(COMPONENTS_DIR)].filter(
+        (f) => f.endsWith('.tsx')
+      );
+      const violations: string[] = [];
 
-      // Check cta-nebula-backdrop usage
-      assert.ok(content.includes('src="/images/cta-nebula-backdrop.png"'), 'CTA banner must use cta-nebula-backdrop.png');
-      assert.ok(content.includes('fill'), 'CTA banner image must use fill');
-      assert.ok(content.includes('sizes='), 'CTA banner fill image must include sizes attribute');
-      assert.ok(content.includes('cta-backdrop-wrap'), 'CTA banner image must be wrapped in cta-backdrop-wrap container');
+      for (const file of sourceFiles) {
+        const content = fs.readFileSync(file, 'utf-8');
+        const imageBlocks = content.match(/<Image\b[^>]*\/?>/g) || [];
+        for (const block of imageBlocks) {
+          if (/\bfill\b/.test(block) && !/sizes\s*=/.test(block)) {
+            violations.push(`${path.basename(file)}: <Image fill> missing sizes attribute`);
+          }
+        }
+      }
+
+      assert.strictEqual(violations.length, 0, `Fill-image CLS violations:\n${violations.join('\n')}`);
     });
   });
 
@@ -236,25 +247,16 @@ describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () =>
       expect(score).toBe(44);
     });
 
-    test('LandingBentoGrid contains all 5 bento cards and 5 3D illustration assets', () => {
-      const bentoFile = path.join(COMPONENTS_DIR, 'LandingBentoGrid.tsx');
-      const content = fs.readFileSync(bentoFile, 'utf-8');
+    test('landing page comparison section covers matching, discovery, and contracts', () => {
+      // The 5-card bento grid was replaced by a tighter 3-row honest comparison
+      // (old way vs. Passion Protocol way). Verify the same 3 core differentiators
+      // are still represented, just without decorative illustration assets.
+      const pageFile = path.join(APP_DIR, 'page.tsx');
+      const content = fs.readFileSync(pageFile, 'utf-8');
 
-      const expectedBentoKeys = ['vibe', 'roles', 'incubator', 'privacy', 'contracts'];
-      for (const key of expectedBentoKeys) {
-        assert.ok(content.includes(`key="${key}"`), `Bento grid missing card key: ${key}`);
-      }
-
-      const expectedBentoImages = [
-        '/images/bento-vibe-engine.png',
-        '/images/bento-roles-complement.png',
-        '/images/bento-project-incubator.png',
-        '/images/bento-privacy-shield.png',
-        '/images/bento-smart-contracts.png',
-      ];
-      for (const img of expectedBentoImages) {
-        assert.ok(content.includes(img), `Bento grid missing image: ${img}`);
-      }
+      assert.match(content, /Pace,\s*Comms,\s*Risk,\s*Energy/, 'Comparison covers the 4D vibe engine');
+      assert.match(content, /Reciprocal matching/i, 'Comparison covers reciprocal matching');
+      assert.match(content, /milestone contract/i, 'Comparison covers milestone contracts');
     });
 
     test('LandingFaq includes 6 glassmorphic FAQ items covering all core topics', () => {
@@ -271,36 +273,33 @@ describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () =>
   });
 
   describe('6. Landing Page Sections & Invariant Verification', () => {
-    test('app/page.tsx renders all 10 required sections', () => {
+    test('app/page.tsx renders all 8 required sections (redesigned, simplified structure)', () => {
+      // Redesigned 2026-08-22: cut from 10 sections to 8. Removed the 5-card
+      // bento grid, the separate simulator section, the 3-card fake-testimonial
+      // grid, and the newsletter footer — each either duplicated the hero's
+      // live SynergyProof widget or relied on fabricated content. Every section
+      // below either carries real product logic or real, non-fabricated copy.
       const pageFile = path.join(APP_DIR, 'page.tsx');
       const content = fs.readFileSync(pageFile, 'utf-8');
 
       // 1. Header
       assert.ok(content.includes('<SiteHeader'), 'Missing SiteHeader');
-      // 2. Hero Section
-      assert.ok(content.includes('hero-section') || content.includes('hero-split'), 'Missing Hero section');
-      assert.ok(content.includes('<LandingHeroPreview'), 'Missing LandingHeroPreview');
-      // 3. Metrics Ribbon
-      assert.ok(content.includes('metrics-ribbon'), 'Missing Metrics Ribbon');
-      assert.ok(content.includes('4D'), 'Missing 4D stat');
-      assert.ok(content.includes('100%'), 'Missing 100% stat');
-      assert.ok(content.includes('&lt;2min') || content.includes('<2min'), 'Missing <2min stat');
-      assert.ok(content.includes('Free'), 'Missing Free stat');
-      // 4. Bento Grid
-      assert.ok(content.includes('<LandingBentoGrid'), 'Missing LandingBentoGrid');
+      // 2. Hero with the live formula widget (replaces the static mock match card)
+      assert.ok(content.includes('styles.hero'), 'Missing Hero section');
+      assert.ok(content.includes('<SynergyProof'), 'Missing SynergyProof live widget');
+      // 3. Real registered builders (self-hides if pool is empty — not fabricated)
+      assert.ok(content.includes('<SneakPeekMarquee'), 'Missing SneakPeekMarquee');
+      // 4. Comparison section (replaces the 5-card bento grid)
+      assert.ok(content.includes('compareSection') || content.includes('COMPARISONS'), 'Missing comparison section');
       // 5. How It Works
       assert.ok(content.includes('how-it-works-section') || content.includes('how-it-works-grid'), 'Missing How It Works');
-      // 6. Simulator
-      assert.ok(content.includes('<LandingSimulator'), 'Missing LandingSimulator');
-      // 7. Testimonials
-      assert.ok(content.includes('testimonials-section') || content.includes('testimonials-grid'), 'Missing Testimonials');
-      // 8. FAQ
+      // 6. Honest builder note (replaces the 3-card fabricated testimonial grid)
+      assert.ok(content.includes('buildNote'), 'Missing honest builder note');
+      // 7. FAQ
       assert.ok(content.includes('<LandingFaq'), 'Missing LandingFaq');
-      // 9. Pre-Footer CTA
-      assert.ok(content.includes('cta-banner-section') || content.includes('cta-banner'), 'Missing Pre-Footer CTA');
-      // 10. Footer
-      assert.ok(content.includes('site-footer'), 'Missing Footer');
-      assert.ok(content.includes('All Systems Operational'), 'Missing operational status');
+      // 8. CTA + Footer
+      assert.ok(content.includes('ctaSimple'), 'Missing CTA section');
+      assert.ok(content.includes('footerSimple'), 'Missing Footer');
     });
   });
 });

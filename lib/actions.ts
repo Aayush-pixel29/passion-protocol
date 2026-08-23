@@ -289,8 +289,26 @@ export async function sendMessage(
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Session expired." };
-  
+
   if (!content.trim()) return { error: "Message cannot be empty." };
+  if (content.length > 2000) {
+    return { error: "Message is too long (2000 character limit)." };
+  }
+
+  // Rate limiting: block rapid-fire spam without impacting real conversation pace
+  const oneMinuteAgo = new Date(Date.now() - 60 * 1000).toISOString();
+  const { count, error: countError } = await supabase
+    .from("messages")
+    .select("*", { count: "exact", head: true })
+    .eq("sender_id", user.id)
+    .gte("created_at", oneMinuteAgo);
+
+  if (countError) {
+    return { error: "Failed to verify rate limits." };
+  }
+  if (count !== null && count >= 20) {
+    return { error: "You're sending messages too fast. Wait a moment and try again." };
+  }
 
   const { data, error } = await supabase
     .from("messages")

@@ -172,8 +172,11 @@ describe('Tier 1: Feature Coverage (F1 to F18)', () => {
       assert.match(content, /\/login|\/discover/, 'Must link to login or discover routes');
     });
 
-    test('F3-4: hero renders live simulated co-founder match card', () => {
-      assert.match(content, /hero-panel|score-badge|hero-sample/i, 'Must render sample match card');
+    test('F3-4: hero renders the live synergy-score formula widget', () => {
+      assert.match(content, /SynergyProof/, 'Must render the interactive SynergyProof component');
+      const synergyPath = path.join(COMPONENTS_DIR, 'SynergyProof.tsx');
+      const synergyContent = fs.existsSync(synergyPath) ? fs.readFileSync(synergyPath, 'utf-8') : '';
+      assert.match(synergyContent, /vibeScore/, 'Widget must use the real vibeScore formula, not a hardcoded number');
     });
 
     test('F3-5: hero lists core matchmaking differentiators', () => {
@@ -188,28 +191,30 @@ describe('Tier 1: Feature Coverage (F1 to F18)', () => {
     const pagePath = path.join(APP_DIR, 'page.tsx');
     const content = fs.existsSync(pagePath) ? fs.readFileSync(pagePath, 'utf-8') : '';
 
-    test('F4-1: landing page defines structured hero badge and differentiator list', () => {
-      assert.match(content, /hero-list|hero-sample|score-badge/, 'Landing contains social proof / live match preview structure');
-      assert.match(content, /Real-time Match|Sample match/i, 'Highlights live real-time matchmaking');
+    test('F4-1: landing page defines a hero badge and live differentiator widget', () => {
+      assert.match(content, /hero-badge-pill/, 'Landing contains the early-access badge pill');
+      assert.match(content, /SynergyProof/, 'Landing renders the live match preview widget');
     });
 
     test('F4-2: metrics & copy highlight builder community and complementary roles', () => {
       assert.match(content, /builders,\s*designers,\s*writers,\s*and\s*makers|builders/i, 'Highlights multi-disciplinary builder community');
-      assert.match(content, /Designer looking for a Coder|RIYA_DESIGNS/i, 'Demonstrates real complementary role pairing');
+      assert.match(content, /Reciprocal matching/i, 'Demonstrates real complementary role pairing');
     });
 
-    test('F4-3: metrics emphasize rapid real-time match and high synergy scores', () => {
-      assert.match(content, /94%|score-badge/i, 'Displays verified high synergy percentage badge');
-      assert.match(content, /Real-time Match/i, 'Emphasizes instantaneous match calculation');
+    test('F4-3: hero stats emphasize deterministic, reciprocal matching', () => {
+      assert.match(content, /heroStats/i, 'Renders the honest stats row');
+      assert.match(content, /Reciprocal matching/i, 'Emphasizes reciprocal matching, not a fabricated match rate');
     });
 
     test('F4-4: social proof reinforces private contact unlock invariant', () => {
-      assert.match(content, /Private contact reveal on mutual connect|contact information is instantly unlocked/i, 'Highlights privacy and contact unlock guarantee');
+      const faqPath = path.join(COMPONENTS_DIR, 'LandingFaq.tsx');
+      const faqContent = fs.existsSync(faqPath) ? fs.readFileSync(faqPath, 'utf-8') : '';
+      assert.match(faqContent, /revealed upon mutual connection acceptance|mutual connection/i, 'Highlights privacy and contact unlock guarantee');
     });
 
-    test('F4-5: feature grid organizes value props into distinct numbered cards', () => {
-      assert.match(content, /feature-grid|feature-card/i, 'Defines multi-column feature grid');
-      assert.match(content, /feature-index/i, 'Includes structured step/feature index tags');
+    test('F4-5: differentiators are organized into a scannable comparison list', () => {
+      assert.match(content, /compareGrid|compareRow/i, 'Defines the old-way vs new-way comparison structure');
+      assert.match(content, /COMPARISONS/, 'Comparison rows are driven by real content, not decorative markup');
     });
   });
 
@@ -446,7 +451,11 @@ describe('Tier 1: Feature Coverage (F1 to F18)', () => {
     });
 
     test('F11-5: footer incorporates border separator from body', () => {
-      assert.match(content, /borderTop|border/);
+      const modulePath = path.join(APP_DIR, 'page.module.css');
+      const moduleCss = fs.existsSync(modulePath) ? fs.readFileSync(modulePath, 'utf-8') : '';
+      const hasInlineBorder = /borderTop|border/.test(content);
+      const hasModuleBorder = /\.footerSimple\s*{[^}]*border-top/.test(moduleCss);
+      assert.ok(hasInlineBorder || hasModuleBorder, 'Footer must have a border separator, inline or in its CSS module');
     });
   });
 
