@@ -263,7 +263,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                 </div>
               ) : null}
               
-              <div style={{ background: "rgba(0, 255, 179, 0.05)", border: "1px solid rgba(0, 255, 179, 0.2)", borderRadius: 16, padding: 16 }}>
+              <div style={{ background: "#f4f4f5", border: "1px solid #000000", borderRadius: 16, padding: 16 }}>
                 <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: "#000000", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}>VIBE PRINT</h4>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 48 }}>
                   {DIMS.map((d, i) => {

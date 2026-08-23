@@ -353,7 +353,7 @@ export function ChatInterface({
                   style={{
                     padding: "16px 24px",
                     cursor: "pointer",
-                    background: isActive ? "rgba(180, 77, 255, 0.1)" : "transparent",
+                    background: isActive ? "#f4f4f5" : "transparent",
                     borderLeft: isActive ? "4px solid #000000" : "4px solid transparent",
                     borderBottom: "1px solid #000000",
                     display: "flex",
@@ -363,7 +363,7 @@ export function ChatInterface({
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #000000", color: "#000000", fontWeight: 700, fontSize: 18, boxShadow: isActive ? "0 0 16px rgba(180, 77, 255, 0.3)" : "none" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #000000", color: "#000000", fontWeight: 700, fontSize: 18, boxShadow: isActive ? "0 0 16px #000000" : "none" }}>
                       {initial}
                     </div>
                     <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: "#000000", border: "2px solid #080810" }} />
@@ -394,7 +394,7 @@ export function ChatInterface({
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
-                  background: "linear-gradient(180deg, rgba(180, 77, 255, 0.08) 0%, transparent 100%)",
+                  background: "linear-gradient(180deg, #f4f4f5 0%, transparent 100%)",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
@@ -451,14 +451,14 @@ export function ChatInterface({
                         fontSize: 15, 
                         lineHeight: 1.6, 
                         wordBreak: "break-word",
-                        background: isMe ? "rgba(180, 77, 255, 0.15)" : "#f4f4f5",
+                        background: isMe ? "#f4f4f5" : "#f4f4f5",
                         border: isMe ? "1px solid #000000" : "1px solid #000000",
                         color: "#000000",
                         padding: "14px 20px",
                         borderRadius: 24,
                         borderBottomRightRadius: isMe ? 4 : 24,
                         borderBottomLeftRadius: isMe ? 24 : 4,
-                        boxShadow: isMe ? "0 4px 24px rgba(180, 77, 255, 0.2)" : "none"
+                        boxShadow: isMe ? "0 4px 24px #000000" : "none"
                       }}>
                         {msg.content}
                       </div>
@@ -479,8 +479,8 @@ export function ChatInterface({
                       padding: 32,
                       textAlign: "center",
                       border: ctr.status === "accepted" ? "1px solid #000000" : "1px solid #000000",
-                      background: ctr.status === "accepted" ? "rgba(0, 255, 179, 0.05)" : "rgba(255,255,255,0.02)",
-                      boxShadow: ctr.status === "accepted" ? "0 8px 32px rgba(0, 255, 179, 0.15)" : "none",
+                      background: ctr.status === "accepted" ? "#f4f4f5" : "rgba(255,255,255,0.02)",
+                      boxShadow: ctr.status === "accepted" ? "0 8px 32px #f4f4f5" : "none",
                       position: "relative",
                       overflow: "hidden"
                     }}
@@ -505,8 +505,8 @@ export function ChatInterface({
                             letterSpacing: "0.1em",
                             textTransform: "uppercase",
                             padding: "4px 12px",
-                            background: "rgba(180, 77, 255, 0.15)",
-                            border: "1px solid rgba(180, 77, 255, 0.3)",
+                            background: "#f4f4f5",
+                            border: "1px solid #000000",
                             color: "#d8b4fe",
                             borderRadius: 32,
                           }}

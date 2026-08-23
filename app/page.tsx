@@ -22,12 +22,12 @@ export default async function HomePage() {
     <div className="site">
       <SiteHeader current="none" signedIn={Boolean(user)} />
 
-      <main className="wrap mesh-bg" style={{ minHeight: '100vh' }}>
+      <main className="wrap" style={{ minHeight: '100vh' }}>
         {/* HERO — the pitch, paired with the actual mechanism, not a mockup of it */}
         <section className={styles.hero}>
           <div>
-            <div className="hero-badge-pill">
-              <span className="badge-spark">✨</span>
+            <div className="hero-badge-pill match-card">
+              
               <span>Now in Early Access · Zero-Spam Co-Founder Network</span>
             </div>
 
@@ -36,7 +36,7 @@ export default async function HomePage() {
             <h1 className="hero-headline">
               Stop Building in Isolation.
               <br />
-              <span className="gradient-text">Find Your Co-Founder Match.</span>
+              <span >Find Your Co-Founder Match.</span>
             </h1>
 
             <p className="lede">
@@ -74,7 +74,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <SynergyProof />
+          <div style={{ display: "none" }}></div>
         </section>
 
         {/* Real registered builders — this component hides itself if the pool is empty */}

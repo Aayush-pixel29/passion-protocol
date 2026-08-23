@@ -45,16 +45,16 @@ export function SynergyProof() {
       <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
         
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <AvatarSVG name="You" size={64} className="glow-emerald animate-float" />
+          <AvatarSVG name="You" size={64} className=" animate-float" />
           <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)' }}>YOU</span>
         </div>
 
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0 16px' }}>
-          <span className="text-glow-emerald" style={{ fontSize: '28px', fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--accent-emerald)', zIndex: 10, marginBottom: '8px' }}>
+          <span className="text-" style={{ fontSize: '28px', fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--accent-emerald)', zIndex: 10, marginBottom: '8px' }}>
             {score}%
           </span>
           <svg style={{ position: 'absolute', top: '50%', width: '100%', height: '32px', transform: 'translateY(-50%)', zIndex: 0 }} preserveAspectRatio="none">
-            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="rgba(0, 255, 179, 0.3)" strokeWidth="2" strokeDasharray="4 4" />
+            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="#000000" strokeWidth="2" strokeDasharray="4 4" />
             <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="var(--accent-emerald)" strokeWidth="2" className="animate-connect-line" />
           </svg>
           <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10, background: 'var(--bg)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--stroke)' }}>
@@ -63,7 +63,7 @@ export function SynergyProof() {
         </div>
 
         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <AvatarSVG name={bestMatch.name} size={64} className="glow-purple animate-float" />
+          <AvatarSVG name={bestMatch.name} size={64} className=" animate-float" />
           <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)' }}>{bestMatch.name}</span>
         </div>
       </div>

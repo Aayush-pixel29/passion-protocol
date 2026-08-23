@@ -176,7 +176,7 @@ export function WorkspaceBoard({
         {paymentStatus === "unpaid" ? (
           <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--glow-rose)" }} />
         ) : (
-          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--glow-emerald)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--)" }} />
         )}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
@@ -205,7 +205,7 @@ export function WorkspaceBoard({
               </span>
             )}
             {paymentStatus === "paid" ? (
-              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: "#000000", border: "1px solid #000000", opacity: 1, boxShadow: "0 0 16px rgba(0, 255, 179, 0.2)", cursor: "default" }}>
+              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: "#000000", border: "1px solid #000000", opacity: 1, boxShadow: "0 0 16px #000000", cursor: "default" }}>
                 Funds Secured ✔
               </button>
             ) : (
@@ -280,7 +280,7 @@ export function WorkspaceBoard({
                 const embedUrl = isFigmaUrl ? `https://www.figma.com/embed?embed_host=passionprotocol&url=${encodeURIComponent(e.url)}` : e.url;
                 
                 return (
-                  <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #000000", boxShadow: "0 0 32px rgba(180, 77, 255, 0.15)" }}>
+                  <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #000000", boxShadow: "0 0 32px #f4f4f5" }}>
                     <iframe 
                       src={embedUrl}
                       style={{ width: "100%", height: 500, border: "none", background: "#000" }}
