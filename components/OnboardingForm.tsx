@@ -56,7 +56,7 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
           <div className="animate-slide-up" style={{ display: "flex", flexDirection: "column", gap: 24 }}>
             <div style={{ textAlign: "center", marginBottom: 16 }}>
               <AvatarSVG name={codename || "New User"} size={80} className="glow-emerald mx-auto mb-4" />
-              <h2 style={{ margin: 0, fontSize: 24 }}>Calibrate Identity</h2>
+              <h2 style={{ margin: 0, fontSize: 24 }}>1. Identity</h2>
             </div>
             
             <label>
@@ -75,6 +75,16 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
               <label>
                 <span className="label">Spoken Languages</span>
                 <input name="spoken_languages" className="input glass" defaultValue={profile?.spoken_languages?.join(", ") ?? ""} placeholder="English, Hindi..." />
+              </label>
+            </div>
+            <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 12 }}>
+              <label>
+                <span className="label">LinkedIn URL</span>
+                <input name="linkedin_url" className="input glass" defaultValue={profile?.linkedin_url ?? ""} />
+              </label>
+              <label>
+                <span className="label">Phone Number</span>
+                <input name="phone_number" className="input glass" defaultValue={profile?.phone_number ?? ""} />
               </label>
             </div>
             <button type="button" className="pill-btn accept" style={{ marginTop: 16 }} onClick={() => setStep(2)}>Next Step →</button>
