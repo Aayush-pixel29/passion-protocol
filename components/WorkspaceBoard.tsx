@@ -42,17 +42,19 @@ export function WorkspaceBoard({
   const supabase = createClient();
   const [files, setFiles] = useState(initialFiles);
   const [embeds, setEmbeds] = useState<WorkspaceEmbed[]>(initialEmbeds);
-  const [error, setError] = useState("");
+  const [paymentError, setPaymentError] = useState("");
+  const [uploadError, setUploadError] = useState("");
+  const [embedError, setEmbedError] = useState("");
   const [pending, startTransition] = useTransition();
 
   async function onUpload(file: File) {
-    setError("");
+    setUploadError("");
     if (!ALLOWED.has(file.type)) {
-      setError("Use an image, PDF, Word doc, or text file.");
+      setUploadError("Use an image, PDF, Word doc, or text file.");
       return;
     }
     if (file.size > MAX_BYTES) {
-      setError("File must be 10MB or smaller.");
+      setUploadError("File must be 10MB or smaller.");
       return;
     }
     const path = `${contractId}/${crypto.randomUUID()}-${safeName(file.name)}`;
@@ -61,7 +63,7 @@ export function WorkspaceBoard({
       upsert: false,
     });
     if (upError) {
-      setError(upError.message);
+      setUploadError(upError.message);
       return;
     }
     const { data, error: metaError } = await supabase
@@ -77,7 +79,7 @@ export function WorkspaceBoard({
       .select("*")
       .single();
     if (metaError) {
-      setError(metaError.message);
+      setUploadError(metaError.message);
       return;
     }
     setFiles((prev) => [data as WorkspaceFile, ...prev]);
@@ -89,7 +91,7 @@ export function WorkspaceBoard({
       .from("pod-workspace")
       .createSignedUrl(path, 120);
     if (signError || !data?.signedUrl) {
-      setError(signError?.message || "Could not open file.");
+      setUploadError(signError?.message || "Could not open file.");
       return;
     }
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
@@ -97,36 +99,36 @@ export function WorkspaceBoard({
 
   async function handleAddEmbed(type: "figma" | "github" | "notion", url: string) {
     if (!url) return;
-    setError("");
+    setUploadError("");
 
     // Validate URL
     let parsedUrl;
     try {
       parsedUrl = new URL(url);
     } catch {
-      setError("Invalid URL format.");
+      setEmbedError("Invalid URL format.");
       return;
     }
 
     if (parsedUrl.protocol !== "https:") {
-      setError("Only HTTPS URLs are allowed.");
+      setEmbedError("Only HTTPS URLs are allowed.");
       return;
     }
 
     const host = parsedUrl.hostname.toLowerCase();
     
     if (type === "github" && host !== "github.com") {
-      setError("Only github.com URLs are allowed for Developer Hub.");
+      setEmbedError("Only github.com URLs are allowed for Developer Hub.");
       return;
     }
     
     if (type === "figma" && host !== "www.figma.com" && host !== "figma.com") {
-      setError("Only figma.com URLs are allowed for Design Studio.");
+      setEmbedError("Only figma.com URLs are allowed for Design Studio.");
       return;
     }
     
     if (type === "notion" && !host.endsWith("notion.so") && !host.endsWith("notion.site")) {
-      setError("Only Notion URLs are allowed for Operations Hub.");
+      setEmbedError("Only Notion URLs are allowed for Operations Hub.");
       return;
     }
 
@@ -151,18 +153,18 @@ export function WorkspaceBoard({
       .single();
       
     if (insertError) {
-      setError(insertError.message);
+      setEmbedError(insertError.message);
     } else if (data) {
       setEmbeds(prev => [data as WorkspaceEmbed, ...prev]);
     }
   }
 
   async function handlePayment() {
-    setError("");
+    setUploadError("");
     startTransition(async () => {
       const { url, error: paymentError } = await createCheckoutSession(contractId);
       if (paymentError) {
-        setError(paymentError);
+        setPaymentError(paymentError);
       } else if (url) {
         window.location.href = url;
       }
@@ -189,7 +191,7 @@ export function WorkspaceBoard({
             </button>
           )}
         </div>
-        {error ? <p className="error" style={{ marginTop: 12 }}>{error}</p> : null}
+        {paymentError ? <p className="error" style={{ marginTop: 12 }}>{paymentError}</p> : null}
       </section>
 
       {/* Role-based Dynamic Hub Blocks */}
@@ -323,7 +325,7 @@ export function WorkspaceBoard({
           />
         </label>
       </div>
-      {error ? <p className="error">{error}</p> : null}
+      {uploadError ? <p className="error">{uploadError}</p> : null}
       {files.length === 0 ? (
         <div className="empty" style={{ padding: 32 }}>
           No files yet. Drop the mock, spec, or screenshot you need to start.
