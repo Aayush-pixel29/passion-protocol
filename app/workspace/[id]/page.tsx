@@ -33,6 +33,12 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
     .eq("contract_id", id)
     .order("created_at", { ascending: false });
 
+  const { data: embeds } = await supabase
+    .from("workspace_embeds")
+    .select("*")
+    .eq("contract_id", id)
+    .order("created_at", { ascending: false });
+
   const row = contract as PartnershipContract;
 
   return (
@@ -65,6 +71,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
           contractId={id}
           currentUserId={user.id}
           initialFiles={(files ?? []) as WorkspaceFile[]}
+          initialEmbeds={(embeds ?? [])}
           paymentStatus={row.payment_status as "paid" | "unpaid"}
           categories={[profile?.industry_category, partner?.industry_category].filter(Boolean) as string[]}
         />

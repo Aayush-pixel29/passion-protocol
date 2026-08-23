@@ -1,4 +1,4 @@
-import { DiscoverDeck, type DiscoverCard } from "@/components/DiscoverDeck";
+import { DiscoverGrid, type DiscoverCard } from "@/components/DiscoverGrid";
 import { SiteHeader } from "@/components/SiteHeader";
 import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
@@ -76,7 +76,7 @@ export default async function DiscoverPage() {
               People who match your <span className="gradient-text">vibe</span>
             </h2>
             <p className="sub">
-              <strong>{profile.codename}</strong> · seeking <strong>{profile.looking_for_title}</strong> · ranked by 4D synergy & reciprocal discipline
+              <strong>{profile.codename}</strong> &middot; seeking <strong>{profile.looking_for_title}</strong> &middot; ranked by 4D synergy & reciprocal discipline
             </p>
           </div>
           <div 
@@ -106,7 +106,7 @@ export default async function DiscoverPage() {
             <span>{cards.length} {cards.length === 1 ? "operator" : "operators"} available</span>
           </div>
         </div>
-        <DiscoverDeck cards={cards} />
+        <DiscoverGrid cards={cards} />
       </main>
     </div>
   );

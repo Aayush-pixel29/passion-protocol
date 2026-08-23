@@ -3,7 +3,7 @@
 import { useState, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
-import type { WorkspaceFile } from "@/lib/types";
+import type { WorkspaceFile, WorkspaceEmbed } from "@/lib/types";
 import { createCheckoutSession } from "@/lib/actions";
 
 const ALLOWED = new Set([
@@ -27,18 +27,21 @@ export function WorkspaceBoard({
   contractId,
   currentUserId,
   initialFiles,
+  initialEmbeds,
   paymentStatus,
   categories,
 }: {
   contractId: string;
   currentUserId: string;
   initialFiles: WorkspaceFile[];
+  initialEmbeds: WorkspaceEmbed[];
   paymentStatus: "paid" | "unpaid";
   categories: string[];
 }) {
   const router = useRouter();
   const supabase = createClient();
   const [files, setFiles] = useState(initialFiles);
+  const [embeds, setEmbeds] = useState<WorkspaceEmbed[]>(initialEmbeds);
   const [error, setError] = useState("");
   const [pending, startTransition] = useTransition();
 
@@ -92,6 +95,68 @@ export function WorkspaceBoard({
     window.open(data.signedUrl, "_blank", "noopener,noreferrer");
   }
 
+  async function handleAddEmbed(type: "figma" | "github" | "notion", url: string) {
+    if (!url) return;
+    setError("");
+
+    // Validate URL
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      setError("Invalid URL format.");
+      return;
+    }
+
+    if (parsedUrl.protocol !== "https:") {
+      setError("Only HTTPS URLs are allowed.");
+      return;
+    }
+
+    const host = parsedUrl.hostname.toLowerCase();
+    
+    if (type === "github" && host !== "github.com") {
+      setError("Only github.com URLs are allowed for Developer Hub.");
+      return;
+    }
+    
+    if (type === "figma" && host !== "www.figma.com" && host !== "figma.com") {
+      setError("Only figma.com URLs are allowed for Design Studio.");
+      return;
+    }
+    
+    if (type === "notion" && !host.endsWith("notion.so") && !host.endsWith("notion.site")) {
+      setError("Only Notion URLs are allowed for Operations Hub.");
+      return;
+    }
+
+    // Sanitize Figma URL to always be the embed format if not already
+    let finalUrl = url;
+    if (type === "figma") {
+      // The embed iframe does this dynamically, but storing it clean is safer
+      // We will let the iframe renderer handle it, so just store the validated URL
+      finalUrl = url;
+    }
+
+    const { data, error: insertError } = await supabase
+      .from("workspace_embeds")
+      .insert({
+        contract_id: contractId,
+        added_by: currentUserId,
+        embed_type: type,
+        url: finalUrl,
+        title: `${type} Link`
+      })
+      .select("*")
+      .single();
+      
+    if (insertError) {
+      setError(insertError.message);
+    } else if (data) {
+      setEmbeds(prev => [data as WorkspaceEmbed, ...prev]);
+    }
+  }
+
   async function handlePayment() {
     setError("");
     startTransition(async () => {
@@ -130,43 +195,108 @@ export function WorkspaceBoard({
       {/* Role-based Dynamic Hub Blocks */}
       {categories.includes("Software & IT") && (
         <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Developer Hub</h3>
               <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
                 Provision a shared GitHub repository or link your Linear ticket board.
               </p>
             </div>
-            <button className="pill-btn skip">Link GitHub</button>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter GitHub Repository URL:");
+                if (url) handleAddEmbed("github", url);
+              }}
+            >
+              Link GitHub
+            </button>
           </div>
+          {embeds.filter(e => e.embed_type === 'github').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {embeds.filter(e => e.embed_type === 'github').map(e => (
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
+                  <span style={{ marginRight: 12 }}>💻</span>
+                  <span style={{ flexGrow: 1 }}>{e.url.replace("https://github.com/", "")}</span>
+                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
       )}
 
       {categories.includes("Creative & Design") && (
         <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Design Studio</h3>
               <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
                 Embed a live Figma canvas or Miro board for real-time collaboration.
               </p>
             </div>
-            <button className="pill-btn skip">Embed Figma</button>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter Figma Share URL:");
+                if (url) handleAddEmbed("figma", url);
+              }}
+            >
+              Embed Figma
+            </button>
           </div>
+          {embeds.filter(e => e.embed_type === 'figma').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+              {embeds.filter(e => e.embed_type === 'figma').map(e => {
+                const isFigmaUrl = e.url.includes('figma.com');
+                const embedUrl = isFigmaUrl ? `https://www.figma.com/embed?embed_host=passionprotocol&url=${encodeURIComponent(e.url)}` : e.url;
+                
+                return (
+                  <div key={e.id} style={{ borderRadius: 12, overflow: "hidden", border: "1px solid var(--stroke)" }}>
+                    <iframe 
+                      src={embedUrl}
+                      style={{ width: "100%", height: 400, border: "none" }}
+                      allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-popups"
+                    />
+                  </div>
+                );
+              })}
+            </div>
+          )}
         </section>
       )}
 
       {(categories.includes("Business & Sales") || categories.includes("Marketing & Content")) && (
         <section className="glass-panel" style={{ padding: 28, marginBottom: 20 }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16 }}>
+          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 16 : 0 }}>
             <div>
               <h3 style={{ margin: 0, color: "var(--text-bright)" }}>Operations Hub</h3>
               <p className="sub" style={{ margin: "6px 0 0", fontSize: 14 }}>
                 Pin your Notion PRD, Google Sheets CRM, or Strategy documents.
               </p>
             </div>
-            <button className="pill-btn skip">Link Notion</button>
+            <button 
+              className="pill-btn skip"
+              onClick={() => {
+                const url = window.prompt("Enter Notion or Google Doc URL:");
+                if (url) handleAddEmbed("notion", url);
+              }}
+            >
+              Link Doc
+            </button>
           </div>
+          {embeds.filter(e => e.embed_type === 'notion').length > 0 && (
+            <div style={{ display: "flex", flexDirection: "column", gap: 8 }}>
+              {embeds.filter(e => e.embed_type === 'notion').map(e => (
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "12px 16px", background: "var(--surface-inset)", border: "1px solid var(--stroke)", borderRadius: 8, color: "var(--text-bright)", textDecoration: "none" }}>
+                  <span style={{ marginRight: 12 }}>📝</span>
+                  <span style={{ flexGrow: 1 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
+                  <span style={{ color: "var(--accent-primary)", fontSize: 13 }}>Open &rarr;</span>
+                </a>
+              ))}
+            </div>
+          )}
         </section>
       )}
 

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/actions";
 
 type Props = {
-  current: "discover" | "profile" | "messages" | "none";
+  current: "discover" | "profile" | "messages" | "workspaces" | "none";
   signedIn: boolean;
 };
 
@@ -38,6 +38,13 @@ export function SiteHeader({ current, signedIn }: Props) {
                 aria-current={current === "discover" ? "page" : undefined}
               >
                 Discover
+              </Link>
+              <Link 
+                href="/workspaces" 
+                className={current === "workspaces" ? "active" : ""}
+                aria-current={current === "workspaces" ? "page" : undefined}
+              >
+                Workspaces
               </Link>
               <Link 
                 href="/messages" 

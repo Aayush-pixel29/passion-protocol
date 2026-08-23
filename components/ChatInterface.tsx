@@ -295,7 +295,8 @@ export function ChatInterface({
       className="glass-panel"
       style={{
         display: "flex",
-        height: "680px",
+        height: "100%",
+        width: "100%",
         overflow: "hidden",
         boxShadow: "var(--shadow)",
         border: "1px solid var(--stroke)",
