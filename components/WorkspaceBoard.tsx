@@ -98,13 +98,53 @@ export function WorkspaceBoard({
   async function handleAddEmbed(type: "figma" | "github" | "notion", url: string) {
     if (!url) return;
     setError("");
+
+    // Validate URL
+    let parsedUrl;
+    try {
+      parsedUrl = new URL(url);
+    } catch {
+      setError("Invalid URL format.");
+      return;
+    }
+
+    if (parsedUrl.protocol !== "https:") {
+      setError("Only HTTPS URLs are allowed.");
+      return;
+    }
+
+    const host = parsedUrl.hostname.toLowerCase();
+    
+    if (type === "github" && host !== "github.com") {
+      setError("Only github.com URLs are allowed for Developer Hub.");
+      return;
+    }
+    
+    if (type === "figma" && host !== "www.figma.com" && host !== "figma.com") {
+      setError("Only figma.com URLs are allowed for Design Studio.");
+      return;
+    }
+    
+    if (type === "notion" && !host.endsWith("notion.so") && !host.endsWith("notion.site")) {
+      setError("Only Notion URLs are allowed for Operations Hub.");
+      return;
+    }
+
+    // Sanitize Figma URL to always be the embed format if not already
+    let finalUrl = url;
+    if (type === "figma") {
+      // The embed iframe does this dynamically, but storing it clean is safer
+      // We will let the iframe renderer handle it, so just store the validated URL
+      finalUrl = url;
+    }
+
     const { data, error: insertError } = await supabase
       .from("workspace_embeds")
       .insert({
         contract_id: contractId,
         added_by: currentUserId,
         embed_type: type,
-        url,
+        url: finalUrl,
         title: `${type} Link`
       })
       .select("*")
@@ -217,6 +257,7 @@ export function WorkspaceBoard({
                       src={embedUrl}
                       style={{ width: "100%", height: 400, border: "none" }}
                       allowFullScreen
+                      sandbox="allow-same-origin allow-scripts allow-popups"
                     />
                   </div>
                 );

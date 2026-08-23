@@ -29,9 +29,11 @@ create policy "Workspace embeds are visible to contract members"
 create policy "Contract members can add embeds"
   on public.workspace_embeds for insert
   with check (
+    added_by = auth.uid() and
     exists (
       select 1 from public.partnership_contracts pc
       where pc.id = workspace_embeds.contract_id
       and (pc.proposed_by = auth.uid() or pc.proposed_to = auth.uid())
+      and pc.status = 'accepted'
     )
   );
