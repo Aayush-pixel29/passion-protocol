@@ -13,6 +13,7 @@ export type DiscoverCard = {
   score: number;
   connectStatus: ConnectState;
   contactUrl?: string | null;
+  reciprocalMatch?: boolean;
 };
 
 const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
@@ -69,16 +70,36 @@ function getAvatarGradient(id: string) {
   return `linear-gradient(135deg, hsl(${hue1}, 80%, 60%), hsl(${hue2}, 90%, 48%))`;
 }
 
-export function DiscoverGrid({ cards }: { cards: DiscoverCard[] }) {
+export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; allCategories: string[] }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
   const [local, setLocal] = useState(cards);
   const [error, setError] = useState("");
   const [busyId, setBusyId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
+  
+  // Filter state
+  const [categoryFilter, setCategoryFilter] = useState<string>("all");
+  const [searchQuery, setSearchQuery] = useState("");
+  const [showReciprocalOnly, setShowReciprocalOnly] = useState(false);
 
-  const visible = local.filter((c) => !hidden.has(c.profile.id));
+  // Apply filters
+  const filtered = local.filter((c) => {
+    if (hidden.has(c.profile.id)) return false;
+    if (categoryFilter !== "all" && c.profile.industry_category !== categoryFilter) return false;
+    if (showReciprocalOnly && !c.reciprocalMatch) return false;
+    if (searchQuery.trim()) {
+      const q = searchQuery.toLowerCase();
+      const matchesSearch = 
+        c.profile.codename.toLowerCase().includes(q) ||
+        (c.profile.professional_title || "").toLowerCase().includes(q) ||
+        (c.profile.industry_category || "").toLowerCase().includes(q) ||
+        (c.profile.bio || "").toLowerCase().includes(q);
+      if (!matchesSearch) return false;
+    }
+    return true;
+  });
 
-  if (visible.length === 0) {
+  if (local.length === 0) {
     return (
       <div className="empty" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}>
         <div style={{ position: "relative", width: 280, height: 160, marginBottom: 8 }}>
@@ -149,9 +170,82 @@ export function DiscoverGrid({ cards }: { cards: DiscoverCard[] }) {
 
   return (
     <div>
+      {/* Filter Bar */}
+      <div style={{ 
+        display: "flex", 
+        flexWrap: "wrap", 
+        gap: 12, 
+        marginBottom: 24, 
+        alignItems: "center",
+        padding: "16px 20px",
+        background: "var(--surface-card)",
+        border: "1px solid var(--stroke)",
+        borderRadius: "var(--radius-sm)"
+      }}>
+        {/* Search */}
+        <input 
+          type="text"
+          placeholder="Search by name, role, or skill..."
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
+          className="input"
+          style={{ 
+            flex: "1 1 200px", 
+            margin: 0, 
+            minWidth: 200,
+            background: "var(--surface-inset)",
+            border: "1px solid var(--stroke-subtle)",
+          }}
+        />
+        
+        {/* Category filter pills */}
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 6 }}>
+          <button
+            className={categoryFilter === "all" ? "chip selected" : "chip"}
+            onClick={() => setCategoryFilter("all")}
+            style={{ fontSize: 13 }}
+          >
+            All
+          </button>
+          {allCategories.map((cat) => (
+            <button
+              key={cat}
+              className={categoryFilter === cat ? "chip selected" : "chip"}
+              onClick={() => setCategoryFilter(cat)}
+              style={{ fontSize: 13 }}
+            >
+              {cat}
+            </button>
+          ))}
+        </div>
+
+        {/* Reciprocal toggle */}
+        <button
+          className={showReciprocalOnly ? "chip selected" : "chip"}
+          onClick={() => setShowReciprocalOnly(!showReciprocalOnly)}
+          style={{ fontSize: 13 }}
+        >
+          🎯 Best Matches
+        </button>
+      </div>
+
+      {/* Results count */}
+      <p className="sub" style={{ marginBottom: 16, fontSize: 13 }}>
+        Showing {filtered.length} of {local.length} operators
+        {categoryFilter !== "all" && <> in <strong>{categoryFilter}</strong></>}
+        {showReciprocalOnly && <> · reciprocal matches only</>}
+      </p>
+
       {error ? <p className="error">{error}</p> : null}
+
+      {filtered.length === 0 ? (
+        <div className="glass-panel" style={{ padding: 40, textAlign: "center" }}>
+          <h3 style={{ margin: "0 0 8px", color: "var(--text-bright)" }}>No results found</h3>
+          <p className="sub" style={{ margin: 0 }}>Try adjusting your filters or search query.</p>
+        </div>
+      ) : (
       <div className="match-grid">
-        {visible.map((card) => {
+        {filtered.map((card) => {
           const accepted = card.connectStatus === "accepted";
           const outgoing = card.connectStatus === "outgoing_pending";
           const incoming = card.connectStatus === "incoming_pending";
@@ -407,6 +501,7 @@ export function DiscoverGrid({ cards }: { cards: DiscoverCard[] }) {
           );
         })}
       </div>
+      )}
     </div>
   );
 }

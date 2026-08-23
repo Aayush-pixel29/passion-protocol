@@ -6,6 +6,7 @@ export type RankedMatch = {
   project: import("@/lib/types").Project | null;
   score: number;
   intentMatch: boolean;
+  reciprocalMatch: boolean;
 };
 
 const VIBE_KEYS = ["pace", "comms", "risk", "energy"] as const;
@@ -16,6 +17,11 @@ export function vibeScore(a: VibeAnswers, b: VibeAnswers): number {
   return Math.round(100 - (total / MAX_DISTANCE) * 100);
 }
 
+/**
+ * rankMatches — returns ALL users ranked by synergy.
+ * Reciprocal category matches get a bonus, but everyone is included.
+ * Client-side filters (category, etc.) narrow down the results.
+ */
 export function rankMatches(
   me: { industry_category: string; looking_for_category: string; spoken_languages: string[]; intent_filter: string | null; vibe: VibeAnswers; id: string },
   others: Array<{ profile: Profile; vibe: VibeAnswers; project: import("@/lib/types").Project | null }>
@@ -23,33 +29,27 @@ export function rankMatches(
   return others
     .filter((row) => {
       if (row.profile.id === me.id || !row.profile.onboarding_complete) return false;
-      
-      // Category match
-      if (row.profile.industry_category !== me.looking_for_category || row.profile.looking_for_category !== me.industry_category) {
-        return false;
-      }
-      
-      // Language match: if both have languages specified, they must overlap.
-      // If either has no languages specified, assume they are open.
-      const myLangs = me.spoken_languages.map(l => l.toLowerCase());
-      const theirLangs = row.profile.spoken_languages.map(l => l.toLowerCase());
-      if (myLangs.length > 0 && theirLangs.length > 0) {
-        const intersection = myLangs.filter(l => theirLangs.includes(l));
-        if (intersection.length === 0) return false;
-      }
-      
       return true;
     })
     .map((row) => {
       const baseScore = vibeScore(me.vibe, row.vibe);
       
-      // Intent match bonus: if both specify intent and they match, +5 score (capped at 100)
+      // Reciprocal match bonus: they offer what I need AND need what I offer
+      const reciprocalMatch = Boolean(
+        row.profile.industry_category === me.looking_for_category &&
+        row.profile.looking_for_category === me.industry_category
+      );
+      
+      // Intent match bonus
       const intentMatch = Boolean(
         me.intent_filter &&
         row.profile.intent_filter &&
         me.intent_filter === row.profile.intent_filter
       );
-      const adjustedScore = intentMatch ? Math.min(100, baseScore + 5) : baseScore;
+      
+      let adjustedScore = baseScore;
+      if (reciprocalMatch) adjustedScore = Math.min(100, adjustedScore + 10);
+      if (intentMatch) adjustedScore = Math.min(100, adjustedScore + 5);
 
       return {
         profile: row.profile,
@@ -57,10 +57,12 @@ export function rankMatches(
         project: row.project,
         score: adjustedScore,
         intentMatch,
+        reciprocalMatch,
       };
     })
     .sort((a, b) => {
-      // Intent-matched profiles bubble up first, then by score
+      // Reciprocal matches first, then intent matches, then by score
+      if (a.reciprocalMatch !== b.reciprocalMatch) return a.reciprocalMatch ? -1 : 1;
       if (a.intentMatch !== b.intentMatch) return a.intentMatch ? -1 : 1;
       return b.score - a.score;
     });
