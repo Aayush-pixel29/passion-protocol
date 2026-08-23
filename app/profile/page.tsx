@@ -185,17 +185,16 @@ export default async function ProfilePage() {
             </div>
 
             {vibe ? (
-              DIMS.map((d) => (
-                <div key={d.key} style={{ marginBottom: 8 }}>
-                  <div className="slider-meta" style={{ display: "flex", justifyContent: "space-between", marginBottom: 6, fontSize: "13px" }}>
-                    <span style={{ fontWeight: 600, color: "var(--text-bright)" }}>{d.label}</span>
-                    <span style={{ fontWeight: 700, color: "var(--accent-3)", fontFamily: "monospace" }}>{vibe[d.key]} / 5</span>
+              <div style={{ display: "flex", flexDirection: "column", gap: 10, marginTop: 16 }}>
+                {DIMS.map((d) => (
+                  <div key={d.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center", paddingBottom: 10, borderBottom: "1px solid var(--stroke-subtle)" }}>
+                    <span style={{ fontSize: "13px", color: "var(--text-bright)", fontWeight: 500 }}>{d.label}</span>
+                    <span style={{ fontFamily: "var(--font-mono)", fontSize: "14px", color: "var(--accent-2)", fontWeight: 600 }}>
+                      {vibe[d.key]}/5
+                    </span>
                   </div>
-                  <div className="bar-track">
-                    <div className="bar-fill" style={{ width: `${(vibe[d.key] / 5) * 100}%` }} />
-                  </div>
-                </div>
-              ))
+                ))}
+              </div>
             ) : (
               <p className="sub">No vibe answers yet.</p>
             )}

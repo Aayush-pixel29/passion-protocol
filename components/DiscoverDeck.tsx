@@ -258,39 +258,21 @@ export function DiscoverDeck({ cards }: { cards: DiscoverCard[] }) {
                 className="dims" 
                 style={{ 
                   marginTop: 16,
+                  paddingTop: 16,
+                  borderTop: "1px solid var(--stroke-subtle)",
                   display: "grid",
                   gridTemplateColumns: "1fr 1fr",
-                  gap: "10px 14px"
+                  gap: "8px 16px"
                 }}
               >
                 {DIMS.map((d) => {
                   const val = card.vibe[d.key];
-                  const percentage = Math.round((val / 5) * 100);
                   return (
-                    <div key={d.key} style={{ display: "flex", flexDirection: "column", gap: 4 }}>
-                      <div style={{ display: "flex", justifyContent: "space-between", fontSize: "12px", color: "var(--muted)", fontWeight: 600 }}>
-                        <span>{d.label}</span>
-                        <span style={{ color: "var(--text)" }}>{val}/5</span>
-                      </div>
-                      <div 
-                        className="bar-track" 
-                        style={{ 
-                          height: 5, 
-                          background: "rgba(255, 255, 255, 0.08)",
-                          borderRadius: 999,
-                          overflow: "hidden"
-                        }}
-                      >
-                        <div 
-                          className="bar-fill" 
-                          style={{ 
-                            width: `${percentage}%`,
-                            height: "100%",
-                            background: "linear-gradient(90deg, var(--accent) 0%, var(--accent-2) 50%, var(--accent-3) 100%)",
-                            borderRadius: 999
-                          }} 
-                        />
-                      </div>
+                    <div key={d.key} style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+                      <span style={{ fontSize: "12px", color: "var(--muted)" }}>{d.label}</span>
+                      <span style={{ fontFamily: "var(--font-mono)", fontSize: "13px", color: "var(--accent-2)", fontWeight: 600 }}>
+                        {val}/5
+                      </span>
                     </div>
                   );
                 })}

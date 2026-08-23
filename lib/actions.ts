@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { type ConnectState, type Message, type PartnershipContract, type PartnershipStatus } from "@/lib/types";
+import { stripe } from "@/lib/stripe";
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -401,4 +402,76 @@ export async function respondToPartnership(
   revalidatePath("/profile");
   revalidatePath(`/workspace/${contractId}`);
   return {};
+}
+
+export async function createCheckoutSession(contractId: string): Promise<{ error?: string; url?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const { data: contract, error: contractError } = await supabase
+    .from("partnership_contracts")
+    .select("*, profiles!partnership_contracts_proposed_to_fkey(stripe_account_id)")
+    .eq("id", contractId)
+    .single();
+
+  if (contractError || !contract) return { error: "Contract not found." };
+  if (contract.status !== "accepted") return { error: "Contract must be accepted first." };
+
+  // Determine who the recipient is. Usually it's the proposer receiving money from the acceptor, or vice versa.
+  // For simplicity, we assume the person calling this function is the payer, and the other party is the recipient.
+  const recipientId = contract.proposed_by === user.id ? contract.proposed_to : contract.proposed_by;
+
+  const { data: recipientProfile } = await supabase
+    .from("profiles")
+    .select("stripe_account_id")
+    .eq("id", recipientId)
+    .single();
+
+  if (!recipientProfile?.stripe_account_id) {
+    return { error: "The partner has not set up their Stripe account to receive payments." };
+  }
+
+  const priceAmount = contract.price_amount;
+  if (priceAmount <= 0) return { error: "Price must be greater than 0." };
+
+  // Calculate the platform fee (20%)
+  const platformFeePct = contract.platform_fee_pct || 20;
+  const applicationFeeAmount = Math.round(priceAmount * 100 * (platformFeePct / 100));
+
+  try {
+    const session = await stripe.checkout.sessions.create({
+      payment_method_types: ["card"],
+      mode: "payment",
+      line_items: [
+        {
+          price_data: {
+            currency: "usd",
+            product_data: {
+              name: "Micro-Contract Milestone Payment",
+              description: contract.deliverables,
+            },
+            unit_amount: Math.round(priceAmount * 100), // Stripe expects cents
+          },
+          quantity: 1,
+        },
+      ],
+      payment_intent_data: {
+        application_fee_amount: applicationFeeAmount,
+        transfer_data: {
+          destination: recipientProfile.stripe_account_id,
+        },
+      },
+      metadata: {
+        contractId: contract.id,
+      },
+      success_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/workspace/${contract.id}?payment=success`,
+      cancel_url: `${process.env.NEXT_PUBLIC_SITE_URL || "http://localhost:3000"}/workspace/${contract.id}?payment=canceled`,
+    });
+
+    return { url: session.url! };
+  } catch (err: unknown) {
+    console.error("Stripe Error:", err);
+    return { error: (err as Error).message };
+  }
 }
