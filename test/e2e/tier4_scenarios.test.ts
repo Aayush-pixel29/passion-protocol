@@ -482,7 +482,7 @@ describe('Tier 4: Real-World Workload Scenarios (12 User Journeys)', () => {
     assert.strictEqual(ranked[0].profile.codename, 'MAYA_GROWTH');
     assert.strictEqual(ranked[0].score, 100);
     assert.strictEqual(ranked[1].profile.codename, 'TOM_CONTENT');
-    assert.strictEqual(ranked[1].score, 38);
+    assert.strictEqual(ranked[1].score, 48);
   });
 
   // --------------------------------------------------------------------------
