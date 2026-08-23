@@ -98,7 +98,7 @@ export function OnboardingForm({ profile }: { profile?: Profile | null }) {
                     type="range"
                     min={1}
                     max={5}
-                    defaultValue={(profile as any)?.[s.name] ?? 3}
+                    defaultValue={3}
                     className="slider"
                     style={{ width: "100%" }}
                   />
