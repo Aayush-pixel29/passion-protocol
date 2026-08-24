@@ -31,12 +31,10 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
   const [busyId, setBusyId] = useState<string | null>(null);
   const [, startTransition] = useTransition();
   
-  // Filter state
   const [categoryFilter, setCategoryFilter] = useState<string>("all");
   const [searchQuery, setSearchQuery] = useState("");
   const [showReciprocalOnly, setShowReciprocalOnly] = useState(false);
 
-  // Apply filters
   const filtered = local.filter((c) => {
     if (hidden.has(c.profile.id)) return false;
     if (categoryFilter !== "all" && c.profile.industry_category !== categoryFilter) return false;
@@ -57,28 +55,10 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
     return (
       <div className="empty" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}>
         <div style={{ position: "relative", width: 280, height: 160, marginBottom: 8 }}>
-          <Image
-            src="/images/empty-discover-deck.png"
-            alt="Deep space observatory scanning for operators"
-            width={280}
-            height={160}
-            style={{ objectFit: "contain", width: "100%", height: "auto" }}
-            priority
-          />
+          <Image src="/images/empty-discover-deck.png" alt="Empty" width={280} height={160} style={{ objectFit: "contain" }} priority />
         </div>
-        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-bright)", margin: 0 }}>
-          No operators with that role yet
-        </p>
-        <p style={{ maxWidth: 480, margin: 0, color: "var(--muted)", lineHeight: 1.6 }}>
-          You&apos;re one of the first here — invite a collaborator or check back soon!
-        </p>
-        <Link 
-          href="/profile" 
-          className="outline-btn"
-          style={{ marginTop: 8, padding: "10px 20px", fontSize: "14px" }}
-        >
-          Adjust Vibe Preferences →
-        </Link>
+        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-bright)", margin: 0 }}>No operators with that role yet</p>
+        <Link href="/profile" className="outline-btn" style={{ marginTop: 8, padding: "10px 20px", fontSize: "14px" }}>Adjust Vibe Preferences +'</Link>
       </div>
     );
   }
@@ -99,9 +79,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
         return;
       }
       const status = result.status ?? "outgoing_pending";
-      setLocal((rows) =>
-        rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row))
-      );
+      setLocal((rows) => rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row)));
     });
   }
 
@@ -116,74 +94,97 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
         return;
       }
       const status = result.status ?? decision;
-      setLocal((rows) =>
-        rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row))
-      );
+      setLocal((rows) => rows.map((row) => (row.profile.id === id ? { ...row, connectStatus: status } : row)));
     });
   }
 
   return (
     <div>
-      {/* Filter Bar */}
+      {/* Sleek Horizontal Filter Bar */}
       <div style={{ 
         display: "flex", 
-        flexWrap: "wrap", 
-        gap: 12, 
-        marginBottom: 32, 
-        alignItems: "center",
-        padding: "16px 24px",
-        background: "var(--surface-card)",
-        border: "1px solid var(--stroke)",
+        flexDirection: "column",
+        gap: 16, 
+        marginBottom: 40,
+        position: "sticky",
+        top: 80,
+        zIndex: 20,
+        padding: "20px 24px",
+        background: "rgba(18, 20, 32, 0.6)",
+        backdropFilter: "blur(24px)",
+        borderBottom: "1px solid var(--stroke-subtle)",
         borderRadius: 24,
-        boxShadow: "0 4px 24px rgba(0,0,0,0.2)"
+        boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
       }}>
-        {/* Search */}
-        <input 
-          type="text"
-          placeholder="Search operators..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="input glass"
-          style={{ 
-            flex: "1 1 200px", 
-            margin: 0, 
-            minWidth: 200,
-            borderRadius: 32
-          }}
-        />
-        
-        {/* Category filter pills */}
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 8 }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
+          <input 
+            type="text"
+            placeholder="Search operators, bio, roles..."
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="input glass"
+            style={{ flex: "1 1 250px", margin: 0, borderRadius: 32, padding: "12px 24px", background: "rgba(0,0,0,0.3)" }}
+          />
           <button
-            className={categoryFilter === "all" ? "chip selected glass-emerald" : "chip"}
-            onClick={() => setCategoryFilter("all")}
-            style={{ fontSize: 13, borderRadius: 32 }}
+            onClick={() => setShowReciprocalOnly(!showReciprocalOnly)}
+            style={{ 
+              padding: "10px 20px", 
+              borderRadius: 32, 
+              fontSize: 13, 
+              fontWeight: 700,
+              background: showReciprocalOnly ? "rgba(255, 61, 110, 0.15)" : "rgba(255,255,255,0.02)",
+              border: showReciprocalOnly ? "1px solid var(--accent)" : "1px solid var(--stroke)",
+              color: showReciprocalOnly ? "var(--accent)" : "var(--muted)",
+              cursor: "pointer",
+              transition: "all 0.2s ease"
+            }}
           >
-            All
+            dY" Best Matches Only
+          </button>
+        </div>
+
+        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
+          <button
+            onClick={() => setCategoryFilter("all")}
+            style={{ 
+              padding: "8px 20px", 
+              borderRadius: 32, 
+              fontSize: 13, 
+              whiteSpace: "nowrap",
+              cursor: "pointer",
+              background: categoryFilter === "all" ? "var(--accent-4)" : "rgba(255,255,255,0.03)",
+              color: categoryFilter === "all" ? "#000" : "var(--muted)",
+              border: "none",
+              fontWeight: categoryFilter === "all" ? 800 : 500,
+              boxShadow: categoryFilter === "all" ? "0 0 20px rgba(16, 185, 129, 0.4)" : "none"
+            }}
+          >
+            All Domains
           </button>
           {allCategories.map((cat) => (
             <button
               key={cat}
-              className={categoryFilter === cat ? "chip selected glass-emerald" : "chip"}
               onClick={() => setCategoryFilter(cat)}
-              style={{ fontSize: 13, borderRadius: 32 }}
+              style={{ 
+                padding: "8px 20px", 
+                borderRadius: 32, 
+                fontSize: 13, 
+                whiteSpace: "nowrap",
+                cursor: "pointer",
+                background: categoryFilter === cat ? "var(--accent-4)" : "rgba(255,255,255,0.03)",
+                color: categoryFilter === cat ? "#000" : "var(--muted)",
+                border: "none",
+                fontWeight: categoryFilter === cat ? 800 : 500,
+                boxShadow: categoryFilter === cat ? "0 0 20px rgba(16, 185, 129, 0.4)" : "none"
+              }}
             >
               {cat}
             </button>
           ))}
         </div>
-
-        {/* Reciprocal toggle */}
-        <button
-          className={showReciprocalOnly ? "chip selected glass-rose" : "chip"}
-          onClick={() => setShowReciprocalOnly(!showReciprocalOnly)}
-          style={{ fontSize: 13, borderRadius: 32 }}
-        >
-          🔥 Best Matches
-        </button>
       </div>
 
-      {error ? <p className="error" style={{ marginBottom: 24 }}>{error}</p> : null}
+      {error ? <p className="error" style={{ marginBottom: 24, textAlign: "center" }}>{error}</p> : null}
 
       {filtered.length === 0 ? (
         <div className="glass-panel" style={{ padding: 60, textAlign: "center", borderRadius: 24 }}>
@@ -191,154 +192,161 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
           <p className="sub" style={{ margin: 0 }}>Try adjusting your frequency (filters) to find more operators.</p>
         </div>
       ) : (
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>
-        {filtered.map((card) => {
-          const accepted = card.connectStatus === "accepted";
-          const outgoing = card.connectStatus === "outgoing_pending";
-          const incoming = card.connectStatus === "incoming_pending";
-          const declined = card.connectStatus === "declined";
-          const pending = busyId === card.profile.id;
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 32 }}>
+          {filtered.map((card) => {
+            const accepted = card.connectStatus === "accepted";
+            const outgoing = card.connectStatus === "outgoing_pending";
+            const incoming = card.connectStatus === "incoming_pending";
+            const declined = card.connectStatus === "declined";
+            const pending = busyId === card.profile.id;
+            const isHighSynergy = card.score >= 90;
 
-          const isHighSynergy = card.score >= 90;
+            return (
+              <article 
+                key={card.profile.id} 
+                style={{ 
+                  background: "var(--surface-card)",
+                  border: `1px solid ${accepted ? "var(--accent-4)" : "var(--stroke)"}`,
+                  borderRadius: 24, 
+                  padding: 24,
+                  display: "flex", 
+                  flexDirection: "column", 
+                  gap: 20, 
+                  position: "relative",
+                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
+                  boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-6px)";
+                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.8), 0 0 30px rgba(16, 185, 129, 0.1)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "none";
+                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
+                }}
+              >
+                {/* Match Score Badge */}
+                <div style={{ 
+                  position: "absolute", 
+                  top: -12, 
+                  right: 24, 
+                  background: isHighSynergy ? "var(--accent)" : "var(--bg)", 
+                  color: isHighSynergy ? "#fff" : "var(--accent-4)", 
+                  fontSize: 11, 
+                  fontWeight: 800, 
+                  padding: "6px 16px", 
+                  borderRadius: 32, 
+                  border: isHighSynergy ? "none" : "1px solid var(--accent-4)",
+                  boxShadow: isHighSynergy ? "var(--glow-rose)" : "0 0 10px rgba(16, 185, 129, 0.2)",
+                  display: "flex", 
+                  alignItems: "center", 
+                  gap: 6 
+                }}>
+                  {isHighSynergy ? 'dY" HOT MATCH ' : 'MATCH '}{card.score}%
+                </div>
 
-          return (
-            <article 
-              key={card.profile.id} 
-              className={`glass ${accepted ? "border-emerald-500/50" : ""}`}
-              style={{ padding: 24, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}
-            >
-              {isHighSynergy && (
-                <div style={{ position: "absolute", top: -12, left: 24, background: "var(--accent-rose)", color: "#fff", fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 32, boxShadow: "var(--glow-rose)", display: "flex", alignItems: "center", gap: 6 }}>
-                  🔥 HOT MATCH · {card.score}%
+                {/* Top Tier: Identity */}
+                <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 8 }}>
+                  <AvatarSVG name={card.profile.codename} size={64} className={isHighSynergy ? "glow-rose" : ""} />
+                  <div>
+                    <h3 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900, color: "var(--text-bright)", letterSpacing: "-0.02em" }}>
+                      {card.profile.codename}
+                    </h3>
+                    <p style={{ margin: 0, fontSize: 13, color: "var(--accent-3)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
+                      {formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)}
+                    </p>
+                  </div>
                 </div>
-              )}
-              
-              {!isHighSynergy && (
-                <div style={{ position: "absolute", top: 12, right: 16, color: "var(--accent-emerald)", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 32, border: "1px solid var(--accent-emerald)", background: "rgba(0, 255, 179, 0.1)" }}>
-                  {card.score}% MATCH
-                </div>
-              )}
 
-              <div style={{ display: 'flex', alignItems: 'center', gap: 16, marginTop: isHighSynergy ? 12 : 0 }}>
-                <AvatarSVG name={card.profile.codename} size={64} className={isHighSynergy ? "glow-rose" : ""} />
-                <div>
-                  <h3 style={{ margin: "0 0 4px", fontSize: 20, fontWeight: 800 }}>{card.profile.codename}</h3>
-                  <p style={{ margin: 0, fontSize: 12, color: "var(--muted)", fontFamily: "var(--font-mono)" }}>
-                    {formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)}
-                  </p>
-                </div>
-              </div>
-              
-                            {card.profile.spoken_languages && card.profile.spoken_languages.length > 0 && (
-                <div style={{ marginTop: 12, display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                  <span style={{ fontSize: 10, color: "var(--muted)", fontFamily: "var(--font-mono)", textTransform: "uppercase" }}>Languages:</span>
-                  {card.profile.spoken_languages.map(lang => (
-                    <span key={lang} style={{ padding: "4px 8px", background: "var(--surface-2)", border: "1px solid var(--stroke)", borderRadius: 12, fontSize: 11, color: "var(--ink)" }}>{lang}</span>
-                  ))}
-                </div>
-              )}
-              {card.project ? (
-                <div 
-                  style={{ 
-                    padding: 16,
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid var(--stroke-subtle)",
-                    borderRadius: 16
-                  }}
-                >
-                  <h4 style={{ margin: "0 0 8px 0", fontSize: 14, color: "var(--text-bright)" }}>
-                    Building: {card.project.title}
-                  </h4>
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.5 }}>
-                    {card.project.description}
-                  </p>
-                </div>
-              ) : card.profile.bio ? (
-                <div 
-                  style={{ 
-                    padding: 16,
-                    background: "rgba(255,255,255,0.02)",
-                    border: "1px solid var(--stroke-subtle)",
-                    borderRadius: 16
-                  }}
-                >
-                  <h4 style={{ margin: "0 0 8px 0", fontSize: 12, color: "var(--text-bright)", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
-                    Operator Pitch
-                  </h4>
-                  <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", lineHeight: 1.5, fontStyle: "italic" }}>
-                    &ldquo;{card.profile.bio}&rdquo;
-                  </p>
-                </div>
-              ) : null}
-              
-              <div style={{ background: "rgba(0, 255, 179, 0.05)", border: "1px solid rgba(0, 255, 179, 0.2)", borderRadius: 16, padding: 16 }}>
-                <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: "var(--accent-emerald)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}>VIBE PRINT</h4>
-                <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 48 }}>
-                  {DIMS.map((d, i) => {
-                    const val = card.vibe[d.key];
-                    const heightPct = (val / 5) * 100;
-                    return (
-                      <div key={d.key} style={{ flex: 1, display: "flex", flexDirection: "column", justifyContent: "flex-end", alignItems: "center", gap: 6, height: "100%" }} title={`${d.label}: ${val}/5`}>
-                        <div 
-                          style={{ 
-                            width: "100%", 
-                            height: `${heightPct}%`, 
-                            background: "var(--accent-emerald)",
-                            borderRadius: 4,
-                            animationDelay: `${i * 0.15}s`,
-                            boxShadow: "0 0 8px rgba(0, 255, 179, 0.4)"
-                          }} 
-                          className="animate-bar-dance"
-                        />
-                        <span style={{ fontSize: 9, textTransform: "uppercase", color: "var(--accent-emerald)", opacity: 0.8, fontWeight: 700 }}>
-                          {d.label.slice(0,3)}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-
-              <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
-                {accepted ? (
-                  <>
-                    <div style={{ textAlign: "center", padding: "12px", background: "rgba(16, 185, 129, 0.1)", borderRadius: 16, color: "#10b981", fontWeight: 700, fontSize: 14 }}>
-                      Partnership Active ✔
+                {/* Middle Tier: Bio & Languages */}
+                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
+                  {card.profile.bio ? (
+                    <div style={{ 
+                      padding: 16, 
+                      background: "rgba(0,0,0,0.2)", 
+                      borderRadius: 16, 
+                      borderLeft: "2px solid var(--stroke-strong)" 
+                    }}>
+                      <p style={{ margin: 0, fontSize: 14, color: "var(--text)", lineHeight: 1.6, fontStyle: "italic" }}>
+                        &ldquo;{card.profile.bio}&rdquo;
+                      </p>
                     </div>
-                    {card.contactUrl && (
-                      <a href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`} target="_blank" rel="noopener noreferrer" style={{ textAlign: "center", fontSize: 12, color: "var(--text-bright)", textDecoration: "underline" }}>
-                        Open Comms Channel ↗
-                      </a>
-                    )}
-                  </>
-                ) : outgoing ? (
-                  <div style={{ textAlign: "center", padding: "12px", border: "1px solid var(--stroke)", borderRadius: 16, color: "var(--muted)", fontSize: 14, fontWeight: 600 }}>
-                    Signal Transmitted...
+                  ) : null}
+
+                  {card.profile.spoken_languages && card.profile.spoken_languages.length > 0 && (
+                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
+                      {card.profile.spoken_languages.map(lang => (
+                        <span key={lang} style={{ padding: "4px 10px", background: "rgba(255,255,255,0.03)", border: "1px solid var(--stroke-subtle)", borderRadius: 12, fontSize: 11, color: "var(--muted)", fontWeight: 600 }}>
+                          {lang}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                
+                {/* Bottom Tier: Vibe Print & Actions */}
+                <div style={{ background: "rgba(0, 255, 179, 0.03)", border: "1px solid rgba(0, 255, 179, 0.15)", borderRadius: 16, padding: 16 }}>
+                  <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: "var(--accent-4)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", display: "flex", justifyContent: "space-between" }}>
+                    <span>VIBE PRINT</span>
+                    {card.reciprocalMatch && <span style={{ color: "var(--accent-amber)" }}>MUTUAL PREF</span>}
+                  </h4>
+                  
+                  <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 40, marginBottom: 12 }}>
+                    {DIMS.map((d, i) => {
+                      const val = card.vibe[d.key];
+                      const heightPct = (val / 5) * 100;
+                      return (
+                        <div key={d.key} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
+                          <div style={{ width: "100%", height: 40, background: "rgba(0,0,0,0.4)", borderRadius: 4, position: "relative", overflow: "hidden" }}>
+                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: `${heightPct}%`, background: "var(--accent-4)", opacity: 0.8, borderRadius: 4 }} />
+                          </div>
+                          <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase" }}>
+                            {d.key.substring(0,3)}
+                          </span>
+                        </div>
+                      );
+                    })}
                   </div>
-                ) : incoming ? (
-                  <div style={{ display: "flex", gap: 12 }}>
-                    <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => respond(card.profile.id, "declined")} disabled={pending}>Decline</button>
-                    <button className="pill-btn" style={{ flex: 1, background: "var(--accent-emerald)", color: "#000", fontWeight: 700 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>Accept</button>
-                  </div>
-                ) : declined ? (
-                  <div style={{ textAlign: "center", padding: "12px", borderRadius: 16, color: "var(--accent-rose)", fontSize: 14, fontWeight: 600 }}>
-                    Signal Ignored
-                  </div>
-                ) : (
-                  <div style={{ display: "flex", gap: 12 }}>
-                    <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => skip(card.profile.id)}>Pass</button>
-                    <button className="pill-btn" style={{ flex: 2, background: "var(--text-bright)", color: "#000", fontWeight: 700, boxShadow: "0 0 16px rgba(255,255,255,0.2)" }} onClick={() => connect(card.profile.id)} disabled={pending}>
-                      {pending ? "Transmitting..." : "Connect ⚡"}
+                </div>
+
+                <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
+                  {accepted ? (
+                    <Link href="/messages" className="pill-btn" style={{ flex: 1, textAlign: "center", background: "var(--surface-solid)", color: "var(--accent-4)", border: "1px solid var(--accent-4)", fontWeight: 800 }}>
+                      Open Comms &rarr;
+                    </Link>
+                  ) : outgoing ? (
+                    <button className="pill-btn" style={{ flex: 1, background: "rgba(255,255,255,0.05)", color: "var(--muted)" }} disabled>
+                      Signal Sent...
                     </button>
-                  </div>
-                )}
-              </div>
-            </article>
-          );
-        })}
-      </div>
+                  ) : incoming ? (
+                    <>
+                      <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => respond(card.profile.id, "declined")} disabled={pending}>
+                        Pass
+                      </button>
+                      <button className="pill-btn" style={{ flex: 1, background: "var(--accent-4)", color: "#000", fontWeight: 800 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>
+                        {pending ? "..." : "Accept"}
+                      </button>
+                    </>
+                  ) : declined ? (
+                    <button className="pill-btn" style={{ flex: 1, background: "transparent", color: "var(--muted)", border: "1px solid var(--stroke)" }} disabled>
+                      Declined
+                    </button>
+                  ) : (
+                    <>
+                      <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => skip(card.profile.id)} disabled={pending}>
+                        Skip
+                      </button>
+                      <button className="pill-btn" style={{ flex: 1, background: "var(--text-bright)", color: "#000", fontWeight: 800 }} onClick={() => connect(card.profile.id)} disabled={pending}>
+                        {pending ? "..." : "Send Signal"}
+                      </button>
+                    </>
+                  )}
+                </div>
+              </article>
+            );
+          })}
+        </div>
       )}
     </div>
   );
 }
-
