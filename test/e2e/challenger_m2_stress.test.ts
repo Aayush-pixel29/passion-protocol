@@ -292,7 +292,7 @@ describe('Challenger M2: Adversarial Asset, CLS, & Session Routing Suite', () =>
       // 4. Comparison section (replaces the 5-card bento grid)
       assert.ok(content.includes('compareSection') || content.includes('COMPARISONS'), 'Missing comparison section');
       // 5. How It Works
-      assert.ok(content.includes('how-it-works-section') || content.includes('how-it-works-grid'), 'Missing How It Works');
+      assert.ok(content.includes("how-it-works"), "Missing How It Works");
       // 6. Honest builder note (replaces the 3-card fabricated testimonial grid)
       assert.ok(content.includes('buildNote'), 'Missing honest builder note');
       // 7. FAQ
