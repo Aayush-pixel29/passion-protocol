@@ -10,7 +10,14 @@ export async function GET(request: Request) {
     const supabase = await createClient();
     const { error } = await supabase.auth.exchangeCodeForSession(code);
     if (!error) {
-      return NextResponse.redirect(`${origin}${next}`);
+      let target = "/discover";
+      try {
+        const url = new URL(next, origin);
+        if (url.origin === origin) {
+          target = url.pathname + url.search;
+        }
+      } catch (e) {}
+      return NextResponse.redirect(`${origin}${target}`);
     }
   }
 

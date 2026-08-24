@@ -31,7 +31,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
   const [codename, setCodename] = useState(profile?.codename ?? "");
   const [selectedAvatar, setSelectedAvatar] = useState(profile?.codename ?? "GhostSt");
   const [category, setCategory] = useState<IndustryCategory | "">((profile?.industry_category as IndustryCategory) ?? "");
-  const lookingCategory = (profile?.looking_for_category as string) ?? "";
+  const [lookingCategory, setLookingCategory] = useState<IndustryCategory | "">((profile?.looking_for_category as IndustryCategory) ?? "");
   const intent = (profile?.intent_filter as string) ?? "";
   
   const [sliderValues, setSliderValues] = useState({
@@ -85,7 +85,6 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
         
         {/* Hidden inputs to preserve E2E testing integrity across steps */}
         <input type="hidden" name="industry_category" value={category} />
-        <input type="hidden" name="looking_for_category" value={lookingCategory} />
         <input type="hidden" name="intent_filter" value={intent} />
         <span style={{display: 'none'}}>1. Identity</span>
 
@@ -147,7 +146,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             <input type="hidden" name="location" value="" />
             <input type="hidden" name="full_name" value="" />
 
-            <button type="button" className="pill-btn" style={{ marginTop: 32, width: "100%", background: "var(--accent-emerald)", color: "#000", fontWeight: 700 }} onClick={() => { if (codename.trim().length < 2) { alert("Codename must be at least 2 characters."); return; } setStep(2); }}>
+            <button type="button" className="pill-btn" style={{ marginTop: 32, width: "100%", background: "var(--accent-emerald)", color: "#000", fontWeight: 700 }} onClick={() => { const i = document.querySelector("input[name='codename']") as HTMLInputElement; if (!i || !i.reportValidity()) return; if (!category) { alert("Please select your domain."); return; } setStep(2); }}>
               Continue &rarr;
             </button>
           </div>
@@ -222,6 +221,15 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
 
             <div style={{ marginBottom: 32 }}>
               <p className="label plain" style={{ marginBottom: 16 }}>Looking for a partner who is...</p>
+              
+              <label style={{ marginBottom: 32, display: "block" }}>
+                <span className="label plain">Domain</span>
+                <select className="input match-card" name="looking_for_category" value={lookingCategory} onChange={e => setLookingCategory(e.target.value as IndustryCategory)} style={{ appearance: "none", width: "100%", background: "#ffffff", border: "2px solid #000000" }} required>
+                  <option value="" disabled>Select partner domain...</option>
+                  {INDUSTRY_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
+                </select>
+              </label>
+
               <div className="trait-card-grid" style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: 16 }}>
                 {PARTNER_TRAITS.map(trait => (
                   <div key={trait} className={`trait-card ${selectedTraits.includes(trait) ? 'selected' : ''}`}
@@ -250,10 +258,10 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
               </div>
             </div>
 
-            <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
-              <button type="button" className="pill-btn skip" onClick={() => { if (codename.trim().length < 2) { alert("Codename must be at least 2 characters."); return; } setStep(2); }}>&larr; Back</button>
-              <button type="button" className="pill-btn" style={{ flex: 1, background: "var(--accent-rose)", color: "#ffffff", fontWeight: 700 }} onClick={() => setStep(4)}>Finalize &rarr;</button>
-            </div>
+              <div style={{ display: "flex", gap: 16, marginTop: 16 }}>
+                <button type="button" className="pill-btn skip" onClick={() => setStep(2)}>&larr; Back</button>
+                <button type="button" className="pill-btn" style={{ flex: 1, background: "var(--accent-rose)", color: "#ffffff", fontWeight: 700 }} onClick={() => { const b = document.querySelector("textarea[name='bio']") as HTMLTextAreaElement; if (!b || !b.reportValidity()) return; if (!lookingCategory) { alert("Please select the domain you are looking for."); return; } setStep(4); }}>Finalize &rarr;</button>
+              </div>
           </div>
 
         {/* Step 4: Ready */}

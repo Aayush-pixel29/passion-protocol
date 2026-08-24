@@ -74,7 +74,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <div style={{ display: "none" }}></div>
+          <SynergyProof />
         </section>
 
         {/* Real registered builders — this component hides itself if the pool is empty */}

@@ -43,6 +43,7 @@ function asProfile(
 }
 
 const PROFILE_SELECT = "id, codename, bio, onboarding_complete, full_name, location, phone_number, linkedin_url, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title, intent_filter, stripe_account_id";
+const PUBLIC_PROFILE_SELECT = "id, codename, bio, onboarding_complete, full_name, location, spoken_languages, industry_category, professional_title, looking_for_category, looking_for_title, intent_filter";
 
 export async function getSessionUser() {
   const supabase = await createClient();
@@ -106,12 +107,10 @@ export const loadCompletedOperators = unstable_cache(
       process.env.SUPABASE_SERVICE_ROLE_KEY!
     );
     const { data: profiles } = await supabase
-      .from("profiles")
-      .select(PROFILE_SELECT)
-      .eq("onboarding_complete", true);
+      .from("profiles").select(PUBLIC_PROFILE_SELECT).eq("onboarding_complete", true);
 
     const { data: vibes } = await supabase.from("vibe_answers").select("user_id, pace, comms, risk, energy");
-    const { data: projects } = await supabase.from("projects").select("*");
+    const { data: projects } = await supabase.from("projects").select("id, user_id, title, description");
 
     const vibeByUser = new Map<string, VibeAnswers>();
     for (const row of vibes ?? []) {

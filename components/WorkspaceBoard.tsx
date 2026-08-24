@@ -399,7 +399,7 @@ export function WorkspaceBoard({
                 <div>
                   <div style={{ fontWeight: 700, color: "#000000", fontSize: 15, marginBottom: 4 }}>{f.file_name}</div>
                   <div className="sub" style={{ fontSize: 12, margin: 0, fontFamily: "var(--font-mono)" }}>
-                    {(f.size_bytes / 1024).toFixed(0)} KB • {new Date(f.created_at).toLocaleString()}
+                    {(f.size_bytes / 1024).toFixed(0)} KB • {new Date(f.created_at).toLocaleString("en-US", { timeZone: "UTC" })}
                   </div>
                 </div>
               </div>
