@@ -305,7 +305,7 @@ export function ChatInterface({
         .chat-sidebar {
           width: 320px;
           border-right: 1px solid var(--border);
-          background: #f4f4f5;
+          background: rgba(255, 255, 255, 0.4);
           display: flex;
           flex-direction: column;
           overflow-y: auto;
@@ -336,7 +336,7 @@ export function ChatInterface({
               alignItems: "center",
             }}
           >
-            <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.08em", color: "#52525b", textTransform: "uppercase" }}>
+            <span style={{ fontSize: 12, fontWeight: 800, letterSpacing: "0.08em", color: "var(--muted)", textTransform: "uppercase" }}>
               Active Comm Links ({connections.length})
             </span>
           </div>
@@ -363,16 +363,16 @@ export function ChatInterface({
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 18, boxShadow: isActive ? "var(--shadow-card-hover)" : "none" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "var(--surface-2)", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 18, boxShadow: isActive ? "var(--shadow-card-hover)" : "none" }}>
                       {initial}
                     </div>
-                    <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: 'var(--brand)', border: "2px solid #080810" }} />
+                    <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: 'var(--brand)', border: "2px solid #ffffff" }} />
                   </div>
                   <div style={{ overflow: "hidden" }}>
                     <h4 style={{ margin: "0 0 4px 0", fontSize: 16, fontWeight: 800, color: isActive ? "#fff" : "var(--text)" }}>
                       {conn.partner.codename}
                     </h4>
-                    <p style={{ margin: 0, fontSize: 13, color: "#52525b", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: "var(--font-mono)" }}>
+                    <p style={{ margin: 0, fontSize: 13, color: "var(--muted)", whiteSpace: "nowrap", overflow: "hidden", textOverflow: "ellipsis", fontFamily: "var(--font-mono)" }}>
                       {conn.partner.professional_title || "Verified Builder"}
                     </p>
                   </div>
@@ -398,7 +398,7 @@ export function ChatInterface({
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 20 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: "var(--surface-2)", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 20 }}>
                     {activePartner.partner.codename.charAt(0).toUpperCase()}
                   </div>
                   <div>
@@ -439,7 +439,7 @@ export function ChatInterface({
                     <p style={{ margin: "0 0 8px 0", fontSize: 16, color: 'var(--ink)', fontWeight: 700 }}>
                       Secure connection established with {activePartner.partner.codename}.
                     </p>
-                    <p style={{ margin: 0, fontSize: 14, color: "#52525b" }}>Send a message to sync up, or propose a milestone contract to start building.</p>
+                    <p style={{ margin: 0, fontSize: 14, color: "var(--muted)" }}>Send a message to sync up, or propose a milestone contract to start building.</p>
                   </div>
                 ) : null}
 
@@ -505,7 +505,7 @@ export function ChatInterface({
                             letterSpacing: "0.1em",
                             textTransform: "uppercase",
                             padding: "4px 12px",
-                            background: "#f4f4f5",
+                            background: "var(--surface-2)",
                             border: '1px solid var(--border)',
                             color: "#d8b4fe",
                             borderRadius: 32,
@@ -523,7 +523,7 @@ export function ChatInterface({
                         borderRadius: 16,
                         padding: 16,
                         margin: "0 0 20px 0",
-                        color: "#52525b",
+                        color: "var(--muted)",
                         fontSize: 14,
                         lineHeight: 1.6,
                         textAlign: "left"
@@ -586,7 +586,7 @@ export function ChatInterface({
                         </a>
                       ) : null}
                       {ctr.status === "pending" && String(ctr.proposed_by) === String(currentUserId) ? (
-                        <p style={{ margin: "16px 0 0", fontSize: 13, color: "#52525b", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: 8 }}>
+                        <p style={{ margin: "16px 0 0", fontSize: 13, color: "var(--muted)", background: "rgba(255,255,255,0.03)", padding: "10px", borderRadius: 8 }}>
                           Waiting for {activePartner.partner.codename} to respond.
                         </p>
                       ) : null}
@@ -628,7 +628,7 @@ export function ChatInterface({
 
                   {/* Template Selector */}
                   <div style={{ marginBottom: 24 }}>
-                    <span style={{ fontSize: 12, fontWeight: 700, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 12 }}>Select Architecture</span>
+                    <span style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 12 }}>Select Architecture</span>
                     <div style={{ display: "flex", flexWrap: "wrap", gap: 10 }}>
                       {CONTRACT_TEMPLATES.map((t) => (
                         <button
@@ -654,12 +654,12 @@ export function ChatInterface({
                     <input type="hidden" name="platform_fee_pct" value={selectedTemplate.platformFee} />
                     
                     <label style={{ display: "block" }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>Project Budget ($)</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>Project Budget ($)</span>
                       <input name="price_amount" type="number" min={0} required placeholder={selectedTemplate.key === "portfolio_only" ? "0" : "E.g., 500"} className="input glass" style={{ width: "100%", fontSize: 16, padding: 16, borderRadius: 16 }} defaultValue={selectedTemplate.key === "portfolio_only" ? 0 : undefined} />
                     </label>
                     
                     <label style={{ display: "block" }}>
-                      <span style={{ fontSize: 12, fontWeight: 700, color: "#52525b", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>Milestones & Scope</span>
+                      <span style={{ fontSize: 12, fontWeight: 700, color: "var(--muted)", textTransform: "uppercase", letterSpacing: "0.05em", display: "block", marginBottom: 8 }}>Milestones & Scope</span>
                       <textarea name="deliverables" required placeholder="Outline exactly what needs to be delivered..." rows={4} className="input glass" style={{ width: "100%", fontSize: 15, padding: 16, borderRadius: 16, resize: "vertical" }} />
                     </label>
                     

@@ -194,18 +194,18 @@ export function WorkspaceBoard({
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="pill-btn"
-                style={{ background: "rgba(255,255,255,0.05)", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700 }}
+                style={{ background: "rgba(255,255,255,0.6)", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700 }}
               >
                 Initiate Transfer ↗
               </a>
             )}
             {paymentStatus === "unpaid" && !partnerPaymentLink && (
-              <span className="sub" style={{ fontSize: 13, padding: "8px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 32, border: '1px solid var(--border)' }}>
+              <span className="sub" style={{ fontSize: 13, padding: "8px 16px", background: "rgba(255,255,255,0.5)", borderRadius: 32, border: '1px solid var(--border)' }}>
                 Awaiting Routing Link
               </span>
             )}
             {paymentStatus === "paid" ? (
-              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: 'var(--ink)', border: '1px solid var(--border)', opacity: 1, boxShadow: 'var(--shadow-card)', cursor: "default" }}>
+              <button className="pill-btn accept" disabled style={{ background: "var(--accent-emerald-tint)", color: 'var(--ink)', border: '1px solid var(--border)', opacity: 1, boxShadow: 'var(--shadow-card)', cursor: "default" }}>
                 Funds Secured ✔
               </button>
             ) : (
@@ -234,7 +234,7 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter GitHub Repository URL:");
                 if (url) handleAddEmbed("github", url);
               }}
-              style={{ background: "rgba(255,255,255,0.05)" }}
+              style={{ background: "rgba(255,255,255,0.6)" }}
             >
               + Link Repository
             </button>
@@ -242,7 +242,7 @@ export function WorkspaceBoard({
           {embeds.filter(e => e.embed_type === 'github').length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'github').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-cyan-500 hover:bg-cyan-900/10">
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(255,255,255,0.7)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-cyan-500 hover:bg-cyan-900/10">
                   <span style={{ marginRight: 16, fontSize: 20 }}>💻</span>
                   <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace("https://github.com/", "")}</span>
                   <span style={{ color: 'var(--ink)', fontSize: 13, fontWeight: 700 }}>EXECUTE ↗</span>
@@ -268,7 +268,7 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter Figma Share URL:");
                 if (url) handleAddEmbed("figma", url);
               }}
-              style={{ background: "rgba(255,255,255,0.05)" }}
+              style={{ background: "rgba(255,255,255,0.6)" }}
             >
               + Mount Canvas
             </button>
@@ -310,7 +310,7 @@ export function WorkspaceBoard({
                 const url = window.prompt("Enter Notion or Google Doc URL:");
                 if (url) handleAddEmbed("notion", url);
               }}
-              style={{ background: "rgba(255,255,255,0.05)" }}
+              style={{ background: "rgba(255,255,255,0.6)" }}
             >
               + Link Blueprint
             </button>
@@ -318,7 +318,7 @@ export function WorkspaceBoard({
           {embeds.filter(e => e.embed_type === 'notion').length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'notion').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-purple-500 hover:bg-purple-900/10">
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(255,255,255,0.7)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-purple-500 hover:bg-purple-900/10">
                   <span style={{ marginRight: 16, fontSize: 20 }}>📝</span>
                   <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
                   <span style={{ color: 'var(--ink)', fontSize: 13, fontWeight: 700 }}>OPEN ↗</span>
@@ -333,7 +333,7 @@ export function WorkspaceBoard({
         style={{ 
           padding: 32, 
           borderRadius: 24,
-          background: "#f4f4f5",
+          background: "rgba(255,255,255,0.4)",
           border: "2px dashed var(--border)",
           position: "relative",
           transition: "all 0.2s"
@@ -387,13 +387,13 @@ export function WorkspaceBoard({
                 gap: 16,
                 alignItems: "center",
                 padding: "16px 20px",
-                background: "rgba(255,255,255,0.02)",
+                background: "rgba(255,255,255,0.5)",
                 border: '1px solid var(--border)',
                 borderRadius: 16,
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: '1px solid var(--border)' }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(255,255,255,0.7)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: '1px solid var(--border)' }}>
                   📄
                 </div>
                 <div>
@@ -403,7 +403,7 @@ export function WorkspaceBoard({
                   </div>
                 </div>
               </div>
-              <button type="button" className="pill-btn skip" onClick={() => openFile(f.path)} style={{ background: "rgba(255,255,255,0.05)" }}>
+              <button type="button" className="pill-btn skip" onClick={() => openFile(f.path)} style={{ background: "rgba(255,255,255,0.6)" }}>
                 View ↗
               </button>
             </li>
