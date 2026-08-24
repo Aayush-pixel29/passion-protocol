@@ -209,7 +209,7 @@ export function WorkspaceBoard({
                 Funds Secured ✔
               </button>
             ) : (
-              <button className="pill-btn" onClick={handlePayment} disabled={pending} style={{ background: 'var(--brand)', color: "#000", fontWeight: 800 }}>
+              <button className="pill-btn" onClick={handlePayment} disabled={pending} style={{ background: 'var(--brand)', color: "#ffffff", fontWeight: 800 }}>
                 {pending ? "Syncing..." : "Mark as Transferred"}
               </button>
             )}
@@ -283,7 +283,7 @@ export function WorkspaceBoard({
                   <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: '1px solid var(--border)', boxShadow: "0 0 32px #f4f4f5" }}>
                     <iframe 
                       src={embedUrl}
-                      style={{ width: "100%", height: 500, border: "none", background: "#000" }}
+                      style={{ width: "100%", height: 500, border: "none", background: "var(--surface-2)" }}
                       allowFullScreen
                       sandbox="allow-same-origin allow-scripts allow-popups"
                     />
@@ -334,16 +334,16 @@ export function WorkspaceBoard({
           padding: 32, 
           borderRadius: 24,
           background: "#f4f4f5",
-          border: "2px dashed #000000",
+          border: "2px dashed var(--border)",
           position: "relative",
           transition: "all 0.2s"
         }}
-        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "rgba(0,255,179,0.05)"; }}
-        onDragLeave={(e) => { e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "#f4f4f5"; }}
+        onDragOver={(e) => { e.preventDefault(); e.stopPropagation(); e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "rgba(0,255,179,0.05)"; }}
+        onDragLeave={(e) => { e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "#f4f4f5"; }}
         onDrop={(e) => {
           e.preventDefault();
           e.stopPropagation();
-          e.currentTarget.style.borderColor = "#000000"; e.currentTarget.style.background = "#f4f4f5";
+          e.currentTarget.style.borderColor = "var(--brand)"; e.currentTarget.style.background = "#f4f4f5";
           const file = e.dataTransfer.files?.[0];
           if (file) startTransition(() => onUpload(file));
         }}
@@ -355,7 +355,7 @@ export function WorkspaceBoard({
             Images, PDFs, docs. Drag & drop to securely transfer.
           </p>
         </div>
-        <label className="pill-btn" style={{ cursor: pending ? "wait" : "pointer", background: 'var(--brand)', color: "#000", fontWeight: 800 }}>
+        <label className="pill-btn" style={{ cursor: pending ? "wait" : "pointer", background: 'var(--brand)', color: "#ffffff", fontWeight: 800 }}>
           {pending ? "Encrypting Upload..." : "Upload Asset ☁"}
           <input
             type="file"

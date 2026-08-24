@@ -117,7 +117,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
 
             <label>
               <span className="label">Codename / Alias</span>
-              <input name="codename" className="input match-card" value={codename} onChange={e => setCodename(e.target.value)} required pattern="[A-Za-z0-9_ ]{2,32}" placeholder="e.g. GhostStack, NullBase, Vektor..." style={{ background: "rgba(255,255,255,0.9)", color: "#000" }} />
+              <input name="codename" className="input match-card" value={codename} onChange={e => setCodename(e.target.value)} required pattern="[A-Za-z0-9_ ]{2,32}" placeholder="e.g. GhostStack, NullBase, Vektor..." style={{ background: "rgba(255,255,255,0.9)", color: "var(--ink)" }} />
               <p style={{ fontSize: 11, fontFamily: "var(--font-mono)", color: "var(--muted)", marginTop: 8 }}>This is public. Choose wisely.</p>
             </label>
 
@@ -146,7 +146,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             <input type="hidden" name="location" value="" />
             <input type="hidden" name="full_name" value="" />
 
-            <button type="button" className="pill-btn" style={{ marginTop: 32, width: "100%", background: "var(--accent-emerald)", color: "#000", fontWeight: 700 }} onClick={() => { const i = document.querySelector("input[name='codename']") as HTMLInputElement; if (!i || !i.reportValidity()) return; if (!category) { alert("Please select your domain."); return; } setStep(2); }}>
+            <button type="button" className="pill-btn" style={{ marginTop: 32, width: "100%", background: "var(--accent-emerald)", color: "#ffffff", fontWeight: 700 }} onClick={() => { const i = document.querySelector("input[name='codename']") as HTMLInputElement; if (!i || !i.reportValidity()) return; if (!category) { alert("Please select your domain."); return; } setStep(2); }}>
               Continue &rarr;
             </button>
           </div>
@@ -202,7 +202,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             
             <div style={{ display: "flex", gap: 16, marginTop: 24 }}>
               <button type="button" className="pill-btn skip" onClick={() => setStep(1)}>&larr; Back</button>
-              <button type="button" className="pill-btn" style={{ flex: 1, background: "var(--accent-emerald)", color: "#000", fontWeight: 700 }} onClick={() => setStep(3)}>Continue &rarr;</button>
+              <button type="button" className="pill-btn" style={{ flex: 1, background: "var(--accent-emerald)", color: "#ffffff", fontWeight: 700 }} onClick={() => setStep(3)}>Continue &rarr;</button>
             </div>
           </div>
 
@@ -296,7 +296,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             
             <div style={{ display: "flex", gap: 16 }}>
               <button type="button" className="pill-btn skip" onClick={() => setStep(3)}>&larr; Back</button>
-              <button type="submit" className="pill-btn" style={{ flex: 1, background: "var(--accent-emerald)", color: "#000", fontWeight: 700, boxShadow: "var(--)" }} disabled={pending}>
+              <button type="submit" className="pill-btn" style={{ flex: 1, background: "var(--accent-emerald)", color: "#ffffff", fontWeight: 700, boxShadow: "var(--)" }} disabled={pending}>
                 {pending ? "Transmitting..." : "Lock in Profile 🚀"}
               </button>
             </div>

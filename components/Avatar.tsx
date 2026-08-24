@@ -41,7 +41,7 @@ export function AvatarSVG({ name, size = 40, className = '' }: AvatarProps) {
       viewBox="0 0 100 100" 
       xmlns="http://www.w3.org/2000/svg"
       className={`rounded-full overflow-hidden ${className}`}
-      style={{ borderRadius: '50%', background: config.bg, border: "2px solid #000000", boxShadow: "2px 2px 0px #000000" }}
+      style={{ borderRadius: '50%', background: config.bg, border: "1px solid var(--border)", boxShadow: "var(--shadow-sm)" }}
     >
       {/* Base Face */}
       <circle cx="50" cy="65" r="30" fill={config.skin} />

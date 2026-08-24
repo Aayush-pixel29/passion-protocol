@@ -299,12 +299,12 @@ export function ChatInterface({
           width: 100%;
           overflow: hidden;
           box-shadow: var(--shadow);
-          border: 1px solid #000000;
+          border: 1px solid var(--border);
           border-radius: 24px;
         }
         .chat-sidebar {
           width: 320px;
-          border-right: 1px solid #000000;
+          border-right: 1px solid var(--border);
           background: #f4f4f5;
           display: flex;
           flex-direction: column;
@@ -319,7 +319,7 @@ export function ChatInterface({
             width: 100%;
             height: 140px;
             border-right: none;
-            border-bottom: 1px solid #000000;
+            border-bottom: 1px solid var(--border);
             flex-shrink: 0;
           }
         }
@@ -354,7 +354,7 @@ export function ChatInterface({
                     padding: "16px 24px",
                     cursor: "pointer",
                     background: isActive ? "#f4f4f5" : "transparent",
-                    borderLeft: isActive ? "4px solid #000000" : "4px solid transparent",
+                    borderLeft: isActive ? "4px solid var(--brand)" : "4px solid transparent",
                     borderBottom: '1px solid var(--border)',
                     display: "flex",
                     alignItems: "center",
@@ -363,7 +363,7 @@ export function ChatInterface({
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 18, boxShadow: isActive ? "0 0 16px #000000" : "none" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 18, boxShadow: isActive ? "var(--shadow-card-hover)" : "none" }}>
                       {initial}
                     </div>
                     <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: 'var(--brand)', border: "2px solid #080810" }} />
@@ -416,7 +416,7 @@ export function ChatInterface({
                   type="button"
                   className="pill-btn"
                   onClick={() => setShowPropose(true)}
-                  style={{ fontSize: 13, padding: "8px 16px", background: 'var(--brand)', color: "#000", fontWeight: 700 }}
+                  style={{ fontSize: 13, padding: "8px 16px", background: 'var(--brand)', color: "#ffffff", fontWeight: 700 }}
                 >
                   Propose Partnership ⚡
                 </button>
@@ -458,7 +458,7 @@ export function ChatInterface({
                         borderRadius: 24,
                         borderBottomRightRadius: isMe ? 4 : 24,
                         borderBottomLeftRadius: isMe ? 24 : 4,
-                        boxShadow: isMe ? "0 4px 24px #000000" : "none"
+                        boxShadow: "none"
                       }}>
                         {msg.content}
                       </div>
@@ -568,7 +568,7 @@ export function ChatInterface({
                           <button
                             type="button"
                             className="pill-btn"
-                            style={{ flex: 1, background: 'var(--brand)', color: "#000", fontWeight: 700 }}
+                            style={{ flex: 1, background: 'var(--brand)', color: "#ffffff", fontWeight: 700 }}
                             disabled={isPending}
                             onClick={() => handleContractDecision(ctr.id, "accepted")}
                           >
@@ -580,7 +580,7 @@ export function ChatInterface({
                         <a
                           href={`/workspace/${ctr.id}`}
                           className="pill-btn"
-                          style={{ display: "block", marginTop: 24, textDecoration: "none", background: 'var(--brand)', color: "#000", fontWeight: 800, padding: 16, borderRadius: 32 }}
+                          style={{ display: "block", marginTop: 24, textDecoration: "none", background: 'var(--brand)', color: "#ffffff", fontWeight: 800, padding: 16, borderRadius: 32 }}
                         >
                           Enter Workspace 🚀
                         </a>
@@ -636,7 +636,7 @@ export function ChatInterface({
                           type="button"
                           className={selectedTemplate.key === t.key ? "chip selected glass-purple" : "chip"}
                           onClick={() => setSelectedTemplate(t)}
-                          style={{ fontSize: 13, padding: "8px 16px", borderRadius: 32, background: selectedTemplate.key === t.key ? "#000000" : "transparent", color: selectedTemplate.key === t.key ? "#fff" : "var(--text)" }}
+                          style={{ fontSize: 13, padding: "8px 16px", borderRadius: 32, background: selectedTemplate.key === t.key ? "var(--brand)" : "transparent", color: selectedTemplate.key === t.key ? "#fff" : "var(--text)" }}
                         >
                           {t.label}
                         </button>
@@ -663,7 +663,7 @@ export function ChatInterface({
                       <textarea name="deliverables" required placeholder="Outline exactly what needs to be delivered..." rows={4} className="input glass" style={{ width: "100%", fontSize: 15, padding: 16, borderRadius: 16, resize: "vertical" }} />
                     </label>
                     
-                    <button type="submit" disabled={isPending} className="pill-btn" style={{ background: 'var(--brand)', color: "#000", fontWeight: 800, padding: 16, borderRadius: 32, fontSize: 15, marginTop: 8 }}>
+                    <button type="submit" disabled={isPending} className="pill-btn" style={{ background: 'var(--brand)', color: "#ffffff", fontWeight: 800, padding: 16, borderRadius: 32, fontSize: 15, marginTop: 8 }}>
                       {isPending ? "Encrypting Proposal..." : `Transmit ${selectedTemplate.label} Proposal`}
                     </button>
                   </form>
@@ -694,7 +694,7 @@ export function ChatInterface({
                     onClick={handleSend}
                     disabled={!inputText.trim() || isPending}
                     className="pill-btn"
-                    style={{ height: 48, padding: "0 32px", background: inputText.trim() ? "#000000" : "var(--surface)", color: inputText.trim() ? "#000" : "#52525b", fontWeight: 800, borderRadius: 32, transition: "all 0.2s" }}
+                    style={{ height: 48, padding: "0 32px", background: inputText.trim() ? "var(--brand)" : "var(--surface)", color: inputText.trim() ? "#000" : "#52525b", fontWeight: 800, borderRadius: 32, transition: "all 0.2s" }}
                   >
                     Send
                   </button>

@@ -310,7 +310,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                 ) : incoming ? (
                   <div style={{ display: "flex", gap: 12 }}>
                     <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => respond(card.profile.id, "declined")} disabled={pending}>Decline</button>
-                    <button className="pill-btn" style={{ flex: 1, background: 'var(--brand)', color: "#000", fontWeight: 700 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>Accept</button>
+                    <button className="pill-btn" style={{ flex: 1, background: 'var(--brand)', color: "#ffffff", fontWeight: 700 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>Accept</button>
                   </div>
                 ) : declined ? (
                   <div style={{ textAlign: "center", padding: "12px", borderRadius: 16, color: 'var(--ink)', fontSize: 14, fontWeight: 600 }}>
@@ -319,7 +319,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                 ) : (
                   <div style={{ display: "flex", gap: 12 }}>
                     <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => skip(card.profile.id)}>Pass</button>
-                    <button className="pill-btn" style={{ flex: 2, background: 'var(--brand)', color: "#000", fontWeight: 700, boxShadow: "0 0 16px rgba(255,255,255,0.2)" }} onClick={() => connect(card.profile.id)} disabled={pending}>
+                    <button className="pill-btn" style={{ flex: 2, background: 'var(--brand)', color: "#ffffff", fontWeight: 700, boxShadow: "0 0 16px rgba(255,255,255,0.2)" }} onClick={() => connect(card.profile.id)} disabled={pending}>
                       {pending ? "Transmitting..." : "Connect ⚡"}
                     </button>
                   </div>

@@ -93,9 +93,9 @@ export function AuthForm() {
           }}
           style={{
             background: "#ffffff",
-            color: "#000000",
-            border: "2px solid #000000",
-            boxShadow: "4px 4px 0px #000000",
+            color: "var(--ink)",
+            border: "1px solid var(--border)",
+            boxShadow: "var(--shadow-card)",
             padding: "12px",
             fontSize: "1rem",
             fontWeight: 800,
@@ -111,9 +111,9 @@ export function AuthForm() {
           Sign in with Google
         </button>
         <div style={{ textAlign: "center", fontSize: "0.85rem", color: "#52525b", fontWeight: 600, display: "flex", alignItems: "center", gap: 8 }}>
-          <div style={{ flex: 1, height: 2, background: "#000000" }}></div>
+          <div style={{ flex: 1, height: 2, background: "var(--ink)" }}></div>
           OR
-          <div style={{ flex: 1, height: 2, background: "#000000" }}></div>
+          <div style={{ flex: 1, height: 2, background: "var(--ink)" }}></div>
         </div>
       </div>
 
