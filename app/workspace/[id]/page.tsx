@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { SiteHeader } from "@/components/SiteHeader";
-import { WorkspaceBoard } from "@/components/WorkspaceBoard";
+import { SiteHeader } from "@/components/ui/SiteHeader";
+import { WorkspaceBoard } from "@/components/features/workspace/WorkspaceBoard";
 import { getOwnProfile } from "@/lib/data";
 import type { PartnershipContract, WorkspaceFile } from "@/lib/types";
 

@@ -1,5 +1,5 @@
-import { AuthForm } from "@/components/AuthForm";
-import { SiteHeader } from "@/components/SiteHeader";
+import { AuthForm } from "@/components/features/auth/AuthForm";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 
 export default function LoginPage() {
   return (

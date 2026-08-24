@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
-import { SynergyProof } from "@/components/SynergyProof";
-import { LandingFaq } from "@/components/LandingFaq";
-import { SneakPeekMarquee } from "@/components/SneakPeekMarquee";
+import { SiteHeader } from "@/components/ui/SiteHeader";
+import { LandingSimulator } from "@/components/features/landing/LandingSimulator";
+import { LandingFaq } from "@/components/features/landing/LandingFaq";
+import { SneakPeekMarquee } from "@/components/features/landing/SneakPeekMarquee";
 import { getSessionUser, loadSneakPeekProfiles } from "@/lib/data";
 import styles from "./page.module.css";
 
@@ -74,7 +74,7 @@ export default async function HomePage() {
             </div>
           </div>
 
-          <SynergyProof />
+          <LandingSimulator />
         </section>
 
         {/* Real registered builders — this component hides itself if the pool is empty */}

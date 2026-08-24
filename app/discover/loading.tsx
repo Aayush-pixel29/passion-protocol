@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { DiscoverSkeleton } from "@/components/Skeletons";
+import { SiteHeader } from "@/components/ui/SiteHeader";
+import { DiscoverSkeleton } from "@/components/ui/Skeletons";
 
 export default function DiscoverLoading() {
   return (

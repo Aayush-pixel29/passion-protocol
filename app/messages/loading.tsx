@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { ChatSkeleton } from "@/components/Skeletons";
+import { SiteHeader } from "@/components/ui/SiteHeader";
+import { ChatSkeleton } from "@/components/ui/Skeletons";
 
 export default function MessagesLoading() {
   return (

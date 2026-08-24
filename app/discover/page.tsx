@@ -1,5 +1,5 @@
-import { DiscoverGrid, type DiscoverCard } from "@/components/DiscoverGrid";
-import { SiteHeader } from "@/components/SiteHeader";
+import { DiscoverGrid, type DiscoverCard } from "@/components/features/discover/DiscoverGrid";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";

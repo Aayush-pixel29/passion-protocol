@@ -1,5 +1,5 @@
-import { OnboardingForm } from "@/components/OnboardingForm";
-import { SiteHeader } from "@/components/SiteHeader";
+import { OnboardingForm } from "@/components/features/onboarding/OnboardingForm";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 import { redirect } from "next/navigation";
 

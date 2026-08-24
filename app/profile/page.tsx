@@ -1,10 +1,10 @@
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 import { redirect } from "next/navigation";
-import { DeleteAccountButton } from "@/components/DeleteAccountButton";
-import { PaymentSettings } from "@/components/PaymentSettings";
-import { ProjectForm } from "@/components/ProjectForm";
+import { DeleteAccountButton } from "@/components/ui/DeleteAccountButton";
+import { PaymentSettings } from "@/components/features/profile/PaymentSettings";
+import { ProjectForm } from "@/components/features/onboarding/ProjectForm";
 import { CATEGORY_ICONS } from "@/lib/types";
 
 const DIMS: Array<{ key: "pace" | "comms" | "risk" | "energy"; label: string }> = [

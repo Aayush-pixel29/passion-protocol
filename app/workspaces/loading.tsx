@@ -1,5 +1,5 @@
-import { SiteHeader } from "@/components/SiteHeader";
-import { WorkspacesSkeleton } from "@/components/Skeletons";
+import { SiteHeader } from "@/components/ui/SiteHeader";
+import { WorkspacesSkeleton } from "@/components/ui/Skeletons";
 
 export default function WorkspacesLoading() {
   return (

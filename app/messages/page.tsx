@@ -1,9 +1,9 @@
 import Image from "next/image";
 import Link from "next/link";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 import { redirect } from "next/navigation";
-import { ChatInterface } from "@/components/ChatInterface";
+import { ChatInterface } from "@/components/features/messages/ChatInterface";
 
 export default async function MessagesPage() {
   const { user, profile, supabase } = await getOwnProfile();

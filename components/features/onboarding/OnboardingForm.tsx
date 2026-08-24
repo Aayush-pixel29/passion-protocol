@@ -3,7 +3,7 @@
 import { useActionState, useState } from "react";
 import { saveOnboarding } from "@/lib/actions";
 import { INDUSTRY_CATEGORIES, type IndustryCategory, type Profile } from "@/lib/types";
-import { AvatarSVG } from "./Avatar";
+import { AvatarSVG } from "@/components/ui/Avatar";
 
 const SLIDERS: Array<{
   name: "pace" | "comms" | "risk" | "energy";

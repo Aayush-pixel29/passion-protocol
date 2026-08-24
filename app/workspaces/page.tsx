@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { SiteHeader } from "@/components/SiteHeader";
+import { SiteHeader } from "@/components/ui/SiteHeader";
 import { getOwnProfile } from "@/lib/data";
 
 export default async function WorkspacesPage() {

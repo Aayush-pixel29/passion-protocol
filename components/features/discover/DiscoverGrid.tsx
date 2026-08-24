@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { sendConnect, respondToConnect } from "@/lib/actions";
-import { AvatarSVG } from "./Avatar";
+import { AvatarSVG } from "@/components/ui/Avatar";
 import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
 
 export type DiscoverCard = {
