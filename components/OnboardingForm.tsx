@@ -42,6 +42,9 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
   });
 
   const [selectedTraits, setSelectedTraits] = useState<string[]>([]);
+  const [selectedLangs, setSelectedLangs] = useState<string[]>([]);
+  const [bio, setBio] = useState(profile?.bio ?? '');
+  const [contractComfort, setContractComfort] = useState('Both');
   
   const [state, action, pending] = useActionState(
     async (_prev: { error: string } | void, formData: FormData) => {
@@ -84,9 +87,22 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
       <form action={action} style={{ position: "relative", zIndex: 10 }}>
         
         {/* Hidden inputs to preserve E2E testing integrity across steps */}
-        <input type="hidden" name="industry_category" value={category} />
-        <input type="hidden" name="looking_for_category" value={lookingCategory} />
-        <input type="hidden" name="intent_filter" value={intent} />
+          <input type="hidden" name="industry_category" value={category || "Software & IT"} />
+          <input type="hidden" name="looking_for_category" value={lookingCategory || "Software & IT"} />
+          <input type="hidden" name="intent_filter" value={intent || "Co-Founding"} />
+          <input type="hidden" name="codename" value={codename} />
+          
+          
+                    <input type="hidden" name="professional_title" value={category || "Software & IT"} />
+          <input type="hidden" name="spoken_languages" value={selectedLangs.join(", ")} />
+          <input type="hidden" name="looking_for_title" value={selectedTraits.join(", ") || "A partner"} />
+          <input type="hidden" name="pace" value={sliderValues.pace} />
+          <input type="hidden" name="comms" value={sliderValues.comms} />
+          <input type="hidden" name="risk" value={sliderValues.risk} />
+          <input type="hidden" name="energy" value={sliderValues.energy} />
+          <input type="hidden" name="bio" value={bio} />
+          
+          <input type="hidden" name="contract_comfort" value={contractComfort} />
         <span style={{display: 'none'}}>1. Identity</span>
 
         {/* Step 1: Identity */}
@@ -130,17 +146,43 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
                 {INDUSTRY_CATEGORIES.map(c => <option key={c} value={c}>{c}</option>)}
               </select>
             </label>
-            <input type="hidden" name="professional_title" value={category} />
+            
 
             <div style={{ marginTop: 24 }}>
-              <span className="label">Spoken Languages</span>
-              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
-                {["English", "Spanish", "French", "German", "Japanese", "Portuguese", "Hindi", "Chinese", "Korean", "Arabic"].map(lang => (
-                  <div key={lang} style={{ padding: "6px 16px", borderRadius: 32, border: "1px solid var(--stroke)", fontSize: 12, fontWeight: 600 }}>{lang}</div>
-                ))}
+                <span className="label">Spoken Languages</span>
+                <div style={{ display: "flex", flexWrap: "wrap", gap: 8, marginTop: 8 }}>
+                  {["English", "Spanish", "French", "German", "Japanese", "Portuguese", "Hindi", "Chinese", "Korean", "Arabic"].map(lang => {
+                    const isSelected = selectedLangs.includes(lang);
+                    return (
+                      <div 
+                        key={lang} 
+                        onClick={() => {
+                          setSelectedLangs(prev => 
+                            prev.includes(lang) ? prev.filter(l => l !== lang) : [...prev, lang]
+                          );
+                        }}
+                        style={{ 
+                          padding: "6px 16px", 
+                          borderRadius: 32, 
+                          border: isSelected ? "1px solid var(--accent-emerald)" : "1px solid var(--stroke)",
+                          fontSize: 12, 
+                          fontWeight: 600,
+                          cursor: "pointer",
+                          background: isSelected ? "rgba(0, 255, 179, 0.1)" : "transparent",
+                          color: isSelected ? "var(--accent-emerald)" : "var(--muted)",
+                          display: "flex",
+                          alignItems: "center",
+                          gap: 6
+                        }}
+                      >
+                        {isSelected && <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3" strokeLinecap="round" strokeLinejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>}
+                        {lang}
+                      </div>
+                    );
+                  })}
+                </div>
+                
               </div>
-              <input type="hidden" name="spoken_languages" value="English, Hindi" />
-            </div>
 
             {/* E2E Hidden Inputs */}
             <input type="hidden" name="linkedin_url" value="" />
@@ -187,9 +229,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
                       {sliderValues[s.name as keyof typeof sliderValues]}
                     </div>
                   </div>
-                  <input
-                    name={s.name}
-                    type="range"
+                  <input type="range"
                     min={1}
                     max={5}
                     value={sliderValues[s.name as keyof typeof sliderValues]}
@@ -222,7 +262,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             
             <label style={{ marginBottom: 32, display: "block" }}>
               <span className="label plain">Project Pitch (max 140 chars)</span>
-              <textarea name="bio" className="input" rows={4} defaultValue={profile?.bio ?? ""} placeholder="I'm building a B2B SaaS tool and need a co-founder who..." style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }} />
+              <textarea className="input" rows={4} value={bio} onChange={e => setBio(e.target.value)} placeholder="I'm building a B2B SaaS tool and need a co-founder who..." style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.1)" }} />
             </label>
 
             <div style={{ marginBottom: 32 }}>
@@ -243,15 +283,31 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
                 ))}
               </div>
               {/* E2E compat: Set looking_for_title to traits */}
-              <input type="hidden" name="looking_for_title" value={selectedTraits.join(", ") || "A partner"} />
+              
             </div>
 
             <div style={{ marginBottom: 32 }}>
               <p className="label plain" style={{ marginBottom: 16 }}>Contract Comfort</p>
               <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr 1fr", gap: 8, background: "rgba(255,255,255,0.02)", padding: 4, borderRadius: 32, border: "1px solid var(--stroke)" }}>
-                <div style={{ textAlign: "center", padding: "10px 0", borderRadius: 28, fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--muted)" }}>Equity Only</div>
-                <div style={{ textAlign: "center", padding: "10px 0", borderRadius: 28, fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--muted)" }}>Paid Project</div>
-                <div style={{ textAlign: "center", padding: "10px 0", borderRadius: 28, fontSize: 12, fontFamily: "var(--font-mono)", color: "var(--text-bright)", background: "rgba(255,255,255,0.05)" }}>Both</div>
+                {["Equity Only", "Paid Project", "Both"].map(opt => (
+                    <div 
+                      key={opt}
+                      onClick={() => setContractComfort(opt)}
+                      style={{ 
+                        textAlign: "center", 
+                        padding: "10px 0", 
+                        borderRadius: 28, 
+                        fontSize: 12, 
+                        fontFamily: "var(--font-mono)", 
+                        color: contractComfort === opt ? "var(--text-bright)" : "var(--muted)", 
+                        background: contractComfort === opt ? "rgba(255,255,255,0.05)" : "transparent",
+                        cursor: "pointer",
+                        border: contractComfort === opt ? "1px solid rgba(255,255,255,0.1)" : "1px solid transparent"
+                      }}
+                    >
+                      {opt}
+                    </div>
+                  ))}
               </div>
             </div>
 
