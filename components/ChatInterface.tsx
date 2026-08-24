@@ -330,7 +330,7 @@ export function ChatInterface({
           <div
             style={{
               padding: "20px 24px",
-              borderBottom: "1px solid #000000",
+              borderBottom: '1px solid var(--border)',
               display: "flex",
               justifyContent: "space-between",
               alignItems: "center",
@@ -355,7 +355,7 @@ export function ChatInterface({
                     cursor: "pointer",
                     background: isActive ? "#f4f4f5" : "transparent",
                     borderLeft: isActive ? "4px solid #000000" : "4px solid transparent",
-                    borderBottom: "1px solid #000000",
+                    borderBottom: '1px solid var(--border)',
                     display: "flex",
                     alignItems: "center",
                     gap: 16,
@@ -363,10 +363,10 @@ export function ChatInterface({
                   }}
                 >
                   <div style={{ position: "relative" }}>
-                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #000000", color: "#000000", fontWeight: 700, fontSize: 18, boxShadow: isActive ? "0 0 16px #000000" : "none" }}>
+                    <div style={{ width: 44, height: 44, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 18, boxShadow: isActive ? "0 0 16px #000000" : "none" }}>
                       {initial}
                     </div>
-                    <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: "#000000", border: "2px solid #080810" }} />
+                    <span style={{ position: "absolute", bottom: 0, right: 0, width: 12, height: 12, borderRadius: "50%", background: 'var(--brand)', border: "2px solid #080810" }} />
                   </div>
                   <div style={{ overflow: "hidden" }}>
                     <h4 style={{ margin: "0 0 4px 0", fontSize: 16, fontWeight: 800, color: isActive ? "#fff" : "var(--text)" }}>
@@ -390,7 +390,7 @@ export function ChatInterface({
               <div
                 style={{
                   padding: "20px 24px",
-                  borderBottom: "1px solid #000000",
+                  borderBottom: '1px solid var(--border)',
                   display: "flex",
                   justifyContent: "space-between",
                   alignItems: "center",
@@ -398,15 +398,15 @@ export function ChatInterface({
                 }}
               >
                 <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: "1px solid #000000", color: "#000000", fontWeight: 700, fontSize: 20 }}>
+                  <div style={{ width: 48, height: 48, borderRadius: "50%", background: "#f4f4f5", display: "flex", alignItems: "center", justifyContent: "center", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700, fontSize: 20 }}>
                     {activePartner.partner.codename.charAt(0).toUpperCase()}
                   </div>
                   <div>
-                    <h3 style={{ margin: "0 0 4px 0", fontSize: 18, fontWeight: 800, color: "#000000" }}>
+                    <h3 style={{ margin: "0 0 4px 0", fontSize: 18, fontWeight: 800, color: 'var(--ink)' }}>
                       Chat with {activePartner.partner.codename}
                     </h3>
-                    <span style={{ fontSize: 12, color: "#000000", display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
-                      <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: "#000000", boxShadow: "0 0 8px #000000" }} />
+                    <span style={{ fontSize: 12, color: 'var(--ink)', display: "flex", alignItems: "center", gap: 6, fontWeight: 600 }}>
+                      <span style={{ display: "inline-block", width: 6, height: 6, borderRadius: "50%", background: 'var(--brand)', boxShadow: 'var(--shadow-card)' }} />
                       Encrypted Realtime Channel
                     </span>
                   </div>
@@ -416,7 +416,7 @@ export function ChatInterface({
                   type="button"
                   className="pill-btn"
                   onClick={() => setShowPropose(true)}
-                  style={{ fontSize: 13, padding: "8px 16px", background: "#000000", color: "#000", fontWeight: 700 }}
+                  style={{ fontSize: 13, padding: "8px 16px", background: 'var(--brand)', color: "#000", fontWeight: 700 }}
                 >
                   Propose Partnership ⚡
                 </button>
@@ -434,9 +434,9 @@ export function ChatInterface({
                 }}
               >
                 {messages.length === 0 && contracts.length === 0 ? (
-                  <div style={{ margin: "auto", textAlign: "center", color: "var(--dim)", padding: 40, background: "rgba(255,255,255,0.02)", borderRadius: 24, border: "1px solid #000000" }}>
+                  <div style={{ margin: "auto", textAlign: "center", color: "var(--dim)", padding: 40, background: "rgba(255,255,255,0.02)", borderRadius: 24, border: '1px solid var(--border)' }}>
                     <div style={{ fontSize: 32, marginBottom: 16 }}>🔒</div>
-                    <p style={{ margin: "0 0 8px 0", fontSize: 16, color: "#000000", fontWeight: 700 }}>
+                    <p style={{ margin: "0 0 8px 0", fontSize: 16, color: 'var(--ink)', fontWeight: 700 }}>
                       Secure connection established with {activePartner.partner.codename}.
                     </p>
                     <p style={{ margin: 0, fontSize: 14, color: "#52525b" }}>Send a message to sync up, or propose a milestone contract to start building.</p>
@@ -453,7 +453,7 @@ export function ChatInterface({
                         wordBreak: "break-word",
                         background: isMe ? "#f4f4f5" : "#f4f4f5",
                         border: isMe ? "1px solid #000000" : "1px solid #000000",
-                        color: "#000000",
+                        color: 'var(--ink)',
                         padding: "14px 20px",
                         borderRadius: 24,
                         borderBottomRightRadius: isMe ? 4 : 24,
@@ -486,12 +486,12 @@ export function ChatInterface({
                     }}
                   >
                     {ctr.status === "accepted" && (
-                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: "#000000", boxShadow: "0 0 16px #000000" }} />
+                      <div style={{ position: "absolute", top: 0, left: 0, right: 0, height: 4, background: 'var(--brand)', boxShadow: 'var(--shadow-card)' }} />
                     )}
                     
                     <div style={{ display: "flex", alignItems: "center", justifyContent: "center", gap: 12, marginBottom: 12 }}>
                       <span style={{ fontSize: 24 }}>🤝</span>
-                      <h4 style={{ margin: 0, fontSize: 20, color: "#000000", fontWeight: 800 }}>
+                      <h4 style={{ margin: 0, fontSize: 20, color: 'var(--ink)', fontWeight: 800 }}>
                         {ctr.status === "accepted" ? "Workspace Unlocked" : "Partnership Proposed"}
                       </h4>
                     </div>
@@ -506,7 +506,7 @@ export function ChatInterface({
                             textTransform: "uppercase",
                             padding: "4px 12px",
                             background: "#f4f4f5",
-                            border: "1px solid #000000",
+                            border: '1px solid var(--border)',
                             color: "#d8b4fe",
                             borderRadius: 32,
                           }}
@@ -519,7 +519,7 @@ export function ChatInterface({
                     <div
                       style={{
                         background: "rgba(0,0,0,0.3)",
-                        border: "1px solid #000000",
+                        border: '1px solid var(--border)',
                         borderRadius: 16,
                         padding: 16,
                         margin: "0 0 20px 0",
@@ -529,7 +529,7 @@ export function ChatInterface({
                         textAlign: "left"
                       }}
                     >
-                      <div style={{ fontSize: 11, fontWeight: 700, color: "#000000", marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Deliverables / Scope</div>
+                      <div style={{ fontSize: 11, fontWeight: 700, color: 'var(--ink)', marginBottom: 8, textTransform: "uppercase", letterSpacing: "0.05em" }}>Deliverables / Scope</div>
                       {ctr.deliverables}
                     </div>
                     
@@ -568,7 +568,7 @@ export function ChatInterface({
                           <button
                             type="button"
                             className="pill-btn"
-                            style={{ flex: 1, background: "#000000", color: "#000", fontWeight: 700 }}
+                            style={{ flex: 1, background: 'var(--brand)', color: "#000", fontWeight: 700 }}
                             disabled={isPending}
                             onClick={() => handleContractDecision(ctr.id, "accepted")}
                           >
@@ -580,7 +580,7 @@ export function ChatInterface({
                         <a
                           href={`/workspace/${ctr.id}`}
                           className="pill-btn"
-                          style={{ display: "block", marginTop: 24, textDecoration: "none", background: "#000000", color: "#000", fontWeight: 800, padding: 16, borderRadius: 32 }}
+                          style={{ display: "block", marginTop: 24, textDecoration: "none", background: 'var(--brand)', color: "#000", fontWeight: 800, padding: 16, borderRadius: 32 }}
                         >
                           Enter Workspace 🚀
                         </a>
@@ -591,7 +591,7 @@ export function ChatInterface({
                         </p>
                       ) : null}
                       {ctr.status === "declined" ? (
-                        <p style={{ margin: "16px 0 0", fontSize: 14, color: "#000000", fontWeight: 700 }}>
+                        <p style={{ margin: "16px 0 0", fontSize: 14, color: 'var(--ink)', fontWeight: 700 }}>
                           Proposal Declined
                         </p>
                       ) : null}
@@ -607,7 +607,7 @@ export function ChatInterface({
                   className=""
                   style={{
                     padding: 32,
-                    borderTop: "1px solid #000000",
+                    borderTop: '1px solid var(--border)',
                     borderBottomLeftRadius: 24,
                     borderBottomRightRadius: 24,
                     maxHeight: 500,
@@ -615,7 +615,7 @@ export function ChatInterface({
                   }}
                 >
                   <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: 24 }}>
-                    <h4 style={{ margin: 0, fontSize: 18, color: "#000000", fontWeight: 800 }}>⚡ Micro-Contract Proposal</h4>
+                    <h4 style={{ margin: 0, fontSize: 18, color: 'var(--ink)', fontWeight: 800 }}>⚡ Micro-Contract Proposal</h4>
                     <button
                       type="button"
                       onClick={() => setShowPropose(false)}
@@ -663,7 +663,7 @@ export function ChatInterface({
                       <textarea name="deliverables" required placeholder="Outline exactly what needs to be delivered..." rows={4} className="input glass" style={{ width: "100%", fontSize: 15, padding: 16, borderRadius: 16, resize: "vertical" }} />
                     </label>
                     
-                    <button type="submit" disabled={isPending} className="pill-btn" style={{ background: "#000000", color: "#000", fontWeight: 800, padding: 16, borderRadius: 32, fontSize: 15, marginTop: 8 }}>
+                    <button type="submit" disabled={isPending} className="pill-btn" style={{ background: 'var(--brand)', color: "#000", fontWeight: 800, padding: 16, borderRadius: 32, fontSize: 15, marginTop: 8 }}>
                       {isPending ? "Encrypting Proposal..." : `Transmit ${selectedTemplate.label} Proposal`}
                     </button>
                   </form>
@@ -672,7 +672,7 @@ export function ChatInterface({
                 <div
                   style={{
                     padding: "20px 24px",
-                    borderTop: "1px solid #000000",
+                    borderTop: '1px solid var(--border)',
                     display: "flex",
                     gap: 16,
                     background: "rgba(255,255,255,0.02)",
@@ -704,7 +704,7 @@ export function ChatInterface({
           ) : (
             <div style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", color: "var(--dim)", background: "rgba(255,255,255,0.02)" }}>
               <div style={{ fontSize: 48, marginBottom: 24, opacity: 0.5 }}>📡</div>
-              <p style={{ fontSize: 18, color: "#000000", fontWeight: 700, margin: "0 0 8px 0" }}>No active comm links selected</p>
+              <p style={{ fontSize: 18, color: 'var(--ink)', fontWeight: 700, margin: "0 0 8px 0" }}>No active comm links selected</p>
               <p style={{ fontSize: 14, margin: 0 }}>Select a partner from the sidebar to establish a connection.</p>
             </div>
           )}

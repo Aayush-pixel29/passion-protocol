@@ -216,7 +216,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             
             <label style={{ marginBottom: 32, display: "block" }}>
               <span className="label plain">Project Pitch (max 140 chars)</span>
-              <textarea name="bio" className="input" rows={4} defaultValue={profile?.bio ?? ""} placeholder="I'm building a B2B SaaS tool and need a co-founder who..." style={{ background: "#ffffff", border: "2px solid #000000" }} />
+              <textarea name="bio" className="input" rows={4} defaultValue={profile?.bio ?? ""} placeholder="I'm building a B2B SaaS tool and need a co-founder who..." style={{ background: "#ffffff", border: '1px solid var(--border)' }} />
             </label>
 
             <div style={{ marginBottom: 32 }}>
@@ -224,7 +224,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
               
               <label style={{ marginBottom: 32, display: "block" }}>
                 <span className="label plain">Domain</span>
-                <select className="input match-card" name="looking_for_category" value={lookingCategory} onChange={e => setLookingCategory(e.target.value as IndustryCategory)} style={{ appearance: "none", width: "100%", background: "#ffffff", border: "2px solid #000000" }} required>
+                <select className="input match-card" name="looking_for_category" value={lookingCategory} onChange={e => setLookingCategory(e.target.value as IndustryCategory)} style={{ appearance: "none", width: "100%", background: "#ffffff", border: '1px solid var(--border)' }} required>
                   <option value="" disabled>Select partner domain...</option>
                   {INDUSTRY_CATEGORIES.map(cat => <option key={cat} value={cat}>{cat}</option>)}
                 </select>
@@ -273,7 +273,7 @@ export function OnboardingForm({ profile }: { profile?: (Profile & { pace?: numb
             <h2 style={{ margin: "0 0 8px 0", fontSize: 32, fontWeight: 800, color: "var(--accent-emerald)" }} className="text-">PROFILE INITIALIZED</h2>
             <p style={{ color: "var(--muted)", marginBottom: 32 }}>You are ready to enter the matching pool.</p>
 
-            <div style={{ background: "#ffffff", border: "1px solid #000000", borderRadius: 16, padding: 24, marginBottom: 32, textAlign: "left" }}>
+            <div style={{ background: "#ffffff", border: '1px solid var(--border)', borderRadius: 16, padding: 24, marginBottom: 32, textAlign: "left" }}>
               <div style={{ display: "flex", justifyContent: "space-between", marginBottom: 16 }}>
                 <span className="label plain">Codename</span>
                 <span style={{ fontFamily: "var(--font-mono)", fontWeight: 700 }}>{codename}</span>

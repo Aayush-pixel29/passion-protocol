@@ -124,7 +124,7 @@ export const loadCompletedOperators = unstable_cache(
 
     const projectByUser = new Map<string, import("@/lib/types").Project>();
     for (const row of projects ?? []) {
-      projectByUser.set(row.user_id, row);
+      projectByUser.set(row.user_id, row as import("@/lib/types").Project);
     }
 
     return (profiles ?? [])

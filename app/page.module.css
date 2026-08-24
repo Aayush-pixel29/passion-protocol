@@ -1,6 +1,6 @@
 .hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 460px);
+  grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
   gap: 56px;
   align-items: center;
   padding: 64px 0 48px;
@@ -9,118 +9,214 @@
 .heroStats {
   display: flex;
   flex-wrap: wrap;
-  gap: 28px;
+  gap: 16px;
   margin-top: 32px;
   padding-top: 24px;
-  border-top: 1px solid var(--stroke-subtle);
 }
 
-.heroStat {
+.heroStatCard {
   display: flex;
   flex-direction: column;
-  gap: 2px;
+  gap: 4px;
+  background: #ffffff;
+  padding: 16px 20px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  flex: 1;
+  min-width: 120px;
 }
 
 .heroStatValue {
-  font-family: var(--font-mono);
-  font-size: 1.1rem;
-  font-weight: 600;
-  color: var(--text-bright);
+  font-family: var(--font-sans);
+  font-size: 1.5rem;
+  font-weight: 800;
+  color: var(--ink);
 }
 
 .heroStatLabel {
-  font-size: 0.78rem;
+  font-size: 0.85rem;
   color: var(--muted);
+  font-weight: 500;
 }
 
 .compareSection {
-  padding: 56px 0;
+  padding: 80px 0;
 }
 
 .compareGrid {
   display: grid;
-  gap: 1px;
-  background: var(--stroke-subtle);
-  border: 1px solid var(--stroke-subtle);
-  border-radius: var(--radius);
-  overflow: hidden;
-  margin-top: 32px;
+  gap: 24px;
+  margin-top: 48px;
 }
 
 .compareRow {
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 20px;
-  background: var(--surface-solid);
-  padding: 22px 28px;
+  gap: 24px;
+  padding: 24px;
+  border-radius: var(--radius-card);
+}
+
+.compareCard {
+  background: rgba(255, 255, 255, 0.6);
+  padding: 24px;
+  border-radius: var(--radius-md);
+  height: 100%;
+  display: flex;
+  align-items: center;
 }
 
 .compareOld {
-  color: var(--dim);
-  font-size: 0.95rem;
+  color: var(--muted);
+  font-size: 1.05rem;
   text-decoration: line-through;
-  text-decoration-color: var(--stroke-strong);
+  text-decoration-color: var(--muted);
+}
+
+.compareArrowBox {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .compareArrow {
-  color: var(--accent-2);
-  font-size: 1rem;
+  color: var(--ink);
+  font-size: 1.2rem;
+  background: white;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  box-shadow: var(--shadow-sm);
 }
 
 .compareNew {
-  color: var(--text);
-  font-size: 0.95rem;
-  font-weight: 500;
+  color: var(--ink);
+  font-size: 1.1rem;
+  font-weight: 600;
 }
 
-@media (max-width: 720px) {
-  .compareRow {
-    grid-template-columns: 1fr;
-    gap: 6px;
-    text-align: left;
-  }
-  .compareArrow { display: none; }
+.stepsSection {
+  padding: 80px 0;
 }
 
-.buildNote {
-  max-width: 640px;
-  margin: 0 auto;
+.stepsGrid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 32px;
+  margin-top: 56px;
+  position: relative;
+}
+
+.stepLine {
+  position: absolute;
+  top: 24px;
+  left: 10%;
+  right: 10%;
+  height: 2px;
+  background: var(--border);
+  z-index: 0;
+}
+
+.stepCard {
+  background: #ffffff;
+  border-radius: var(--radius-card);
   padding: 32px;
-  text-align: center;
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
+  position: relative;
+  z-index: 1;
+}
+
+.stepBadge {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: 24px;
+  box-shadow: 0 4px 12px rgba(79, 70, 229, 0.2);
+}
+
+.stepCard h3 {
+  font-size: 1.25rem;
+  margin-bottom: 12px;
+  color: var(--ink);
+}
+
+.stepCard p {
+  color: var(--muted);
+  line-height: 1.6;
+}
+
+.testimonialCard {
+  max-width: 720px;
+  margin: 0 auto;
+  background: white;
+  padding: 48px;
+  border-radius: var(--radius-card);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-card);
 }
 
 .buildNoteQuote {
-  font-family: var(--font-fraunces), serif;
-  font-size: 1.3rem;
-  line-height: 1.5;
-  color: var(--text);
-  margin-bottom: 16px;
+  font-size: 1.35rem;
+  line-height: 1.6;
+  color: var(--ink);
+  font-style: italic;
+  margin-bottom: 32px;
 }
 
-.buildNoteAttribution {
-  font-size: 0.85rem;
-  color: var(--muted);
+.testimonialAuthor {
+  display: flex;
+  align-items: center;
+  gap: 16px;
 }
 
-.ctaSimple {
+.testimonialAvatar {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--brand-tint);
+  color: var(--brand);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+.ctaGradient {
   text-align: center;
-  padding: 64px 0 80px;
+  padding: 80px 32px;
+  margin: 80px 0 0;
+  background: linear-gradient(135deg, var(--brand), var(--brand-2));
+  border-radius: var(--radius-card);
 }
 
 .footerSimple {
-  border-top: 1px solid var(--stroke);
-  padding: 32px 0;
+  border-top: 1px solid var(--border);
+  padding: 48px 0;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
   flex-wrap: wrap;
+  margin-top: 64px;
 }
 
 .footerLinks {
   display: flex;
-  gap: 24px;
+  gap: 32px;
   list-style: none;
   padding: 0;
   margin: 0;
@@ -128,17 +224,31 @@
 
 .footerLinks a {
   color: var(--muted);
-  font-size: 0.85rem;
+  font-size: 0.95rem;
   text-decoration: none;
+  font-weight: 500;
 }
 
 .footerLinks a:hover {
-  color: var(--text);
+  color: var(--ink);
 }
 
 @media (max-width: 900px) {
   .hero {
     grid-template-columns: 1fr;
     padding-top: 40px;
+  }
+  .stepsGrid {
+    grid-template-columns: 1fr;
+  }
+  .stepLine {
+    display: none;
+  }
+  .compareRow {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+  .compareArrowBox {
+    transform: rotate(90deg);
   }
 }

@@ -174,13 +174,13 @@ export function WorkspaceBoard({
       {/* Milestone Payment Widget */}
       <section className="" style={{ padding: 32, borderRadius: 24, position: "relative", overflow: "hidden" }}>
         {paymentStatus === "unpaid" ? (
-          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--glow-rose)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: 'var(--brand)', boxShadow: "var(--glow-rose)" }} />
         ) : (
-          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: "#000000", boxShadow: "var(--)" }} />
+          <div style={{ position: "absolute", top: 0, left: 0, width: 4, height: "100%", background: 'var(--brand)', boxShadow: "var(--)" }} />
         )}
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 24 }}>
           <div>
-            <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 24, fontWeight: 800 }}>
+            <h3 style={{ margin: "0 0 8px 0", color: 'var(--ink)', fontSize: 24, fontWeight: 800 }}>
               Milestone Treasury
             </h3>
             <p className="sub" style={{ margin: 0, fontSize: 14, fontFamily: "var(--font-mono)" }}>
@@ -194,28 +194,28 @@ export function WorkspaceBoard({
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="pill-btn"
-                style={{ background: "rgba(255,255,255,0.05)", border: "1px solid #000000", color: "#000000", fontWeight: 700 }}
+                style={{ background: "rgba(255,255,255,0.05)", border: '1px solid var(--border)', color: 'var(--ink)', fontWeight: 700 }}
               >
                 Initiate Transfer ↗
               </a>
             )}
             {paymentStatus === "unpaid" && !partnerPaymentLink && (
-              <span className="sub" style={{ fontSize: 13, padding: "8px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 32, border: "1px solid #000000" }}>
+              <span className="sub" style={{ fontSize: 13, padding: "8px 16px", background: "rgba(255,255,255,0.02)", borderRadius: 32, border: '1px solid var(--border)' }}>
                 Awaiting Routing Link
               </span>
             )}
             {paymentStatus === "paid" ? (
-              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: "#000000", border: "1px solid #000000", opacity: 1, boxShadow: "0 0 16px #000000", cursor: "default" }}>
+              <button className="pill-btn accept" disabled style={{ background: "rgba(0, 255, 179, 0.1)", color: 'var(--ink)', border: '1px solid var(--border)', opacity: 1, boxShadow: 'var(--shadow-card)', cursor: "default" }}>
                 Funds Secured ✔
               </button>
             ) : (
-              <button className="pill-btn" onClick={handlePayment} disabled={pending} style={{ background: "#000000", color: "#000", fontWeight: 800 }}>
+              <button className="pill-btn" onClick={handlePayment} disabled={pending} style={{ background: 'var(--brand)', color: "#000", fontWeight: 800 }}>
                 {pending ? "Syncing..." : "Mark as Transferred"}
               </button>
             )}
           </div>
         </div>
-        {error ? <p className="error" style={{ marginTop: 16, padding: "12px", background: "rgba(255,61,120,0.1)", borderRadius: 8, border: "1px solid #000000" }}>{error}</p> : null}
+        {error ? <p className="error" style={{ marginTop: 16, padding: "12px", background: "rgba(255,61,120,0.1)", borderRadius: 8, border: '1px solid var(--border)' }}>{error}</p> : null}
       </section>
 
       {/* Role-based Dynamic Hub Blocks */}
@@ -223,7 +223,7 @@ export function WorkspaceBoard({
         <section className="" style={{ padding: 32, borderRadius: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'github') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Developer Terminal</h3>
+              <h3 style={{ margin: "0 0 8px 0", color: 'var(--ink)', fontSize: 20, fontWeight: 800 }}>Developer Terminal</h3>
               <p className="sub" style={{ margin: 0, fontSize: 14 }}>
                 Provision a shared codebase or ticket board.
               </p>
@@ -242,10 +242,10 @@ export function WorkspaceBoard({
           {embeds.filter(e => e.embed_type === 'github').length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'github').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: "1px solid #000000", borderRadius: 16, color: "#000000", textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-cyan-500 hover:bg-cyan-900/10">
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-cyan-500 hover:bg-cyan-900/10">
                   <span style={{ marginRight: 16, fontSize: 20 }}>💻</span>
                   <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace("https://github.com/", "")}</span>
-                  <span style={{ color: "#000000", fontSize: 13, fontWeight: 700 }}>EXECUTE ↗</span>
+                  <span style={{ color: 'var(--ink)', fontSize: 13, fontWeight: 700 }}>EXECUTE ↗</span>
                 </a>
               ))}
             </div>
@@ -257,7 +257,7 @@ export function WorkspaceBoard({
         <section className="" style={{ padding: 32, borderRadius: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'figma') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Design Studio</h3>
+              <h3 style={{ margin: "0 0 8px 0", color: 'var(--ink)', fontSize: 20, fontWeight: 800 }}>Design Studio</h3>
               <p className="sub" style={{ margin: 0, fontSize: 14 }}>
                 Embed a live Figma canvas for real-time collaboration.
               </p>
@@ -280,7 +280,7 @@ export function WorkspaceBoard({
                 const embedUrl = isFigmaUrl ? `https://www.figma.com/embed?embed_host=passionprotocol&url=${encodeURIComponent(e.url)}` : e.url;
                 
                 return (
-                  <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: "1px solid #000000", boxShadow: "0 0 32px #f4f4f5" }}>
+                  <div key={e.id} style={{ borderRadius: 16, overflow: "hidden", border: '1px solid var(--border)', boxShadow: "0 0 32px #f4f4f5" }}>
                     <iframe 
                       src={embedUrl}
                       style={{ width: "100%", height: 500, border: "none", background: "#000" }}
@@ -299,7 +299,7 @@ export function WorkspaceBoard({
         <section className="" style={{ padding: 32, borderRadius: 24 }}>
           <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: 16, marginBottom: embeds.some(e => e.embed_type === 'notion') ? 24 : 0 }}>
             <div>
-              <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Operations Hub</h3>
+              <h3 style={{ margin: "0 0 8px 0", color: 'var(--ink)', fontSize: 20, fontWeight: 800 }}>Operations Hub</h3>
               <p className="sub" style={{ margin: 0, fontSize: 14 }}>
                 Pin your Notion PRD, Strategy, or Analytics docs.
               </p>
@@ -318,10 +318,10 @@ export function WorkspaceBoard({
           {embeds.filter(e => e.embed_type === 'notion').length > 0 && (
             <div style={{ display: "flex", flexDirection: "column", gap: 12 }}>
               {embeds.filter(e => e.embed_type === 'notion').map(e => (
-                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: "1px solid #000000", borderRadius: 16, color: "#000000", textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-purple-500 hover:bg-purple-900/10">
+                <a key={e.id} href={e.url} target="_blank" rel="noopener noreferrer" style={{ display: "flex", alignItems: "center", padding: "16px", background: "rgba(0,0,0,0.3)", border: '1px solid var(--border)', borderRadius: 16, color: 'var(--ink)', textDecoration: "none", transition: "all 0.2s ease" }} className="hover:border-purple-500 hover:bg-purple-900/10">
                   <span style={{ marginRight: 16, fontSize: 20 }}>📝</span>
                   <span style={{ flexGrow: 1, fontFamily: "var(--font-mono)", fontSize: 14 }}>{e.url.replace(/^https?:\/\/(www\.)?/, "")}</span>
-                  <span style={{ color: "#000000", fontSize: 13, fontWeight: 700 }}>OPEN ↗</span>
+                  <span style={{ color: 'var(--ink)', fontSize: 13, fontWeight: 700 }}>OPEN ↗</span>
                 </a>
               ))}
             </div>
@@ -350,12 +350,12 @@ export function WorkspaceBoard({
       >
         <div style={{ display: "flex", justifyContent: "space-between", gap: 16, flexWrap: "wrap", marginBottom: files.length > 0 ? 24 : 0 }}>
         <div>
-          <h3 style={{ margin: "0 0 8px 0", color: "#000000", fontSize: 20, fontWeight: 800 }}>Asset Dropzone</h3>
+          <h3 style={{ margin: "0 0 8px 0", color: 'var(--ink)', fontSize: 20, fontWeight: 800 }}>Asset Dropzone</h3>
           <p className="sub" style={{ margin: 0, fontSize: 14 }}>
             Images, PDFs, docs. Drag & drop to securely transfer.
           </p>
         </div>
-        <label className="pill-btn" style={{ cursor: pending ? "wait" : "pointer", background: "#000000", color: "#000", fontWeight: 800 }}>
+        <label className="pill-btn" style={{ cursor: pending ? "wait" : "pointer", background: 'var(--brand)', color: "#000", fontWeight: 800 }}>
           {pending ? "Encrypting Upload..." : "Upload Asset ☁"}
           <input
             type="file"
@@ -388,16 +388,16 @@ export function WorkspaceBoard({
                 alignItems: "center",
                 padding: "16px 20px",
                 background: "rgba(255,255,255,0.02)",
-                border: "1px solid #000000",
+                border: '1px solid var(--border)',
                 borderRadius: 16,
               }}
             >
               <div style={{ display: "flex", alignItems: "center", gap: 16 }}>
-                <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: "1px solid #000000" }}>
+                <div style={{ width: 40, height: 40, borderRadius: 10, background: "rgba(0,0,0,0.4)", display: "flex", alignItems: "center", justifyContent: "center", fontSize: 20, border: '1px solid var(--border)' }}>
                   📄
                 </div>
                 <div>
-                  <div style={{ fontWeight: 700, color: "#000000", fontSize: 15, marginBottom: 4 }}>{f.file_name}</div>
+                  <div style={{ fontWeight: 700, color: 'var(--ink)', fontSize: 15, marginBottom: 4 }}>{f.file_name}</div>
                   <div className="sub" style={{ fontSize: 12, margin: 0, fontFamily: "var(--font-mono)" }}>
                     {(f.size_bytes / 1024).toFixed(0)} KB • {new Date(f.created_at).toLocaleString("en-US", { timeZone: "UTC" })}
                   </div>

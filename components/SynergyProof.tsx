@@ -36,7 +36,7 @@ export function SynergyProof() {
   }, [you]);
 
   return (
-    <div className="glass" style={{ padding: '32px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '480px', margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
+    <div className="hero-panel" style={{ padding: '32px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '480px', margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
       
       {/* Mesh Background */}
       <div className="mesh-bg" style={{ position: 'absolute', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
@@ -54,10 +54,10 @@ export function SynergyProof() {
             {score}%
           </span>
           <svg style={{ position: 'absolute', top: '50%', width: '100%', height: '32px', transform: 'translateY(-50%)', zIndex: 0 }} preserveAspectRatio="none">
-            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="#000000" strokeWidth="2" strokeDasharray="4 4" />
+            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="var(--border)" strokeWidth="2" strokeDasharray="4 4" />
             <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="var(--accent-emerald)" strokeWidth="2" className="animate-connect-line" />
           </svg>
-          <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10, background: 'var(--bg)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--stroke)' }}>
+          <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10, background: 'white', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--stroke)' }}>
             Synergy
           </span>
         </div>

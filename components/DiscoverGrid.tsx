@@ -66,7 +66,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
             priority
           />
         </div>
-        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "#000000", margin: 0 }}>
+        <p style={{ fontSize: "1.25rem", fontWeight: 800, color: 'var(--ink)', margin: 0 }}>
           No operators with that role yet
         </p>
         <p style={{ maxWidth: 480, margin: 0, color: "#52525b", lineHeight: 1.6 }}>
@@ -133,7 +133,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
         alignItems: "center",
         padding: "16px 24px",
         background: "#ffffff",
-        border: "1px solid #000000",
+        border: '1px solid var(--border)',
         borderRadius: 24,
         boxShadow: "0 4px 24px rgba(0,0,0,0.2)"
       }}>
@@ -187,7 +187,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
 
       {filtered.length === 0 ? (
         <div className="match-card" style={{ padding: 60, textAlign: "center", borderRadius: 24 }}>
-          <h3 style={{ margin: "0 0 8px", color: "#000000", fontSize: 24 }}>No signals found</h3>
+          <h3 style={{ margin: "0 0 8px", color: 'var(--ink)', fontSize: 24 }}>No signals found</h3>
           <p className="sub" style={{ margin: 0 }}>Try adjusting your frequency (filters) to find more operators.</p>
         </div>
       ) : (
@@ -208,13 +208,13 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
               style={{ padding: 24, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}
             >
               {isHighSynergy && (
-                <div style={{ position: "absolute", top: -12, left: 24, background: "#000000", color: "#fff", fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 32, boxShadow: "var(--glow-rose)", display: "flex", alignItems: "center", gap: 6 }}>
+                <div style={{ position: "absolute", top: -12, left: 24, background: 'var(--brand)', color: "#fff", fontSize: 10, fontWeight: 800, padding: "4px 12px", borderRadius: 32, boxShadow: "var(--glow-rose)", display: "flex", alignItems: "center", gap: 6 }}>
                   🔥 HOT MATCH · {card.score}%
                 </div>
               )}
               
               {!isHighSynergy && (
-                <div style={{ position: "absolute", top: 12, right: 16, color: "#000000", fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 32, border: "1px solid #000000", background: "rgba(0, 255, 179, 0.1)" }}>
+                <div style={{ position: "absolute", top: 12, right: 16, color: 'var(--ink)', fontSize: 12, fontWeight: 800, padding: "4px 12px", borderRadius: 32, border: '1px solid var(--border)', background: "rgba(0, 255, 179, 0.1)" }}>
                   {card.score}% MATCH
                 </div>
               )}
@@ -234,11 +234,11 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   style={{ 
                     padding: 16,
                     background: "rgba(255,255,255,0.02)",
-                    border: "1px solid #000000",
+                    border: '1px solid var(--border)',
                     borderRadius: 16
                   }}
                 >
-                  <h4 style={{ margin: "0 0 8px 0", fontSize: 14, color: "#000000" }}>
+                  <h4 style={{ margin: "0 0 8px 0", fontSize: 14, color: 'var(--ink)' }}>
                     Building: {card.project.title}
                   </h4>
                   <p style={{ margin: 0, fontSize: 13, color: "#52525b", lineHeight: 1.5 }}>
@@ -250,11 +250,11 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   style={{ 
                     padding: 16,
                     background: "rgba(255,255,255,0.02)",
-                    border: "1px solid #000000",
+                    border: '1px solid var(--border)',
                     borderRadius: 16
                   }}
                 >
-                  <h4 style={{ margin: "0 0 8px 0", fontSize: 12, color: "#000000", fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
+                  <h4 style={{ margin: "0 0 8px 0", fontSize: 12, color: 'var(--ink)', fontFamily: "var(--font-mono)", textTransform: "uppercase", letterSpacing: "0.1em" }}>
                     Operator Pitch
                   </h4>
                   <p style={{ margin: 0, fontSize: 13, color: "#52525b", lineHeight: 1.5, fontStyle: "italic" }}>
@@ -263,8 +263,8 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                 </div>
               ) : null}
               
-              <div style={{ background: "#f4f4f5", border: "1px solid #000000", borderRadius: 16, padding: 16 }}>
-                <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: "#000000", fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}>VIBE PRINT</h4>
+              <div style={{ background: "#f4f4f5", border: '1px solid var(--border)', borderRadius: 16, padding: 16 }}>
+                <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: 'var(--ink)', fontFamily: "var(--font-mono)", letterSpacing: "0.1em" }}>VIBE PRINT</h4>
                 <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 48 }}>
                   {DIMS.map((d, i) => {
                     const val = card.vibe[d.key];
@@ -275,14 +275,14 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                           style={{ 
                             width: "100%", 
                             height: `${heightPct}%`, 
-                            background: "#000000",
+                            background: 'var(--brand)',
                             borderRadius: 4,
                             animationDelay: `${i * 0.15}s`,
                             boxShadow: "0 0 8px rgba(0, 255, 179, 0.4)"
                           }} 
                           className="animate-bar-dance"
                         />
-                        <span style={{ fontSize: 9, textTransform: "uppercase", color: "#000000", opacity: 0.8, fontWeight: 700 }}>
+                        <span style={{ fontSize: 9, textTransform: "uppercase", color: 'var(--ink)', opacity: 0.8, fontWeight: 700 }}>
                           {d.label.slice(0,3)}
                         </span>
                       </div>
@@ -294,32 +294,32 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
               <div style={{ marginTop: "auto", display: "flex", flexDirection: "column", gap: 8 }}>
                 {accepted ? (
                   <>
-                    <div style={{ textAlign: "center", padding: "12px", background: "#000000", borderRadius: 16, color: "#000000", fontWeight: 700, fontSize: 14 }}>
+                    <div style={{ textAlign: "center", padding: "12px", background: 'var(--brand)', borderRadius: 16, color: 'var(--ink)', fontWeight: 700, fontSize: 14 }}>
                       Partnership Active ✔
                     </div>
                     {card.contactUrl && (
-                      <a href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`} target="_blank" rel="noopener noreferrer" style={{ textAlign: "center", fontSize: 12, color: "#000000", textDecoration: "underline" }}>
+                      <a href={card.contactUrl.startsWith("http") ? card.contactUrl : `https://${card.contactUrl}`} target="_blank" rel="noopener noreferrer" style={{ textAlign: "center", fontSize: 12, color: 'var(--ink)', textDecoration: "underline" }}>
                         Open Comms Channel ↗
                       </a>
                     )}
                   </>
                 ) : outgoing ? (
-                  <div style={{ textAlign: "center", padding: "12px", border: "1px solid #000000", borderRadius: 16, color: "#52525b", fontSize: 14, fontWeight: 600 }}>
+                  <div style={{ textAlign: "center", padding: "12px", border: '1px solid var(--border)', borderRadius: 16, color: "#52525b", fontSize: 14, fontWeight: 600 }}>
                     Signal Transmitted...
                   </div>
                 ) : incoming ? (
                   <div style={{ display: "flex", gap: 12 }}>
                     <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => respond(card.profile.id, "declined")} disabled={pending}>Decline</button>
-                    <button className="pill-btn" style={{ flex: 1, background: "#000000", color: "#000", fontWeight: 700 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>Accept</button>
+                    <button className="pill-btn" style={{ flex: 1, background: 'var(--brand)', color: "#000", fontWeight: 700 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>Accept</button>
                   </div>
                 ) : declined ? (
-                  <div style={{ textAlign: "center", padding: "12px", borderRadius: 16, color: "#000000", fontSize: 14, fontWeight: 600 }}>
+                  <div style={{ textAlign: "center", padding: "12px", borderRadius: 16, color: 'var(--ink)', fontSize: 14, fontWeight: 600 }}>
                     Signal Ignored
                   </div>
                 ) : (
                   <div style={{ display: "flex", gap: 12 }}>
                     <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => skip(card.profile.id)}>Pass</button>
-                    <button className="pill-btn" style={{ flex: 2, background: "#000000", color: "#000", fontWeight: 700, boxShadow: "0 0 16px rgba(255,255,255,0.2)" }} onClick={() => connect(card.profile.id)} disabled={pending}>
+                    <button className="pill-btn" style={{ flex: 2, background: 'var(--brand)', color: "#000", fontWeight: 700, boxShadow: "0 0 16px rgba(255,255,255,0.2)" }} onClick={() => connect(card.profile.id)} disabled={pending}>
                       {pending ? "Transmitting..." : "Connect ⚡"}
                     </button>
                   </div>
