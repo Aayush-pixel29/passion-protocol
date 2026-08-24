@@ -204,7 +204,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
           return (
             <article 
               key={card.profile.id} 
-              className={`${accepted ? "success" : ""}`}
+              className={`match-card ${accepted ? "success" : ""}`}
               style={{ padding: 24, borderRadius: 24, display: 'flex', flexDirection: 'column', gap: 24, position: 'relative' }}
             >
               {isHighSynergy && (
