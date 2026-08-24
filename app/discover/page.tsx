@@ -12,7 +12,23 @@ export default async function DiscoverPage() {
     redirect("/onboarding");
   }
 
-  const pool = await loadCompletedOperators();
+  const { data: profiles } = await supabase.from("profiles").select("*").eq("onboarding_complete", true);
+  const { data: vibes } = await supabase.from("vibe_answers").select("*");
+  const { data: projects } = await supabase.from("projects").select("*");
+
+  const vibeByUser = new Map();
+  for (const row of vibes || []) vibeByUser.set(row.user_id, row);
+
+  const projectByUser = new Map();
+  for (const row of projects || []) projectByUser.set(row.user_id, row);
+
+  const validProfiles = (profiles || []).filter(p => Boolean(p.industry_category && p.professional_title && p.looking_for_category && p.looking_for_title));
+
+  const pool = validProfiles.flatMap(profile => {
+    const vibe = vibeByUser.get(profile.id);
+    const project = projectByUser.get(profile.id) ?? null;
+    return vibe ? [{ profile, vibe, project }] : [];
+  });
   const ranked = rankMatches(
     { 
       id: user.id, 
