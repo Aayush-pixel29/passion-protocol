@@ -58,7 +58,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
           <Image src="/images/empty-discover-deck.png" alt="Empty" width={280} height={160} style={{ objectFit: "contain" }} priority />
         </div>
         <p style={{ fontSize: "1.25rem", fontWeight: 800, color: "var(--text-bright)", margin: 0 }}>No operators with that role yet</p>
-        <Link href="/profile" className="outline-btn" style={{ marginTop: 8, padding: "10px 20px", fontSize: "14px" }}>Adjust Vibe Preferences +'</Link>
+        <Link href="/profile" className="outline-btn" style={{ marginTop: 8, padding: "10px 20px", fontSize: "14px" }}>Adjust Vibe Preferences &rarr;</Link>
       </div>
     );
   }
@@ -139,7 +139,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
               transition: "all 0.2s ease"
             }}
           >
-            dY" Best Matches Only
+            ⚡ Best Matches Only
           </button>
         </div>
 
@@ -242,7 +242,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   alignItems: "center", 
                   gap: 6 
                 }}>
-                  {isHighSynergy ? 'dY" HOT MATCH ' : 'MATCH '}{card.score}%
+                  {isHighSynergy ? '⚡ HOT MATCH ' : 'MATCH '}{card.score}%
                 </div>
 
                 {/* Top Tier: Identity */}
@@ -292,7 +292,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
                   </h4>
                   
                   <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 40, marginBottom: 12 }}>
-                    {DIMS.map((d, i) => {
+                    {DIMS.map((d) => {
                       const val = card.vibe[d.key];
                       const heightPct = (val / 5) * 100;
                       return (
