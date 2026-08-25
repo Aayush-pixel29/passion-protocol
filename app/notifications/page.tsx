@@ -70,7 +70,7 @@ export default async function NotificationsPage() {
           connects={connects} 
           contracts={contracts} 
           roleMatches={roleMatches || []} 
-          currentUserId={user.id}
+          
         />
       </main>
     </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/actions";
 
 type Props = {
-  current: "discover" | "profile" | "messages" | "workspaces" | "none";
+  current: "discover" | "profile" | "messages" | "workspaces" | "notifications" | "none";
   signedIn: boolean;
 };
 

@@ -1,6 +1,6 @@
 import { DiscoverGrid, type DiscoverCard } from "@/components/DiscoverGrid";
 import { SiteHeader } from "@/components/SiteHeader";
-import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
+import { getOwnProfile } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";
 import { type ConnectState, INDUSTRY_CATEGORIES } from "@/lib/types";

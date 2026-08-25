@@ -1,15 +1,18 @@
 "use client";
 
 import { useState } from "react";
-import { respondToConnect, updateContractStatus } from "@/lib/actions";
+import { respondToConnect, respondToPartnership } from "@/lib/actions";
 
-type Sender = { id: string; codename: string; professional_title: string; industry_category: string };
 
-export function NotificationsFeed({ connects, contracts, roleMatches, currentUserId }: {
+
+export function NotificationsFeed({ connects, contracts, roleMatches, }: {
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   connects: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   contracts: any[];
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   roleMatches: any[];
-  currentUserId: string;
+
 }) {
   const [loading, setLoading] = useState<string | null>(null);
 
@@ -21,7 +24,7 @@ export function NotificationsFeed({ connects, contracts, roleMatches, currentUse
 
   const handleContract = async (contractId: string, status: "accepted" | "declined") => {
     setLoading(contractId);
-    await updateContractStatus(contractId, status);
+    await respondToPartnership(contractId, status);
     window.location.reload();
   };
 

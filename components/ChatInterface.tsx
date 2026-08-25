@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useRef, useTransition } from "react";
 import { createClient } from "@/lib/supabase/client";
-import { sendMessage, proposePartnership, respondToPartnership } from "@/lib/actions";
+import { sendMessage, proposePartnership } from "@/lib/actions";
 import type { Message, PartnershipContract } from "@/lib/types";
 import { CONTRACT_TEMPLATES } from "@/lib/types";
 
@@ -264,31 +264,7 @@ export function ChatInterface({
     });
   };
 
-  const handleContractDecision = (contractId: string, decision: "accepted" | "declined") => {
-    startTransition(async () => {
-      const res = await respondToPartnership(contractId, decision);
-      // #region agent log
-      fetch("http://127.0.0.1:7518/ingest/4bb1dd6d-a36d-4f55-9d17-5bde7c70d01a", {
-        method: "POST",
-        headers: { "Content-Type": "application/json", "X-Debug-Session-Id": "7345ba" },
-        body: JSON.stringify({
-          sessionId: "7345ba",
-          runId: "post-fix",
-          hypothesisId: "D",
-          location: "ChatInterface.tsx:handleContractDecision",
-          message: "respondToPartnership finished",
-          data: { ok: !res?.error, error: res?.error ?? null, decision },
-          timestamp: Date.now(),
-        }),
-      }).catch(() => {});
-      // #endregion
-      if (res?.error) {
-        alert(res.error);
-        return;
-      }
-      setContracts((prev) => prev.map((c) => (c.id === contractId ? { ...c, status: decision } : c)));
-    });
-  };
+  ;
 
   return (
     <>
