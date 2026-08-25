@@ -47,7 +47,14 @@ export function SiteHeader({ current, signedIn }: Props) {
                 Workspaces
               </Link>
               <Link 
-                href="/messages" 
+                  href="/notifications" 
+                  className={current === "notifications" ? "active" : ""}
+                  aria-current={current === "notifications" ? "page" : undefined}
+                >
+                  Notifications
+                </Link>
+                <Link 
+                  href="/messages" 
                 className={current === "messages" ? "active" : ""}
                 aria-current={current === "messages" ? "page" : undefined}
               >
