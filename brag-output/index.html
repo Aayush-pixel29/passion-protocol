@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Passion Protocol — Launch Video Composition (brag)</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800;900&family=Fraunces:ital,opsz,wght@1,9..144,500;1,9..144,700&family=JetBrains+Mono:wght@700;800&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1920px;
+      height: 1080px;
+      background: #faf9f6;
+      color: #111827;
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+    }
+
+    /* Video Frame Container */
+    #stage {
+      width: 1920px;
+      height: 1080px;
+      position: relative;
+      background: #faf9f6;
+      overflow: hidden;
+    }
+
+    /* Ambient Background Gradients */
+    .ambient-glow {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      background:
+        radial-gradient(50% 50% at 20% 15%, rgba(255, 61, 110, 0.12), transparent 70%),
+        radial-gradient(45% 45% at 80% 25%, rgba(139, 92, 246, 0.12), transparent 70%),
+        radial-gradient(40% 40% at 50% 85%, rgba(6, 182, 212, 0.08), transparent 70%);
+      z-index: 1;
+    }
+
+    /* Scenes Management */
+    .scene {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 80px 120px;
+      text-align: center;
+      opacity: 0;
+      transform: scale(0.96) translateY(20px);
+      transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .scene.active {
+      opacity: 1;
+      transform: scale(1) translateY(0);
+      pointer-events: auto;
+    }
+
+    .kicker-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 20px;
+      border-radius: 999px;
+      background: rgba(255, 61, 110, 0.08);
+      border: 1px solid rgba(255, 61, 110, 0.25);
+      color: #ff3d6e;
+      font-size: 16px;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-bottom: 24px;
+    }
+
+    .title-huge {
+      font-size: 72px;
+      font-weight: 900;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      color: #111827;
+      max-width: 1280px;
+      margin-bottom: 24px;
+    }
+
+    .serif-accent {
+      font-family: 'Fraunces', serif;
+      font-style: italic;
+      font-weight: 600;
+      background: linear-gradient(120deg, #ff3d6e 0%, #8b5cf6 60%, #06b6d4 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+
+    .sub-text {
+      font-size: 26px;
+      color: #4b5563;
+      max-width: 860px;
+      line-height: 1.5;
+    }
+
+    /* Scene 2 UI Card: 4D Equalizer */
+    .equalizer-card {
+      background: #ffffff;
+      border: 1px solid #e5e3db;
+      border-radius: 24px;
+      padding: 40px 48px;
+      box-shadow: 0 20px 50px -10px rgba(0,0,0,0.08);
+      width: 860px;
+      margin-top: 36px;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .slider-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 24px;
+    }
+
+    .slider-track {
+      flex: 1;
+      height: 12px;
+      background: #f4f3ee;
+      border-radius: 999px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .slider-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #ff3d6e, #8b5cf6);
+      border-radius: 999px;
+      transition: width 1.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .slider-badge {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 18px;
+      font-weight: 800;
+      color: #ff3d6e;
+      background: rgba(255, 61, 110, 0.1);
+      padding: 4px 12px;
+      border-radius: 8px;
+    }
+
+    /* Scene 3: Command Palette Box */
+    .palette-box {
+      background: #ffffff;
+      border: 2px solid #ff3d6e;
+      border-radius: 20px;
+      padding: 24px 32px;
+      width: 780px;
+      box-shadow: 0 24px 60px -10px rgba(255, 61, 110, 0.25);
+      margin-top: 32px;
+      text-align: left;
+    }
+
+    .palette-input {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      font-size: 24px;
+      font-weight: 700;
+      color: #111827;
+      border-bottom: 1px solid #e5e3db;
+      padding-bottom: 16px;
+      margin-bottom: 16px;
+    }
+
+    .palette-key {
+      background: #f4f3ee;
+      border: 1px solid #d2cfc4;
+      border-radius: 6px;
+      padding: 4px 10px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 800;
+    }
+
+    /* Scene 4: AI Verifier & Escrow Split */
+    .grid-2col {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      width: 920px;
+      margin-top: 36px;
+    }
+
+    .audit-card {
+      background: #ffffff;
+      border: 1px solid #e5e3db;
+      border-radius: 20px;
+      padding: 28px;
+      text-align: left;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.05);
+    }
+
+    .score-ring {
+      font-size: 48px;
+      font-weight: 900;
+      color: #10b981;
+      font-family: 'JetBrains Mono', monospace;
+    }
+
+    /* Progress Indicator Bar */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 8px;
+      background: linear-gradient(90deg, #ff3d6e, #8b5cf6, #06b6d4);
+      width: 0%;
+      transition: width 0.1s linear;
+      z-index: 10;
+    }
+
+    /* Watermark / Logo Bar */
+    .brand-watermark {
+      position: absolute;
+      top: 48px;
+      left: 64px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-size: 22px;
+      font-weight: 800;
+      color: #111827;
+      z-index: 10;
+    }
+
+    .time-badge {
+      position: absolute;
+      top: 48px;
+      right: 64px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 16px;
+      font-weight: 700;
+      color: #6b7280;
+      background: #ffffff;
+      border: 1px solid #e5e3db;
+      padding: 6px 14px;
+      border-radius: 999px;
+      z-index: 10;
+    }
+  </style>
+</head>
+<body>
+  <div id="stage">
+    <div class="ambient-glow"></div>
+
+    <!-- Top Watermark -->
+    <div class="brand-watermark">
+      <span style="color: #ff3d6e; font-size: 26px;">⚡</span>
+      <span>Passion Protocol</span>
+    </div>
+
+    <div class="time-badge" id="timerBadge">00:00 / 00:25</div>
+
+    <!-- SCENE 1: THE PROBLEM & HOOK -->
+    <div class="scene active" id="scene1">
+      <div class="kicker-pill">⚡ The Hard Truth</div>
+      <h1 class="title-huge">
+        Why do 90% of co-founder teams fail?
+      </h1>
+      <p class="sub-text">
+        It’s never a lack of technical skills.<br />
+        It’s <span class="serif-accent">working style, pace, and risk mismatch</span>.
+      </p>
+    </div>
+
+    <!-- SCENE 2: 4D VIBE EQUALIZER -->
+    <div class="scene" id="scene2">
+      <div class="kicker-pill">🎛️ 4D Working Style Calibration</div>
+      <h1 class="title-huge" style="font-size: 60px;">
+        Match on <span class="serif-accent">how you actually work</span>.
+      </h1>
+      <div class="equalizer-card">
+        <div class="slider-row">
+          <span style="font-weight: 700; width: 180px; text-align: left;">⚡ Pace &amp; Velocity</span>
+          <div class="slider-track"><div class="slider-fill" style="width: 100%;"></div></div>
+          <span class="slider-badge">5 / 5</span>
+        </div>
+        <div class="slider-row">
+          <span style="font-weight: 700; width: 180px; text-align: left;">💬 Communication</span>
+          <div class="slider-track"><div class="slider-fill" style="width: 80%;"></div></div>
+          <span class="slider-badge">4 / 5</span>
+        </div>
+        <div class="slider-row">
+          <span style="font-weight: 700; width: 180px; text-align: left;">🚀 Risk &amp; Ambition</span>
+          <div class="slider-track"><div class="slider-fill" style="width: 100%;"></div></div>
+          <span class="slider-badge">5 / 5</span>
+        </div>
+        <div class="slider-row">
+          <span style="font-weight: 700; width: 180px; text-align: left;">🔥 Team Energy</span>
+          <div class="slider-track"><div class="slider-fill" style="width: 80%;"></div></div>
+          <span class="slider-badge">4 / 5</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 3: SPOTLIGHT COMMAND PALETTE -->
+    <div class="scene" id="scene3">
+      <div class="kicker-pill">⌘ Zero Friction Speed</div>
+      <h1 class="title-huge" style="font-size: 60px;">
+        Navigate anywhere. <span class="serif-accent">Just press 'K'</span>.
+      </h1>
+      <div class="palette-box">
+        <div class="palette-input">
+          <span>🔍</span>
+          <span>supabase rls &amp; chat presence</span>
+          <span class="palette-key" style="margin-left: auto;">ESC</span>
+        </div>
+        <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+          <span class="palette-key">T: Tasks</span>
+          <span class="palette-key">V: AI Verifier</span>
+          <span class="palette-key">E: Escrow Split</span>
+          <span class="palette-key">U: Cloud Vault</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 4: AI VERIFIER & 50/50 ESCROW -->
+    <div class="scene" id="scene4">
+      <div class="kicker-pill">🤖 Automated Quality &amp; Trust</div>
+      <h1 class="title-huge" style="font-size: 56px;">
+        AI Pod Verifier + <span class="serif-accent">50/50 Revenue Split</span>
+      </h1>
+      <div class="grid-2col">
+        <div class="audit-card">
+          <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: #10b981; margin-bottom: 6px;">
+            ✓ 4-Point AI Diagnostic
+          </div>
+          <div class="score-ring">98 / 100</div>
+          <p style="font-size: 14px; color: #4b5563; margin-top: 6px;">PR Code Sanity &amp; RLS Verified</p>
+        </div>
+        <div class="audit-card">
+          <div style="font-size: 13px; font-weight: 700; text-transform: uppercase; color: #ff3d6e; margin-bottom: 6px;">
+            🤝 Milestone Escrow
+          </div>
+          <div class="score-ring" style="color: #ff3d6e;">50 / 50</div>
+          <p style="font-size: 14px; color: #4b5563; margin-top: 6px;">Digital Signed Legal Protection</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCENE 5: CALL TO ACTION -->
+    <div class="scene" id="scene5">
+      <div class="kicker-pill">🚀 Live in Production</div>
+      <h1 class="title-huge">
+        Find the person you’ll <span class="serif-accent">build with.</span>
+      </h1>
+      <div style="background: #ffffff; border: 2px solid #ff3d6e; padding: 18px 40px; border-radius: 999px; font-size: 28px; font-weight: 800; color: #ff3d6e; box-shadow: 0 10px 30px rgba(255, 61, 110, 0.3); margin-top: 24px;">
+        passion-protocol.vercel.app
+      </div>
+    </div>
+
+    <!-- Bottom Progress Bar -->
+    <div class="progress-bar" id="progressBar"></div>
+  </div>
+
+  <script>
+    const TOTAL_SECONDS = 25;
+    const scenes = [
+      { id: 'scene1', start: 0, end: 5 },
+      { id: 'scene2', start: 5, end: 10 },
+      { id: 'scene3', start: 10, end: 15 },
+      { id: 'scene4', start: 15, end: 20 },
+      { id: 'scene5', start: 20, end: 25 },
+    ];
+
+    let currentSecond = 0;
+    const timerBadge = document.getElementById('timerBadge');
+    const progressBar = document.getElementById('progressBar');
+
+    function updateFrame() {
+      currentSecond += 0.05;
+      if (currentSecond > TOTAL_SECONDS) currentSecond = 0;
+
+      // Update timer badge
+      const s = Math.floor(currentSecond);
+      const strSec = s < 10 ? '0' + s : s;
+      timerBadge.innerText = `00:${strSec} / 00:25`;
+
+      // Update progress bar
+      progressBar.style.width = `${(currentSecond / TOTAL_SECONDS) * 100}%`;
+
+      // Scene transition
+      scenes.forEach((sc) => {
+        const el = document.getElementById(sc.id);
+        if (currentSecond >= sc.start && currentSecond < sc.end) {
+          el.classList.add('active');
+        } else {
+          el.classList.remove('active');
+        }
+      });
+    }
+
+    setInterval(updateFrame, 50);
+  </script>
+</body>
+</html>
