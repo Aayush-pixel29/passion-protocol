@@ -248,7 +248,7 @@ export default async function ProfilePage() {
                           </p>
                         ) : (
                           <p className="sub" style={{ marginTop: 6, marginBottom: 0, fontSize: 13 }}>
-                            No contact handle provided
+                            No external link provided
                           </p>
                         )}
                       </div>
