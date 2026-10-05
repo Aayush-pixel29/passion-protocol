@@ -144,6 +144,37 @@ export async function saveOnboarding(formData: FormData): Promise<{ error: strin
   redirect("/discover");
 }
 
+export async function updateVibeAnswers(formData: FormData) {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired. Sign in again." };
+
+  const pace = Number(formData.get("pace"));
+  const comms = Number(formData.get("comms"));
+  const risk = Number(formData.get("risk"));
+  const energy = Number(formData.get("energy"));
+
+  if ([pace, comms, risk, energy].some((n) => !Number.isInteger(n) || n < 1 || n > 5)) {
+    return { error: "Set every vibe slider (1–5)." };
+  }
+
+  const { error } = await supabase.from("vibe_answers").upsert({
+    user_id: user.id,
+    pace,
+    comms,
+    risk,
+    energy,
+  });
+
+  if (error) {
+    return { error: error.message };
+  }
+
+  revalidatePath("/profile");
+  revalidatePath("/discover");
+  return { success: true };
+}
+
 export async function sendConnect(toId: string): Promise<{ error?: string; status?: ConnectState }> {
   const supabase = await createClient();
   const {
