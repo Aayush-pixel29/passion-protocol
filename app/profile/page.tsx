@@ -6,7 +6,6 @@ import { redirect } from "next/navigation";
 import { DeleteAccountButton } from "@/components/DeleteAccountButton";
 import { ExportDataButton } from "@/components/ExportDataButton";
 import { PaymentSettings } from "@/components/PaymentSettings";
-import { ProjectForm } from "@/components/ProjectForm";
 import { LiveVibeEqualizer } from "@/components/LiveVibeEqualizer";
 import { SubscriptionSettingsCard } from "@/components/SubscriptionSettingsCard";
 
@@ -193,16 +192,6 @@ export default async function ProfilePage() {
           </section>
         </div>
 
-        {/* Project Pitch Section */}
-        <section className="glass-panel" style={{ marginTop: 32, padding: 28, background: "var(--surface, #ffffff)", border: "1px solid var(--stroke, #e5e3db)", borderRadius: "var(--radius-xl, 16px)" }}>
-          <div style={{ marginBottom: 16 }}>
-            <h3 style={{ margin: 0, fontSize: 18, fontWeight: 750, color: "var(--text-bright, #111827)" }}>Project Pitch</h3>
-            <p className="sub" style={{ margin: "4px 0 0", fontSize: 14, color: "var(--muted, #4b5563)" }}>
-              Broadcast what you are building so complementary co-founders can discover your project in the deck.
-            </p>
-          </div>
-          <ProjectForm project={project} />
-        </section>
 
         {/* Payment Settings Section */}
         <section className="glass-panel" style={{ marginTop: 32, padding: 28, background: "var(--surface, #ffffff)", border: "1px solid var(--stroke, #e5e3db)", borderRadius: "var(--radius-xl, 16px)" }}>
@@ -285,15 +274,19 @@ export default async function ProfilePage() {
               {acceptedContracts.map((c) => {
                 const otherId = c.proposed_by === user.id ? c.proposed_to : c.proposed_by;
                 return (
-                  <article key={c.id} className="match-card success">
-                    <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 750 }}>
-                      {contractPartnerName.get(otherId) ?? "Partner"}
-                    </h3>
-                    <p className="card-skill">{c.deliverables}</p>
-                    <p className="sub" style={{ marginBottom: 14 }}>${c.price_amount} &middot; Accepted</p>
-                    <Link href={`/workspace/${c.id}`} className="pill-btn accept" style={{ textAlign: "center", display: "block", fontSize: 13 }}>
-                      Open Workspace &rarr;
-                    </Link>
+                  <article key={c.id} className="match-card success" style={{ display: "flex", flexDirection: "column", justifyContent: "space-between" }}>
+                    <div>
+                      <h3 style={{ margin: "0 0 8px", fontSize: 16, fontWeight: 750 }}>
+                        {contractPartnerName.get(otherId) ?? "Partner"}
+                      </h3>
+                      <p className="card-skill">{c.deliverables}</p>
+                      <p className="sub" style={{ marginBottom: 14 }}>${c.price_amount} &middot; Accepted</p>
+                    </div>
+                    <div style={{ marginTop: 16 }}>
+                      <Link href={`/workspace/${c.id}`} className="pill-btn accept" style={{ textAlign: "center", display: "block", fontSize: 13, width: "100%" }}>
+                        Open Workspace &rarr;
+                      </Link>
+                    </div>
                   </article>
                 );
               })}
