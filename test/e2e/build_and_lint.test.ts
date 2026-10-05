@@ -69,10 +69,12 @@ describe('Build & Lint Integrity Suite', () => {
   describe('2. TypeScript Typechecking (`tsc --noEmit`)', () => {
     test('TypeScript compiles cleanly with 0 type errors', () => {
       try {
-        execSync('npx tsc --noEmit', {
+        const cmd = process.platform === 'win32' ? 'npx.cmd tsc --noEmit' : 'npx tsc --noEmit';
+        execSync(cmd, {
           cwd: ROOT_DIR,
           encoding: 'utf-8',
           stdio: ['ignore', 'pipe', 'pipe'],
+          shell: true as any,
           timeout: 60000,
         });
         assert.ok(true, 'TypeScript compilation completed with 0 errors');
@@ -88,10 +90,12 @@ describe('Build & Lint Integrity Suite', () => {
   describe('3. ESLint Verification (`npm run lint`)', () => {
     test('Next.js lint runs cleanly with 0 lint errors', () => {
       try {
-        execSync('npm run lint', {
+        const cmd = process.platform === 'win32' ? 'npm.cmd run lint' : 'npm run lint';
+        execSync(cmd, {
           cwd: ROOT_DIR,
           encoding: 'utf-8',
           stdio: ['ignore', 'pipe', 'pipe'],
+          shell: true as any,
           timeout: 60000,
         });
         assert.ok(true, 'npm run lint completed with 0 errors');

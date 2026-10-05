@@ -9,8 +9,7 @@ export default function DiscoverLoading() {
         <div className="page-intro spread">
           <div>
             <div className="badge-pill" style={{ marginBottom: 12 }}>
-              <span style={{ color: "#ff3d6e" }}>⚡</span>
-              <span>DISCOVER OPERATORS</span>
+              <span>DISCOVER CANDIDATES</span>
             </div>
             <h2>
               People who match your <span className="gradient-text">vibe</span>

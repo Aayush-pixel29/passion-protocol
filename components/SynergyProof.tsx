@@ -4,20 +4,29 @@ import { useState, useEffect } from "react";
 import { vibeScore } from "@/lib/match";
 import type { VibeAnswers } from "@/lib/types";
 import { AvatarSVG } from "./Avatar";
+import { AdaptiveSlider } from "./ui/AdaptiveSlider";
 
-const AXES: { key: keyof VibeAnswers; label: string }[] = [
-  { key: "pace", label: "Pace" },
-  { key: "comms", label: "Comms" },
-  { key: "risk", label: "Risk" },
-  { key: "energy", label: "Energy" },
+const AXES: { key: keyof VibeAnswers; label: string; desc: string; icon: string }[] = [
+  { key: "pace", label: "Pace", desc: "Sprint vs Methodical", icon: "⚡" },
+  { key: "comms", label: "Comms", desc: "Async vs Real-time", icon: "💬" },
+  { key: "risk", label: "Risk", desc: "Moonshot vs Calculated", icon: "🎲" },
+  { key: "energy", label: "Energy", desc: "Intense vs Steady", icon: "🔋" },
 ];
 
 const MOCK_POOL = [
-  { name: "Neo", role: "Full Stack Engineer", vibe: { pace: 5, comms: 3, risk: 4, energy: 5 } },
-  { name: "Trinity", role: "Product Designer", vibe: { pace: 4, comms: 4, risk: 4, energy: 4 } },
-  { name: "Morpheus", role: "Growth Lead", vibe: { pace: 2, comms: 5, risk: 2, energy: 3 } },
-  { name: "Smith", role: "Sales", vibe: { pace: 5, comms: 2, risk: 5, energy: 5 } },
+  { name: "Alex", role: "Full Stack Engineer", category: "Software & IT", icon: "💻", vibe: { pace: 5, comms: 3, risk: 4, energy: 5 } },
+  { name: "Maya", role: "Product Designer", category: "Creative & Design", icon: "🎨", vibe: { pace: 4, comms: 4, risk: 4, energy: 4 } },
+  { name: "Elena", role: "Growth Lead", category: "Business & Operations", icon: "💼", vibe: { pace: 2, comms: 5, risk: 2, energy: 3 } },
+  { name: "Carlos", role: "Technical Writer", category: "Writing & Content", icon: "✍️", vibe: { pace: 5, comms: 2, risk: 5, energy: 5 } },
 ];
+
+const PACE_LABELS: Record<number, string> = {
+  1: "Deliberate",
+  2: "Steady",
+  3: "Moderate",
+  4: "Fast",
+  5: "Hyper-Sprint",
+};
 
 export function SynergyProof() {
   const [you, setYou] = useState<VibeAnswers>({ pace: 4, comms: 3, risk: 4, energy: 4 });
@@ -27,78 +36,327 @@ export function SynergyProof() {
   useEffect(() => {
     let max = 0;
     let best = MOCK_POOL[0];
-    MOCK_POOL.forEach(p => {
+    MOCK_POOL.forEach((p) => {
       const s = vibeScore(you, p.vibe);
-      if (s > max) { max = s; best = p; }
+      if (s > max) {
+        max = s;
+        best = p;
+      }
     });
     setBestMatch(best);
     setScore(max);
   }, [you]);
 
+  const getTier = (s: number) => {
+    if (s >= 90) return { label: "Exceptional Alignment", color: "#10b981", bg: "rgba(16, 185, 129, 0.12)" };
+    if (s >= 75) return { label: "High Synergy", color: "var(--accent)", bg: "var(--accent-subtle)" };
+    if (s >= 60) return { label: "Moderate Synergy", color: "#f59e0b", bg: "rgba(245, 158, 11, 0.12)" };
+    return { label: "Divergent Workstyle", color: "#ef4444", bg: "rgba(239, 68, 68, 0.12)" };
+  };
+
+  const tier = getTier(score);
+
   return (
-    <div className="glass" style={{ padding: '32px', borderRadius: '24px', display: 'flex', flexDirection: 'column', gap: '32px', width: '100%', maxWidth: '480px', margin: '0 auto', position: 'relative', overflow: 'hidden' }}>
-      
-      {/* Mesh Background */}
-      <div className="mesh-bg" style={{ position: 'absolute', inset: 0, opacity: 0.3, pointerEvents: 'none' }} />
-
-      {/* Connect Widget */}
-      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', position: 'relative', zIndex: 10 }}>
-        
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <AvatarSVG name="You" size={64} className="glow-emerald animate-float" />
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)' }}>YOU</span>
-        </div>
-
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', position: 'relative', padding: '0 16px' }}>
-          <span className="text-glow-emerald" style={{ fontSize: '28px', fontFamily: 'var(--font-mono)', fontWeight: 'bold', color: 'var(--accent-emerald)', zIndex: 10, marginBottom: '8px' }}>
-            {score}%
+    <div
+      style={{
+        position: "relative",
+        background: "var(--surface)",
+        border: "1px solid var(--stroke)",
+        borderRadius: "var(--radius-xl)",
+        padding: "28px",
+        boxShadow: "0 20px 40px -15px rgba(0, 0, 0, 0.08), 0 0 0 1px var(--stroke)",
+        display: "flex",
+        flexDirection: "column",
+        gap: "20px",
+        width: "100%",
+        maxWidth: "480px",
+        margin: "0 auto",
+      }}
+    >
+      {/* Top Header & Mathematical Badge */}
+      <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+        <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
+          <span
+            style={{
+              display: "inline-block",
+              width: "8px",
+              height: "8px",
+              borderRadius: "50%",
+              background: "var(--accent)",
+              boxShadow: "0 0 10px var(--accent)",
+            }}
+          />
+          <span
+            style={{
+              fontSize: "12px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              color: "var(--text-bright)",
+            }}
+          >
+            Live Match Engine
           </span>
-          <svg style={{ position: 'absolute', top: '50%', width: '100%', height: '32px', transform: 'translateY(-50%)', zIndex: 0 }} preserveAspectRatio="none">
-            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="rgba(0, 255, 179, 0.3)" strokeWidth="2" strokeDasharray="4 4" />
-            <line x1="10%" y1="50%" x2="90%" y2="50%" stroke="var(--accent-emerald)" strokeWidth="2" className="animate-connect-line" />
-          </svg>
-          <span style={{ fontSize: '11px', color: 'var(--muted)', textTransform: 'uppercase', letterSpacing: '0.1em', zIndex: 10, background: 'var(--bg)', padding: '2px 8px', borderRadius: '12px', border: '1px solid var(--stroke)' }}>
-            Synergy
-          </span>
         </div>
-
-        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
-          <AvatarSVG name={bestMatch.name} size={64} className="glow-purple animate-float" />
-          <span style={{ fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-purple)' }}>{bestMatch.name}</span>
-        </div>
-      </div>
-
-      {/* Best Match Info */}
-      <div className="glass-emerald animate-slide-up" key={bestMatch.name} style={{ padding: '12px', borderRadius: '12px', textAlign: 'center', zIndex: 10 }}>
-        <span style={{ fontSize: '11px', color: 'var(--accent-emerald)', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', display: 'block', marginBottom: '4px' }}>
-          Top Match Found
+        <span
+          style={{
+            fontSize: "11px",
+            color: "var(--muted)",
+            fontFamily: "var(--font-mono)",
+            background: "var(--surface-inset)",
+            padding: "3px 8px",
+            borderRadius: "var(--radius-sm)",
+            border: "1px solid var(--stroke-subtle)",
+          }}
+        >
+          vibeScore(A, B)
         </span>
-        <span style={{ fontSize: '14px', color: 'var(--text-bright)' }}>{bestMatch.role}</span>
       </div>
 
-      {/* Vibe Widget Sliders */}
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', zIndex: 10 }}>
-        <h4 style={{ fontSize: '12px', fontWeight: 'bold', textTransform: 'uppercase', letterSpacing: '0.05em', color: 'var(--muted)', margin: 0 }}>
-          Your Calibration
-        </h4>
-        {AXES.map((axis) => (
-          <div key={axis.key} style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-            <span style={{ width: '64px', fontSize: '12px', color: 'var(--text-bright)', fontFamily: 'var(--font-mono)' }}>{axis.label}</span>
+      {/* Holographic Vengence-style Pair Visualizer */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "16px 14px",
+          background: "linear-gradient(180deg, var(--surface-inset) 0%, transparent 100%)",
+          borderRadius: "var(--radius-lg)",
+          border: "1px solid var(--stroke-subtle)",
+        }}
+      >
+        {/* User Card */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+          <div style={{ position: "relative" }}>
+            <AvatarSVG name="You" size={52} />
+            <span
+              style={{
+                position: "absolute",
+                bottom: -4,
+                right: -4,
+                fontSize: "11px",
+                background: "var(--surface)",
+                borderRadius: "50%",
+                padding: "2px",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              ⚡
+            </span>
+          </div>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-bright)" }}>You</span>
+          <span style={{ fontSize: "11px", color: "var(--muted)" }}>Calibrating</span>
+        </div>
+
+        {/* Center Circular Score Visual */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+          <div
+            style={{
+              position: "relative",
+              width: "70px",
+              height: "70px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <svg width="70" height="70" viewBox="0 0 74 74" style={{ transform: "rotate(-90deg)" }}>
+              <circle
+                cx="37"
+                cy="37"
+                r="31"
+                fill="none"
+                stroke="var(--stroke-subtle)"
+                strokeWidth="5"
+              />
+              <circle
+                cx="37"
+                cy="37"
+                r="31"
+                fill="none"
+                stroke="url(#scoreGradProof)"
+                strokeWidth="5"
+                strokeDasharray="194.7"
+                strokeDashoffset={194.7 - (194.7 * score) / 100}
+                strokeLinecap="round"
+                style={{ transition: "stroke-dashoffset 0.4s ease" }}
+              />
+              <defs>
+                <linearGradient id="scoreGradProof" x1="0%" y1="0%" x2="100%" y2="100%">
+                  <stop offset="0%" stopColor="#ff3d6e" />
+                  <stop offset="100%" stopColor="#8b5cf6" />
+                </linearGradient>
+              </defs>
+            </svg>
+            <span
+              style={{
+                position: "absolute",
+                fontSize: "20px",
+                fontFamily: "var(--font-mono)",
+                fontWeight: 800,
+                color: "var(--text-bright)",
+                letterSpacing: "-0.03em",
+              }}
+            >
+              {score}%
+            </span>
+          </div>
+
+          <span
+            style={{
+              fontSize: "10px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.04em",
+              color: tier.color,
+              background: tier.bg,
+              padding: "2px 8px",
+              borderRadius: "9999px",
+            }}
+          >
+            {tier.label}
+          </span>
+        </div>
+
+        {/* Candidate Card */}
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px" }}>
+          <div style={{ position: "relative" }}>
+            <AvatarSVG name={bestMatch.name} size={52} />
+            <span
+              style={{
+                position: "absolute",
+                bottom: -4,
+                right: -4,
+                fontSize: "11px",
+                background: "var(--surface)",
+                borderRadius: "50%",
+                padding: "2px",
+                boxShadow: "var(--shadow-sm)",
+              }}
+            >
+              {bestMatch.icon}
+            </span>
+          </div>
+          <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--text-bright)" }}>{bestMatch.name}</span>
+          <span
+            style={{
+              fontSize: "11px",
+              color: "var(--muted)",
+              maxWidth: "80px",
+              textAlign: "center",
+              whiteSpace: "nowrap",
+              overflow: "hidden",
+              textOverflow: "ellipsis",
+            }}
+          >
+            {bestMatch.category}
+          </span>
+        </div>
+      </div>
+
+      {/* Recommended Role Banner */}
+      <div
+        style={{
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "space-between",
+          padding: "10px 14px",
+          background: "var(--accent-subtle)",
+          borderRadius: "var(--radius)",
+          border: "1px solid var(--accent-border)",
+        }}
+      >
+        <span style={{ fontSize: "12px", color: "var(--text)", fontWeight: 500 }}>
+          Top Reciprocal Match:
+        </span>
+        <span style={{ fontSize: "13px", fontWeight: 700, color: "var(--accent)" }}>
+          {bestMatch.icon} {bestMatch.role}
+        </span>
+      </div>
+
+      {/* ADAPTIVE SLIDER FOR PACE (Using user's provided motion physics & dot track) */}
+      <div>
+        <AdaptiveSlider
+          label="Pace Calibration"
+          unit="/ 5"
+          value={you.pace}
+          min={1}
+          max={5}
+          step={1}
+          defaultValue={4}
+          labels={PACE_LABELS}
+          onChange={(newPace) => setYou((prev) => ({ ...prev, pace: newPace }))}
+        />
+      </div>
+
+      {/* Remaining 3 Dimensions (Comms, Risk, Energy) */}
+      <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+        <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+          <span
+            style={{
+              fontSize: "11px",
+              fontWeight: 700,
+              textTransform: "uppercase",
+              letterSpacing: "0.06em",
+              color: "var(--muted)",
+            }}
+          >
+            Other Dimensions
+          </span>
+          <span style={{ fontSize: "11px", color: "var(--dim)" }}>Scale 1 to 5</span>
+        </div>
+
+        {AXES.filter((a) => a.key !== "pace").map((axis) => (
+          <div key={axis.key} style={{ display: "flex", flexDirection: "column", gap: "4px" }}>
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center" }}>
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  color: "var(--text-bright)",
+                  display: "flex",
+                  alignItems: "center",
+                  gap: "6px",
+                }}
+              >
+                <span>{axis.icon}</span> {axis.label}
+                <span style={{ fontSize: "10px", color: "var(--dim)", fontWeight: 400 }}>
+                  ({axis.desc})
+                </span>
+              </span>
+              <span
+                style={{
+                  fontSize: "12px",
+                  fontFamily: "var(--font-mono)",
+                  fontWeight: 700,
+                  color: "var(--accent)",
+                  background: "var(--surface-inset)",
+                  padding: "1px 6px",
+                  borderRadius: "var(--radius-xs)",
+                  border: "1px solid var(--stroke-subtle)",
+                }}
+              >
+                {you[axis.key]} / 5
+              </span>
+            </div>
+
             <input
               type="range"
               min={1}
               max={5}
               value={you[axis.key]}
-              onChange={(e) => setYou(prev => ({ ...prev, [axis.key]: Number(e.target.value) }))}
-              style={{ flex: 1, height: '4px', background: 'var(--surface-inset)', borderRadius: '2px', appearance: 'none', cursor: 'pointer', outline: 'none' }}
+              onChange={(e) => setYou((prev) => ({ ...prev, [axis.key]: Number(e.target.value) }))}
+              style={{
+                width: "100%",
+                height: "5px",
+                borderRadius: "4px",
+                accentColor: "var(--accent)",
+                cursor: "pointer",
+              }}
             />
-            <span style={{ width: '16px', fontSize: '12px', fontFamily: 'var(--font-mono)', color: 'var(--accent-emerald)', textAlign: 'right' }}>
-              {you[axis.key]}
-            </span>
           </div>
         ))}
       </div>
-
     </div>
   );
 }

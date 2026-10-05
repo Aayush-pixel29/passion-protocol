@@ -13,9 +13,9 @@ export const CATEGORY_ICONS: Record<string, string> = {
   "Software & IT": "💻",
   "Engineering & Hardware": "⚙️",
   "Creative & Design": "🎨",
-  "Business & Sales": "📈",
+  "Business & Sales": "💼",
   "Marketing & Content": "✍️",
-  "Other": "🛠️",
+  "Other": "🚀",
 };
 
 // Intent Filters — what kind of collaboration are you looking for?
@@ -30,11 +30,11 @@ export const INTENT_FILTERS = [
 export type IntentFilter = (typeof INTENT_FILTERS)[number];
 
 export const INTENT_ICONS: Record<string, string> = {
-  "Hackathon": "🏆",
+  "Hackathon": "⚡",
   "Side Project": "🛠️",
   "VC Startup": "🚀",
-  "Open Source": "🌍",
-  "Freelance": "💼",
+  "Open Source": "🌐",
+  "Freelance": "🤝",
 };
 
 // Micro-Contract Templates
@@ -150,4 +150,28 @@ export type WorkspaceEmbed = {
   url: string;
   title: string | null;
   created_at: string;
+};
+
+export type WorkspaceTask = {
+  id: string;
+  contract_id: string;
+  title: string;
+  description?: string;
+  assigned_to: string;
+  assigned_by: string;
+  status: "todo" | "in_progress" | "review" | "approved";
+  priority?: "low" | "medium" | "high" | "urgent";
+  tool_type?: "github" | "vscode" | "supabase" | "figma" | "general";
+  deliverable_url?: string | null;
+  deliverable_notes?: string | null;
+  ai_verification?: {
+    score: number;
+    status: "passed" | "warnings" | "failed";
+    summary: string;
+    checks: Array<{ name: string; passed: boolean; details: string }>;
+    verified_at: string;
+  } | null;
+  approved_by_partner?: boolean;
+  created_at: string;
+  due_date?: string | null;
 };

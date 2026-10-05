@@ -6,6 +6,7 @@ import Link from "next/link";
 import { sendConnect, respondToConnect } from "@/lib/actions";
 import { AvatarSVG } from "./Avatar";
 import { formatRoleWithIcon, type Profile, type VibeAnswers, type ConnectState } from "@/lib/types";
+import { ExpandableProfileCard } from "./watermelon/expandable-event-card";
 
 export type DiscoverCard = {
   profile: Profile;
@@ -16,13 +17,6 @@ export type DiscoverCard = {
   contactUrl?: string | null;
   reciprocalMatch?: boolean;
 };
-
-const DIMS: Array<{ key: keyof VibeAnswers; label: string }> = [
-  { key: "pace", label: "Pace" },
-  { key: "comms", label: "Comms" },
-  { key: "risk", label: "Risk" },
-  { key: "energy", label: "Energy" },
-];
 
 export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; allCategories: string[] }) {
   const [hidden, setHidden] = useState<Set<string>>(new Set());
@@ -53,7 +47,7 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
 
   if (local.length === 0) {
     return (
-      <div className="empty" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center" }}>
+      <div className="empty" style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 16, textAlign: "center", padding: "60px 0" }}>
         <div style={{ position: "relative", width: 280, height: 160, marginBottom: 8 }}>
           <Image src="/images/empty-discover-deck.png" alt="Empty" width={280} height={160} style={{ objectFit: "contain" }} priority />
         </div>
@@ -99,83 +93,95 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
   }
 
   return (
-    <div>
-      {/* Sleek Horizontal Filter Bar */}
-      <div style={{ 
-        display: "flex", 
-        flexDirection: "column",
-        gap: 16, 
-        marginBottom: 40,
-        position: "sticky",
-        top: 80,
-        zIndex: 20,
-        padding: "20px 24px",
-        background: "rgba(18, 20, 32, 0.6)",
-        backdropFilter: "blur(24px)",
-        borderBottom: "1px solid var(--stroke-subtle)",
-        borderRadius: 24,
-        boxShadow: "0 10px 40px rgba(0,0,0,0.5)"
-      }}>
-        <div style={{ display: "flex", flexWrap: "wrap", gap: 16, alignItems: "center", justifyContent: "space-between" }}>
-          <input 
-            type="text"
-            placeholder="Search operators, bio, roles..."
-            value={searchQuery}
-            onChange={(e) => setSearchQuery(e.target.value)}
-            className="input glass"
-            style={{ flex: "1 1 250px", margin: 0, borderRadius: 32, padding: "12px 24px", background: "rgba(0,0,0,0.3)" }}
-          />
+    <div style={{ paddingBottom: "60px" }}>
+      {/* Sleek Filter Bar */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          gap: "14px",
+          marginBottom: "32px",
+          padding: "16px 20px",
+          background: "var(--surface)",
+          border: "1px solid var(--stroke)",
+          borderRadius: "var(--radius-xl)",
+          boxShadow: "0 4px 20px rgba(0,0,0,0.04)",
+        }}
+      >
+        <div style={{ display: "flex", flexWrap: "wrap", gap: "12px", alignItems: "center", justifyContent: "space-between" }}>
+          <div style={{ position: "relative", flex: "1 1 280px" }}>
+            <input
+              type="text"
+              placeholder="Search operators, superpower, roles..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="input"
+              style={{
+                borderRadius: "9999px",
+                padding: "10px 18px",
+                background: "var(--surface-inset)",
+                border: "1px solid var(--stroke)",
+                fontSize: "14px",
+              }}
+            />
+          </div>
           <button
+            type="button"
             onClick={() => setShowReciprocalOnly(!showReciprocalOnly)}
-            style={{ 
-              padding: "10px 20px", 
-              borderRadius: 32, 
-              fontSize: 13, 
+            style={{
+              padding: "9px 18px",
+              borderRadius: "9999px",
+              fontSize: "13px",
               fontWeight: 700,
-              background: showReciprocalOnly ? "rgba(255, 61, 110, 0.15)" : "rgba(255,255,255,0.02)",
-              border: showReciprocalOnly ? "1px solid var(--accent)" : "1px solid var(--stroke)",
+              background: showReciprocalOnly ? "var(--accent-subtle)" : "var(--surface-inset)",
+              border: `1px solid ${showReciprocalOnly ? "var(--accent)" : "var(--stroke)"}`,
               color: showReciprocalOnly ? "var(--accent)" : "var(--muted)",
               cursor: "pointer",
-              transition: "all 0.2s ease"
+              transition: "all 0.15s ease",
             }}
           >
-            ⚡ Best Matches Only
+            {showReciprocalOnly ? "✓ Mutual Prefs Only" : "⭐ Top Matches Only"}
           </button>
         </div>
 
-        <div style={{ display: "flex", gap: 8, overflowX: "auto", paddingBottom: 4, scrollbarWidth: "none" }}>
+        {/* Category Pills */}
+        <div style={{ display: "flex", gap: "8px", overflowX: "auto", paddingBottom: "4px", scrollbarWidth: "none" }}>
           <button
+            type="button"
             onClick={() => setCategoryFilter("all")}
-            style={{ 
-              padding: "8px 20px", 
-              borderRadius: 32, 
-              fontSize: 13, 
+            style={{
+              padding: "7px 16px",
+              borderRadius: "9999px",
+              fontSize: "12px",
+              fontWeight: categoryFilter === "all" ? 800 : 600,
               whiteSpace: "nowrap",
               cursor: "pointer",
-              background: categoryFilter === "all" ? "var(--accent-4)" : "rgba(255,255,255,0.03)",
-              color: categoryFilter === "all" ? "#000" : "var(--muted)",
-              border: "none",
-              fontWeight: categoryFilter === "all" ? 800 : 500,
-              boxShadow: categoryFilter === "all" ? "0 0 20px rgba(16, 185, 129, 0.4)" : "none"
+              background: categoryFilter === "all" ? "var(--accent)" : "var(--surface-inset)",
+              color: categoryFilter === "all" ? "#ffffff" : "var(--muted)",
+              border: "1px solid var(--stroke)",
+              boxShadow: categoryFilter === "all" ? "0 2px 10px rgba(255, 61, 110, 0.3)" : "none",
+              transition: "all 0.15s ease",
             }}
           >
             All Domains
           </button>
           {allCategories.map((cat) => (
             <button
+              type="button"
               key={cat}
               onClick={() => setCategoryFilter(cat)}
-              style={{ 
-                padding: "8px 20px", 
-                borderRadius: 32, 
-                fontSize: 13, 
+              style={{
+                padding: "7px 16px",
+                borderRadius: "9999px",
+                fontSize: "12px",
+                fontWeight: categoryFilter === cat ? 800 : 600,
                 whiteSpace: "nowrap",
                 cursor: "pointer",
-                background: categoryFilter === cat ? "var(--accent-4)" : "rgba(255,255,255,0.03)",
-                color: categoryFilter === cat ? "#000" : "var(--muted)",
-                border: "none",
-                fontWeight: categoryFilter === cat ? 800 : 500,
-                boxShadow: categoryFilter === cat ? "0 0 20px rgba(16, 185, 129, 0.4)" : "none"
+                background: categoryFilter === cat ? "var(--accent)" : "var(--surface-inset)",
+                color: categoryFilter === cat ? "#ffffff" : "var(--muted)",
+                border: "1px solid var(--stroke)",
+                boxShadow: categoryFilter === cat ? "0 2px 10px rgba(255, 61, 110, 0.3)" : "none",
+                transition: "all 0.15s ease",
               }}
             >
               {cat}
@@ -184,165 +190,115 @@ export function DiscoverGrid({ cards, allCategories }: { cards: DiscoverCard[]; 
         </div>
       </div>
 
-      {error ? <p className="error" style={{ marginBottom: 24, textAlign: "center" }}>{error}</p> : null}
+      {error ? <p className="error" style={{ marginBottom: "20px", textAlign: "center" }}>⚠️ {error}</p> : null}
 
       {filtered.length === 0 ? (
-        <div className="glass-panel" style={{ padding: 60, textAlign: "center", borderRadius: 24 }}>
-          <h3 style={{ margin: "0 0 8px", color: "var(--text-bright)", fontSize: 24 }}>No signals found</h3>
-          <p className="sub" style={{ margin: 0 }}>Try adjusting your frequency (filters) to find more operators.</p>
+        <div className="glass-panel" style={{ padding: "48px 24px", textAlign: "center", borderRadius: "var(--radius-xl)" }}>
+          <h3 style={{ margin: "0 0 8px", color: "var(--text-bright)", fontSize: "1.25rem" }}>No matching operators found</h3>
+          <p className="sub" style={{ margin: 0 }}>Try clearing your search query or selecting All Domains.</p>
         </div>
       ) : (
-        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: 32 }}>
+        <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(340px, 1fr))", gap: "28px" }}>
           {filtered.map((card) => {
             const accepted = card.connectStatus === "accepted";
             const outgoing = card.connectStatus === "outgoing_pending";
             const incoming = card.connectStatus === "incoming_pending";
             const declined = card.connectStatus === "declined";
             const pending = busyId === card.profile.id;
-            const isHighSynergy = card.score >= 90;
 
             return (
-              <article 
-                key={card.profile.id} 
-                style={{ 
-                  background: "var(--surface-card)",
-                  border: `1px solid ${accepted ? "var(--accent-4)" : "var(--stroke)"}`,
-                  borderRadius: 24, 
-                  padding: 24,
-                  display: "flex", 
-                  flexDirection: "column", 
-                  gap: 20, 
-                  position: "relative",
-                  transition: "transform 0.2s ease, box-shadow 0.2s ease",
-                  boxShadow: "0 10px 30px rgba(0,0,0,0.5)"
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = "translateY(-6px)";
-                  e.currentTarget.style.boxShadow = "0 20px 40px rgba(0,0,0,0.8), 0 0 30px rgba(16, 185, 129, 0.1)";
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = "none";
-                  e.currentTarget.style.boxShadow = "0 10px 30px rgba(0,0,0,0.5)";
-                }}
-              >
-                {/* Match Score Badge */}
-                <div style={{ 
-                  position: "absolute", 
-                  top: -12, 
-                  right: 24, 
-                  background: isHighSynergy ? "var(--accent)" : "var(--bg)", 
-                  color: isHighSynergy ? "#fff" : "var(--accent-4)", 
-                  fontSize: 11, 
-                  fontWeight: 800, 
-                  padding: "6px 16px", 
-                  borderRadius: 32, 
-                  border: isHighSynergy ? "none" : "1px solid var(--accent-4)",
-                  boxShadow: isHighSynergy ? "var(--glow-rose)" : "0 0 10px rgba(16, 185, 129, 0.2)",
-                  display: "flex", 
-                  alignItems: "center", 
-                  gap: 6 
-                }}>
-                  {isHighSynergy ? '⚡ HOT MATCH ' : 'MATCH '}{card.score}%
-                </div>
-
-                {/* Top Tier: Identity */}
-                <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 8 }}>
-                  <AvatarSVG name={card.profile.codename} size={64} className={isHighSynergy ? "glow-rose" : ""} />
-                  <div>
-                    <h3 style={{ margin: "0 0 4px", fontSize: 22, fontWeight: 900, color: "var(--text-bright)", letterSpacing: "-0.02em" }}>
-                      {card.profile.codename}
-                    </h3>
-                    <p style={{ margin: 0, fontSize: 13, color: "var(--accent-3)", fontFamily: "var(--font-mono)", fontWeight: 600 }}>
-                      {formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)}
-                    </p>
+              <ExpandableProfileCard
+                key={card.profile.id}
+                title={card.profile.codename}
+                subtitle={formatRoleWithIcon(card.profile.industry_category, card.profile.professional_title)}
+                description={card.profile.bio || undefined}
+                score={card.score}
+                location={card.profile.location || "Remote / Global"}
+                githubUrl={card.profile.linkedin_url || undefined}
+                languages={card.profile.spoken_languages?.length ? card.profile.spoken_languages : ["English"]}
+                categories={[card.profile.industry_category || "Software & IT"]}
+                vibe={card.vibe}
+                projectTitle={card.project?.title}
+                projectDesc={card.project?.description}
+                connectStatus={card.connectStatus}
+                isPending={pending}
+                onConnect={() => connect(card.profile.id)}
+                avatarComponent={<AvatarSVG name={card.profile.codename} size={48} />}
+                footerAction={
+                  <div style={{ display: "flex", gap: "10px", width: "100%" }}>
+                    {accepted ? (
+                      <Link
+                        href="/messages"
+                        className="pill-btn"
+                        style={{
+                          flex: 1,
+                          textAlign: "center",
+                          background: "var(--success)",
+                          color: "#ffffff",
+                          fontWeight: 800,
+                          padding: "10px 0",
+                        }}
+                      >
+                        Open Comms &rarr;
+                      </Link>
+                    ) : outgoing ? (
+                      <button
+                        className="pill-btn"
+                        style={{ flex: 1, background: "var(--surface-inset)", color: "var(--dim)", border: "1px solid var(--stroke)" }}
+                        disabled
+                      >
+                        ✓ Signal Sent...
+                      </button>
+                    ) : incoming ? (
+                      <>
+                        <button
+                          className="pill-btn skip"
+                          type="button"
+                          style={{ flex: 1, padding: "10px" }}
+                          onClick={() => respond(card.profile.id, "declined")}
+                          disabled={pending}
+                        >
+                          Pass
+                        </button>
+                        <button
+                          className="pill-btn accept"
+                          type="button"
+                          style={{ flex: 1, padding: "10px" }}
+                          onClick={() => respond(card.profile.id, "accepted")}
+                          disabled={pending}
+                        >
+                          {pending ? "..." : "Accept"}
+                        </button>
+                      </>
+                    ) : declined ? (
+                      <button className="pill-btn" style={{ flex: 1, background: "transparent", color: "var(--muted)", border: "1px solid var(--stroke)" }} disabled>
+                        Declined
+                      </button>
+                    ) : (
+                      <>
+                        <button
+                          className="outline-btn"
+                          type="button"
+                          style={{ flex: 1, padding: "10px", fontSize: "13px" }}
+                          onClick={() => skip(card.profile.id)}
+                          disabled={pending}
+                        >
+                          Skip
+                        </button>
+                        <button
+                          className="primary-btn"
+                          type="button"
+                          style={{ flex: 1.4, padding: "10px", fontSize: "13px" }}
+                          onClick={() => connect(card.profile.id)}
+                          disabled={pending}
+                        >
+                          {pending ? "Sending…" : "⚡ Send Signal"}
+                        </button>
+                      </>
+                    )}
                   </div>
-                </div>
-
-                {/* Middle Tier: Bio & Languages */}
-                <div style={{ flex: 1, display: "flex", flexDirection: "column", gap: 16 }}>
-                  {card.profile.bio ? (
-                    <div style={{ 
-                      padding: 16, 
-                      background: "rgba(0,0,0,0.2)", 
-                      borderRadius: 16, 
-                      borderLeft: "2px solid var(--stroke-strong)" 
-                    }}>
-                      <p style={{ margin: 0, fontSize: 14, color: "var(--text)", lineHeight: 1.6, fontStyle: "italic" }}>
-                        &ldquo;{card.profile.bio}&rdquo;
-                      </p>
-                    </div>
-                  ) : null}
-
-                  {card.profile.spoken_languages && card.profile.spoken_languages.length > 0 && (
-                    <div style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}>
-                      {card.profile.spoken_languages.map(lang => (
-                        <span key={lang} style={{ padding: "4px 10px", background: "rgba(255,255,255,0.03)", border: "1px solid var(--stroke-subtle)", borderRadius: 12, fontSize: 11, color: "var(--muted)", fontWeight: 600 }}>
-                          {lang}
-                        </span>
-                      ))}
-                    </div>
-                  )}
-                </div>
-                
-                {/* Bottom Tier: Vibe Print & Actions */}
-                <div style={{ background: "rgba(0, 255, 179, 0.03)", border: "1px solid rgba(0, 255, 179, 0.15)", borderRadius: 16, padding: 16 }}>
-                  <h4 style={{ margin: "0 0 16px 0", fontSize: 10, color: "var(--accent-4)", fontFamily: "var(--font-mono)", letterSpacing: "0.1em", display: "flex", justifyContent: "space-between" }}>
-                    <span>VIBE PRINT</span>
-                    {card.reciprocalMatch && <span style={{ color: "var(--accent-amber)" }}>MUTUAL PREF</span>}
-                  </h4>
-                  
-                  <div style={{ display: "flex", alignItems: "flex-end", gap: 16, height: 40, marginBottom: 12 }}>
-                    {DIMS.map((d) => {
-                      const val = card.vibe[d.key];
-                      const heightPct = (val / 5) * 100;
-                      return (
-                        <div key={d.key} style={{ flex: 1, display: "flex", flexDirection: "column", alignItems: "center", gap: 8 }}>
-                          <div style={{ width: "100%", height: 40, background: "rgba(0,0,0,0.4)", borderRadius: 4, position: "relative", overflow: "hidden" }}>
-                            <div style={{ position: "absolute", bottom: 0, left: 0, right: 0, height: `${heightPct}%`, background: "var(--accent-4)", opacity: 0.8, borderRadius: 4 }} />
-                          </div>
-                          <span style={{ fontSize: 9, fontFamily: "var(--font-mono)", color: "var(--muted)", textTransform: "uppercase" }}>
-                            {d.key.substring(0,3)}
-                          </span>
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-
-                <div style={{ display: "flex", gap: 12, marginTop: "auto" }}>
-                  {accepted ? (
-                    <Link href="/messages" className="pill-btn" style={{ flex: 1, textAlign: "center", background: "var(--surface-solid)", color: "var(--accent-4)", border: "1px solid var(--accent-4)", fontWeight: 800 }}>
-                      Open Comms &rarr;
-                    </Link>
-                  ) : outgoing ? (
-                    <button className="pill-btn" style={{ flex: 1, background: "rgba(255,255,255,0.05)", color: "var(--muted)" }} disabled>
-                      Signal Sent...
-                    </button>
-                  ) : incoming ? (
-                    <>
-                      <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => respond(card.profile.id, "declined")} disabled={pending}>
-                        Pass
-                      </button>
-                      <button className="pill-btn" style={{ flex: 1, background: "var(--accent-4)", color: "#000", fontWeight: 800 }} onClick={() => respond(card.profile.id, "accepted")} disabled={pending}>
-                        {pending ? "..." : "Accept"}
-                      </button>
-                    </>
-                  ) : declined ? (
-                    <button className="pill-btn" style={{ flex: 1, background: "transparent", color: "var(--muted)", border: "1px solid var(--stroke)" }} disabled>
-                      Declined
-                    </button>
-                  ) : (
-                    <>
-                      <button className="pill-btn skip" style={{ flex: 1 }} onClick={() => skip(card.profile.id)} disabled={pending}>
-                        Skip
-                      </button>
-                      <button className="pill-btn" style={{ flex: 1, background: "var(--text-bright)", color: "#000", fontWeight: 800 }} onClick={() => connect(card.profile.id)} disabled={pending}>
-                        {pending ? "..." : "Send Signal"}
-                      </button>
-                    </>
-                  )}
-                </div>
-              </article>
+                }
+              />
             );
           })}
         </div>

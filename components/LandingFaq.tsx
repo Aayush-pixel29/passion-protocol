@@ -63,7 +63,7 @@ export function LandingFaq() {
   };
 
   return (
-    <div className="faq-accordion glass-panel">
+    <div className="faq-accordion glass-panel" suppressHydrationWarning>
       {FAQ_DATA.map((item, idx) => {
         const isOpen = openIndices.has(idx);
         return (
@@ -71,6 +71,7 @@ export function LandingFaq() {
             <button
               type="button"
               className="faq-trigger"
+              suppressHydrationWarning
               onClick={() => toggleItem(idx)}
               aria-expanded={isOpen}
               aria-controls={`faq-answer-${idx}`}

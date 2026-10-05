@@ -35,12 +35,17 @@ export default async function WorkspacesPage() {
         {(!contracts || contracts.length === 0) ? (
           <div className="glass-panel" style={{ padding: 40, textAlign: "center" }}>
             <h3 style={{ margin: "0 0 12px", color: "var(--text-bright)" }}>No active workspaces yet</h3>
-            <p className="sub" style={{ marginBottom: 24 }}>
-              Match with a partner and accept a micro-contract to unlock a workspace.
+            <p className="sub" style={{ marginBottom: 24, maxWidth: 480, margin: "0 auto 24px" }}>
+              Match with a partner and accept a milestone contract, or explore the live interactive demo workspace right now.
             </p>
-            <Link href="/discover" className="pill-btn accept">
-              Find Partners
-            </Link>
+            <div style={{ display: "flex", gap: 12, justifyContent: "center", flexWrap: "wrap" }}>
+              <Link href="/workspace/demo" className="primary-btn">
+                ⚡ Open Live Demo Workspace
+              </Link>
+              <Link href="/discover" className="pill-btn accept">
+                Find Partners &rarr;
+              </Link>
+            </div>
           </div>
         ) : (
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(320px, 1fr))", gap: 24 }}>

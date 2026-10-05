@@ -2,7 +2,7 @@ import Link from "next/link";
 import { signOut } from "@/lib/actions";
 
 type Props = {
-  current: "discover" | "profile" | "messages" | "workspaces" | "notifications" | "none";
+  current: "discover" | "dashboard" | "profile" | "messages" | "workspaces" | "notifications" | "about" | "pricing" | "scoring" | "none";
   signedIn: boolean;
 };
 
@@ -15,18 +15,21 @@ export function SiteHeader({ current, signedIn }: Props) {
           className="brand" 
           aria-label="Passion Protocol Home"
         >
-          <span 
-            style={{ 
-              color: "#ff3d6e", 
-              marginRight: 6,
-              filter: "drop-shadow(0 0 8px rgba(255, 61, 110, 0.6))",
-              fontSize: "1.25rem",
-              lineHeight: 1
-            }}
+          {/* Trustworthy SVG Wordmark Emblem */}
+          <svg 
+            width="24" 
+            height="24" 
+            viewBox="0 0 24 24" 
+            fill="none" 
+            xmlns="http://www.w3.org/2000/svg"
+            style={{ color: "var(--accent)", flexShrink: 0 }}
           >
-            ⚡
-          </span>
-          <span className="brand-text">Passion Protocol</span>
+            <rect x="2" y="2" width="9" height="9" rx="2.5" fill="currentColor" fillOpacity="0.9" />
+            <rect x="13" y="2" width="9" height="9" rx="2.5" fill="currentColor" fillOpacity="0.3" />
+            <rect x="2" y="13" width="9" height="9" rx="2.5" fill="currentColor" fillOpacity="0.3" />
+            <rect x="13" y="13" width="9" height="9" rx="2.5" fill="currentColor" fillOpacity="0.9" />
+          </svg>
+          <span className="brand-text">⚡ Passion Protocol</span>
         </Link>
 
         <nav className="nav" aria-label="Main Navigation">
@@ -40,21 +43,14 @@ export function SiteHeader({ current, signedIn }: Props) {
                 Discover
               </Link>
               <Link 
-                href="/workspaces" 
-                className={current === "workspaces" ? "active" : ""}
-                aria-current={current === "workspaces" ? "page" : undefined}
+                href="/dashboard" 
+                className={current === "dashboard" ? "active" : ""}
+                aria-current={current === "dashboard" ? "page" : undefined}
               >
-                Workspaces
+                Dashboard
               </Link>
               <Link 
-                  href="/notifications" 
-                  className={current === "notifications" ? "active" : ""}
-                  aria-current={current === "notifications" ? "page" : undefined}
-                >
-                  Notifications
-                </Link>
-                <Link 
-                  href="/messages" 
+                href="/messages" 
                 className={current === "messages" ? "active" : ""}
                 aria-current={current === "messages" ? "page" : undefined}
               >
@@ -67,18 +63,41 @@ export function SiteHeader({ current, signedIn }: Props) {
               >
                 Profile
               </Link>
-              <form action={signOut} style={{ display: "inline" }}>
-                <button className="ghost-btn" type="submit" aria-label="Sign out of your account">
+              <form action={signOut} style={{ display: "inline" }} suppressHydrationWarning>
+                <button 
+                  className="ghost-btn" 
+                  type="submit" 
+                  aria-label="Sign out of your account"
+                  suppressHydrationWarning
+                >
                   Sign out
                 </button>
               </form>
             </>
           ) : (
             <>
-              <Link href="/login" className="ghost-btn">
+              <Link 
+                href="/how-scoring-works" 
+                className={current === "scoring" ? "active" : ""}
+              >
+                How It Works
+              </Link>
+              <Link 
+                href="/pricing" 
+                className={current === "pricing" ? "active" : ""}
+              >
+                Pricing
+              </Link>
+              <Link 
+                href="/about" 
+                className={current === "about" ? "active" : ""}
+              >
+                About
+              </Link>
+              <Link href="/login?tab=signin" className="ghost-btn">
                 Sign in
               </Link>
-              <Link href="/login" className="header-cta pill-btn">
+              <Link href="/login?tab=signup" className="primary-btn sm">
                 Get started
               </Link>
             </>
@@ -88,4 +107,3 @@ export function SiteHeader({ current, signedIn }: Props) {
     </header>
   );
 }
-

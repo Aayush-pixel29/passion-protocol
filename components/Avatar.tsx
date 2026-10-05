@@ -14,7 +14,7 @@ const SKIN_COLORS = ['#ffdbac', '#f1c27d', '#e0ac69', '#8d5524', '#c68642', '#e5
 const HAIR_COLORS = ['#090806', '#2c222b', '#71635a', '#b7a69e', '#d6c4c2', '#b55239', '#5b3b27', '#e29a36'];
 const HAIR_STYLES = ['short', 'long', 'afro', 'mohawk', 'bald'];
 const ACCESSORIES = ['none', 'glasses', 'sunglasses', 'earrings'];
-const BG_COLORS = ['#ff3d78', '#b44dff', '#00ffb3', '#00d4ff', '#ffe033', '#8b5cf6'];
+const BG_COLORS = ['#e0e7ff', '#ede9fe', '#e2e8f0', '#fee2e2', '#fef3c7', '#d1fae5'];
 
 interface AvatarProps {
   name: string;

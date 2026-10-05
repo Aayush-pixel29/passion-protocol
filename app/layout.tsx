@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Fraunces, Plus_Jakarta_Sans, IBM_Plex_Mono } from "next/font/google";
+import { Plus_Jakarta_Sans, Fraunces } from "next/font/google";
 import "./globals.css";
 
 const jakarta = Plus_Jakarta_Sans({
@@ -10,28 +10,20 @@ const jakarta = Plus_Jakarta_Sans({
 
 const fraunces = Fraunces({
   subsets: ["latin"],
+  style: ["normal", "italic"],
   variable: "--font-fraunces",
-  display: "swap",
-});
-
-// Used only for the live formula/score readout on the landing page —
-// a monospace face signals "this is a real calculation," not a claim.
-const plexMono = IBM_Plex_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-mono",
   display: "swap",
 });
 
 const SITE_URL = "https://passion-protocol.vercel.app";
 const SITE_NAME = "Passion Protocol";
 const DESCRIPTION =
-  "Find your co-founder by vibe, not resume. Passion Protocol matches builders, designers, writers, and makers on pace, communication style, and risk tolerance — not job titles.";
+  "Find your co-founder by work compatibility, not resumes. Passion Protocol matches creators, engineers, designers, and operators on pace, communication style, and risk tolerance.";
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE_URL),
   title: {
-    default: "Passion Protocol — Find Your Co-Founder by Vibe",
+    default: "Passion Protocol — Find Your Co-Founder by Work Compatibility",
     template: "%s | Passion Protocol",
   },
   description: DESCRIPTION,
@@ -39,10 +31,9 @@ export const metadata: Metadata = {
     "co-founder matching",
     "find a co-founder",
     "startup co-founder search",
-    "collaborator matching app",
-    "co-founder dating",
-    "find a technical co-founder",
-    "find a business co-founder",
+    "collaborator matching platform",
+    "technical co-founder",
+    "startup networking",
   ],
   authors: [{ name: "Aayush Shelar" }],
   applicationName: SITE_NAME,
@@ -62,21 +53,21 @@ export const metadata: Metadata = {
     type: "website",
     url: SITE_URL,
     siteName: SITE_NAME,
-    title: "Passion Protocol — Find Your Co-Founder by Vibe",
+    title: "Passion Protocol — Find Your Co-Founder by Work Compatibility",
     description: DESCRIPTION,
     images: [
       {
         url: "/og-image.png",
         width: 1200,
         height: 630,
-        alt: "Passion Protocol — Match on energy, not a resume",
+        alt: "Passion Protocol — Work compatibility co-founder matching",
       },
     ],
     locale: "en_US",
   },
   twitter: {
     card: "summary_large_image",
-    title: "Passion Protocol — Find Your Co-Founder by Vibe",
+    title: "Passion Protocol — Find Your Co-Founder by Work Compatibility",
     description: DESCRIPTION,
     images: ["/og-image.png"],
   },
@@ -107,14 +98,14 @@ const jsonLd = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${jakarta.variable} ${fraunces.variable} ${plexMono.variable}`}>
+    <html lang="en" suppressHydrationWarning className={`${jakarta.variable} ${fraunces.variable}`}>
       <head>
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
       </head>
-      <body>{children}</body>
+      <body suppressHydrationWarning>{children}</body>
     </html>
   );
 }

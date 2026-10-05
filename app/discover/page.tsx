@@ -56,7 +56,6 @@ export default async function DiscoverPage() {
     statusByUser.set(otherId, state);
   }
 
-  // RLS on profile_links will automatically return links for accepted partners and self
   const { data: links } = await supabase.from("profile_links").select("user_id, contact_url");
   const linkByUser = new Map<string, string>();
   for (const row of links ?? []) {
@@ -79,9 +78,7 @@ export default async function DiscoverPage() {
     };
   });
 
-  // Collect unique categories that exist in the pool for filter pills
   const presentCategories = [...new Set(ranked.map(r => r.profile.industry_category).filter(Boolean))] as string[];
-  // Use the full list but only show ones that actually exist
   const allCategories = INDUSTRY_CATEGORIES.filter(cat => presentCategories.includes(cat));
 
   return (
@@ -91,7 +88,6 @@ export default async function DiscoverPage() {
         <div className="page-intro spread">
           <div>
             <div className="badge-pill" style={{ marginBottom: 12 }}>
-              <span style={{ color: "#ff3d6e" }}>⚡</span>
               <span>DISCOVER OPERATORS</span>
             </div>
             <h2>
@@ -107,11 +103,11 @@ export default async function DiscoverPage() {
               alignItems: "center",
               gap: 8,
               padding: "8px 16px",
-              background: "var(--surface-card)",
+              background: "var(--surface)",
               border: "1px solid var(--stroke)",
               borderRadius: "var(--radius-full)",
               fontSize: "13px",
-              fontWeight: 700,
+              fontWeight: 600,
               color: "var(--muted)",
               boxShadow: "var(--shadow-sm)"
             }}
@@ -121,8 +117,7 @@ export default async function DiscoverPage() {
                 width: 8,
                 height: 8,
                 borderRadius: "50%",
-                background: "#10b981",
-                boxShadow: "0 0 8px rgba(16, 185, 129, 0.7)"
+                background: "var(--success)",
               }} 
             />
             <span>{cards.length} {cards.length === 1 ? "operator" : "operators"} available</span>
@@ -133,4 +128,3 @@ export default async function DiscoverPage() {
     </div>
   );
 }
-
