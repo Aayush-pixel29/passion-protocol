@@ -1,6 +1,6 @@
 import { DiscoverGrid, type DiscoverCard } from "@/components/DiscoverGrid";
 import { SiteHeader } from "@/components/SiteHeader";
-import { getOwnProfile } from "@/lib/data";
+import { getOwnProfile, loadCompletedOperators } from "@/lib/data";
 import { rankMatches } from "@/lib/match";
 import { redirect } from "next/navigation";
 import { type ConnectState, INDUSTRY_CATEGORIES } from "@/lib/types";
@@ -12,34 +12,15 @@ export default async function DiscoverPage() {
     redirect("/onboarding");
   }
 
-  // Execute all discovery queries in parallel for instant sub-100ms loading
+  // Execute all discovery queries in parallel.
+  // We use the cached `loadCompletedOperators` to skip full table scans for the pool.
   const [
-    { data: profiles },
-    { data: vibes },
-    { data: projects },
+    pool,
     { data: connects },
-    { data: links }
   ] = await Promise.all([
-    supabase.from("profiles").select("*").eq("onboarding_complete", true),
-    supabase.from("vibe_answers").select("*"),
-    supabase.from("projects").select("*"),
+    loadCompletedOperators(),
     supabase.from("connect_requests").select("from_id, to_id, status").or(`from_id.eq.${user.id},to_id.eq.${user.id}`),
-    supabase.from("profile_links").select("user_id, contact_url")
   ]);
-
-  const vibeByUser = new Map();
-  for (const row of vibes || []) vibeByUser.set(row.user_id, row);
-
-  const projectByUser = new Map();
-  for (const row of projects || []) projectByUser.set(row.user_id, row);
-
-  const validProfiles = (profiles || []).filter(p => Boolean(p.industry_category && p.professional_title && p.looking_for_category && p.looking_for_title));
-
-  const pool = validProfiles.flatMap(p => {
-    const v = vibeByUser.get(p.id);
-    const proj = projectByUser.get(p.id) ?? null;
-    return v ? [{ profile: p, vibe: v, project: proj }] : [];
-  });
 
   const ranked = rankMatches(
     { 
@@ -63,23 +44,17 @@ export default async function DiscoverPage() {
     statusByUser.set(otherId, state);
   }
 
-  const linkByUser = new Map<string, string>();
-  for (const row of links ?? []) {
-    if (row.contact_url) linkByUser.set(row.user_id, row.contact_url);
-  }
+
 
   const cards: DiscoverCard[] = ranked.map((row) => {
     const status = statusByUser.get(row.profile.id) ?? "none";
     return {
-      profile: {
-        ...row.profile,
-        contact_url: linkByUser.get(row.profile.id) ?? null,
-      },
+      profile: row.profile,
       vibe: row.vibe,
       project: row.project,
       score: row.score,
       connectStatus: status,
-      contactUrl: status === "accepted" ? linkByUser.get(row.profile.id) ?? null : null,
+      contactUrl: status === "accepted" ? row.profile.contact_url ?? null : null,
       reciprocalMatch: row.reciprocalMatch,
     };
   });

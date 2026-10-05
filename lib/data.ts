@@ -56,29 +56,17 @@ export async function getOwnProfile() {
   const { supabase, user } = await getSessionUser();
   if (!user) return { user: null, profile: null, vibe: null, supabase };
 
-  const { data: profileRow } = await supabase
-    .from("profiles")
-    .select(PROFILE_SELECT)
-    .eq("id", user.id)
-    .maybeSingle();
-
-  const { data: vibeRow } = await supabase
-    .from("vibe_answers")
-    .select("pace, comms, risk, energy")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  const { data: linkRow } = await supabase
-    .from("profile_links")
-    .select("contact_url")
-    .eq("user_id", user.id)
-    .maybeSingle();
-
-  const { data: projectRow } = await supabase
-    .from("projects")
-    .select("*")
-    .eq("user_id", user.id)
-    .maybeSingle();
+  const [
+    { data: profileRow },
+    { data: vibeRow },
+    { data: linkRow },
+    { data: projectRow },
+  ] = await Promise.all([
+    supabase.from("profiles").select(PROFILE_SELECT).eq("id", user.id).maybeSingle(),
+    supabase.from("vibe_answers").select("pace, comms, risk, energy").eq("user_id", user.id).maybeSingle(),
+    supabase.from("profile_links").select("contact_url").eq("user_id", user.id).maybeSingle(),
+    supabase.from("projects").select("*").eq("user_id", user.id).maybeSingle(),
+  ]);
 
   return {
     user,

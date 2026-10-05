@@ -5,6 +5,22 @@ import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
 import { type ConnectState, type Message, type PartnershipContract, type PartnershipStatus } from "@/lib/types";
 import { stripe } from "@/lib/stripe";
+import { z } from "zod";
+
+const vibeSchema = z.object({
+  pace: z.number().int().min(1).max(5),
+  comms: z.number().int().min(1).max(5),
+  risk: z.number().int().min(1).max(5),
+  energy: z.number().int().min(1).max(5),
+});
+
+const projectSchema = z.object({
+  title: z.string().min(3).max(100),
+  description: z.string().min(10).max(1000),
+  budget_range: z.string().max(100).optional().nullable(),
+});
+
+const messageSchema = z.string().min(1, "Message cannot be empty.").max(2000, "Message is too long (2000 character limit).");
 
 const UUID_RE =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -154,7 +170,8 @@ export async function updateVibeAnswers(formData: FormData) {
   const risk = Number(formData.get("risk"));
   const energy = Number(formData.get("energy"));
 
-  if ([pace, comms, risk, energy].some((n) => !Number.isInteger(n) || n < 1 || n > 5)) {
+  const parsedVibe = vibeSchema.safeParse({ pace, comms, risk, energy });
+  if (!parsedVibe.success) {
     return { error: "Set every vibe slider (1–5)." };
   }
 
@@ -298,8 +315,10 @@ export async function saveProject(formData: FormData): Promise<{ error?: string 
   const description = String(formData.get("description") ?? "").trim();
   const budget_range = String(formData.get("budget_range") ?? "").trim();
 
-  if (title.length < 3 || title.length > 100) return { error: "Title must be 3-100 characters." };
-  if (description.length < 10 || description.length > 1000) return { error: "Description must be 10-1000 characters." };
+  const parsedProject = projectSchema.safeParse({ title, description, budget_range });
+  if (!parsedProject.success) {
+    return { error: "Invalid project details. Title must be 3-100 chars, description 10-1000 chars." };
+  }
 
   const { error } = await supabase.from("projects").upsert({
     user_id: user.id,
@@ -322,9 +341,9 @@ export async function sendMessage(
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return { error: "Session expired." };
 
-  if (!content.trim()) return { error: "Message cannot be empty." };
-  if (content.length > 2000) {
-    return { error: "Message is too long (2000 character limit)." };
+  const parsedMessage = messageSchema.safeParse(content.trim());
+  if (!parsedMessage.success) {
+    return { error: parsedMessage.error.errors[0].message };
   }
 
   // Rate limiting: block rapid-fire spam without impacting real conversation pace
