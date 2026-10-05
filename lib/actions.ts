@@ -343,7 +343,7 @@ export async function sendMessage(
 
   const parsedMessage = messageSchema.safeParse(content.trim());
   if (!parsedMessage.success) {
-    return { error: parsedMessage.error.errors[0].message };
+    return { error: parsedMessage.error.issues[0]?.message || "Invalid message" };
   }
 
   // Rate limiting: block rapid-fire spam without impacting real conversation pace
