@@ -55,7 +55,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
     const partnerId = contract.proposed_by === user.id ? contract.proposed_to : contract.proposed_by;
     const { data: partnerRow } = await supabase
       .from("profiles")
-      .select("id, codename, full_name, professional_title, industry_category, location, bio, payment_link")
+      .select("id, codename, full_name, professional_title, industry_category, location, bio, stripe_account_id")
       .eq("id", partnerId)
       .maybeSingle();
 
@@ -72,12 +72,23 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
       .order("created_at", { ascending: false });
 
     row = contract as PartnershipContract;
-    partnerProfile = (partnerRow as Partial<Profile>) || {
-      id: partnerId,
-      codename: "Partner",
-      professional_title: "Verified Builder",
-      industry_category: "Software & IT",
-    };
+    partnerProfile = partnerRow
+      ? {
+          id: partnerRow.id,
+          codename: partnerRow.codename,
+          full_name: partnerRow.full_name,
+          professional_title: partnerRow.professional_title,
+          industry_category: partnerRow.industry_category,
+          location: partnerRow.location,
+          bio: partnerRow.bio,
+          payment_link: partnerRow.stripe_account_id,
+        }
+      : {
+          id: partnerId,
+          codename: "Partner",
+          professional_title: "Verified Builder",
+          industry_category: "Software & IT",
+        };
     initialFiles = (files ?? []) as WorkspaceFile[];
     initialEmbeds = (embeds ?? []) as WorkspaceEmbed[];
   }
