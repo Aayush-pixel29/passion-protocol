@@ -3,7 +3,7 @@ import { notFound, redirect } from "next/navigation";
 import { SiteHeader } from "@/components/SiteHeader";
 import { WorkspaceBoard } from "@/components/WorkspaceBoard";
 import { getOwnProfile } from "@/lib/data";
-import type { PartnershipContract, WorkspaceFile, WorkspaceEmbed, Profile } from "@/lib/types";
+import type { PartnershipContract, WorkspaceFile, WorkspaceEmbed, WorkspaceTask, Profile } from "@/lib/types";
 
 export default async function WorkspacePage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -15,6 +15,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
   let partnerProfile: Partial<Profile>;
   let initialFiles: WorkspaceFile[] = [];
   let initialEmbeds: WorkspaceEmbed[] = [];
+  let initialTasks: WorkspaceTask[] = [];
 
   if (id === "demo" || id === "preview" || id === "demo-pod") {
     row = {
@@ -71,6 +72,12 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
       .eq("contract_id", id)
       .order("created_at", { ascending: false });
 
+    const { data: dbTasks } = await supabase
+      .from("workspace_tasks")
+      .select("*")
+      .eq("contract_id", id)
+      .order("created_at", { ascending: true });
+
     row = contract as PartnershipContract;
     partnerProfile = partnerRow
       ? {
@@ -91,6 +98,24 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
         };
     initialFiles = (files ?? []) as WorkspaceFile[];
     initialEmbeds = (embeds ?? []) as WorkspaceEmbed[];
+    initialTasks = (dbTasks ?? []).map((t) => ({
+      id: t.id,
+      contract_id: t.contract_id,
+      title: t.title,
+      description: t.description || undefined,
+      assignee_id: t.assignee_id,
+      assigned_to: t.assignee_id || user.id,
+      assigned_by: user.id,
+      status: t.status,
+      priority: t.priority,
+      tool_type: t.tool_type,
+      deliverable_url: t.deliverable_url,
+      deliverable_notes: t.deliverable_notes,
+      ai_verification: t.ai_verification,
+      approved_by_partner: t.approved_by_partner,
+      created_at: t.created_at,
+      updated_at: t.updated_at,
+    }));
   }
 
   return (
@@ -105,6 +130,7 @@ export default async function WorkspacePage({ params }: { params: Promise<{ id: 
           partner={partnerProfile}
           initialFiles={initialFiles}
           initialEmbeds={initialEmbeds}
+          initialTasks={initialTasks}
           paymentStatus={row.payment_status === "paid" ? "paid" : "unpaid"}
           categories={Array.from(new Set([profile?.industry_category, partnerProfile.industry_category].filter(Boolean))) as string[]}
           partnerPaymentLink={partnerProfile.payment_link}

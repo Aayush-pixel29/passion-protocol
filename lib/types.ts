@@ -157,6 +157,7 @@ export type WorkspaceTask = {
   contract_id: string;
   title: string;
   description?: string;
+  assignee_id?: string | null;
   assigned_to: string;
   assigned_by: string;
   status: "todo" | "in_progress" | "review" | "approved";
@@ -173,5 +174,6 @@ export type WorkspaceTask = {
   } | null;
   approved_by_partner?: boolean;
   created_at: string;
+  updated_at?: string;
   due_date?: string | null;
 };

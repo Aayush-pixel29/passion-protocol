@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { createClient } from "@/lib/supabase/server";
-import { type ConnectState, type Message, type PartnershipContract, type PartnershipStatus } from "@/lib/types";
+import { type ConnectState, type Message, type PartnershipContract, type PartnershipStatus, type WorkspaceTask } from "@/lib/types";
 import { stripe } from "@/lib/stripe";
 import { z } from "zod";
 
@@ -553,6 +553,132 @@ export async function markContractAsPaid(contractId: string): Promise<{ error?: 
     .update({ payment_status: "paid" })
     .eq("id", contractId)
     .or(`proposed_by.eq.${user.id},proposed_to.eq.${user.id}`);
+
+  if (error) return { error: error.message };
+  revalidatePath(`/workspace/${contractId}`);
+  return {};
+}
+
+export async function createWorkspaceTask(
+  contractId: string,
+  taskData: {
+    title: string;
+    description?: string;
+    assignee_id?: string | null;
+    status?: "todo" | "in_progress" | "review" | "approved";
+    priority?: "low" | "medium" | "high" | "urgent";
+    tool_type?: "github" | "vscode" | "supabase" | "figma" | "general";
+  }
+): Promise<{ error?: string; task?: WorkspaceTask }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+  if (!taskData.title.trim()) return { error: "Task title cannot be empty." };
+
+  const { data, error } = await supabase
+    .from("workspace_tasks")
+    .insert({
+      contract_id: contractId,
+      title: taskData.title.trim(),
+      description: taskData.description?.trim() || null,
+      assignee_id: taskData.assignee_id && isUuid(taskData.assignee_id) ? taskData.assignee_id : null,
+      status: taskData.status || "todo",
+      priority: taskData.priority || "medium",
+      tool_type: taskData.tool_type || "general",
+    })
+    .select("*")
+    .single();
+
+  if (error) return { error: error.message };
+  revalidatePath(`/workspace/${contractId}`);
+
+  const mappedTask: WorkspaceTask = {
+    id: data.id,
+    contract_id: data.contract_id,
+    title: data.title,
+    description: data.description || undefined,
+    assignee_id: data.assignee_id,
+    assigned_to: data.assignee_id || user.id,
+    assigned_by: user.id,
+    status: data.status,
+    priority: data.priority,
+    tool_type: data.tool_type,
+    deliverable_url: data.deliverable_url,
+    deliverable_notes: data.deliverable_notes,
+    ai_verification: data.ai_verification,
+    approved_by_partner: data.approved_by_partner,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
+  return { task: mappedTask };
+}
+
+export async function updateWorkspaceTask(
+  taskId: string,
+  contractId: string,
+  updates: Partial<WorkspaceTask>
+): Promise<{ error?: string; task?: WorkspaceTask }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const payload: Record<string, unknown> = {};
+  if (updates.title !== undefined) payload.title = updates.title;
+  if (updates.description !== undefined) payload.description = updates.description;
+  if (updates.status !== undefined) payload.status = updates.status;
+  if (updates.assignee_id !== undefined) {
+    payload.assignee_id = updates.assignee_id && isUuid(updates.assignee_id) ? updates.assignee_id : null;
+  }
+  if (updates.priority !== undefined) payload.priority = updates.priority;
+  if (updates.tool_type !== undefined) payload.tool_type = updates.tool_type;
+  if (updates.deliverable_url !== undefined) payload.deliverable_url = updates.deliverable_url;
+  if (updates.deliverable_notes !== undefined) payload.deliverable_notes = updates.deliverable_notes;
+  if (updates.ai_verification !== undefined) payload.ai_verification = updates.ai_verification;
+  if (updates.approved_by_partner !== undefined) payload.approved_by_partner = updates.approved_by_partner;
+
+  const { data, error } = await supabase
+    .from("workspace_tasks")
+    .update(payload)
+    .eq("id", taskId)
+    .select("*")
+    .single();
+
+  if (error) return { error: error.message };
+  revalidatePath(`/workspace/${contractId}`);
+
+  const mappedTask: WorkspaceTask = {
+    id: data.id,
+    contract_id: data.contract_id,
+    title: data.title,
+    description: data.description || undefined,
+    assignee_id: data.assignee_id,
+    assigned_to: data.assignee_id || user.id,
+    assigned_by: user.id,
+    status: data.status,
+    priority: data.priority,
+    tool_type: data.tool_type,
+    deliverable_url: data.deliverable_url,
+    deliverable_notes: data.deliverable_notes,
+    ai_verification: data.ai_verification,
+    approved_by_partner: data.approved_by_partner,
+    created_at: data.created_at,
+    updated_at: data.updated_at,
+  };
+  return { task: mappedTask };
+}
+
+export async function deleteWorkspaceTask(
+  taskId: string,
+  contractId: string
+): Promise<{ error?: string }> {
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return { error: "Session expired." };
+
+  const { error } = await supabase
+    .from("workspace_tasks")
+    .delete()
+    .eq("id", taskId);
 
   if (error) return { error: error.message };
   revalidatePath(`/workspace/${contractId}`);
