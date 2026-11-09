@@ -1,12 +1,17 @@
 import { createClient } from "@supabase/supabase-js";
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
+import type { IndustryCategory } from "../lib/types";
 
 type DemoUser = {
   email: string;
   codename: string;
-  role: "coder" | "designer" | "writer" | "maker";
-  looking_for: "coder" | "designer" | "writer" | "maker";
+  full_name: string;
+  industry_category: IndustryCategory;
+  professional_title: string;
+  looking_for_category: IndustryCategory;
+  looking_for_title: string;
+  spoken_languages: string[];
   bio: string;
   contact_url: string;
   pace: number;
@@ -19,8 +24,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "riya.designs@example.com",
     codename: "RIYA_DESIGNS",
-    role: "designer",
-    looking_for: "coder",
+    full_name: "Riya Sharma",
+    industry_category: "Creative & Design",
+    professional_title: "UI/UX & Product Designer",
+    looking_for_category: "Software & IT",
+    looking_for_title: "Full-Stack Engineer",
+    spoken_languages: ["English", "Hindi"],
     bio: "Interfaces that feel like a product, not a mock.",
     contact_url: "x.com/riya_designs",
     pace: 3,
@@ -31,8 +40,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "dev.arjun@example.com",
     codename: "DEV_ARJUN",
-    role: "coder",
-    looking_for: "designer",
+    full_name: "Arjun Patel",
+    industry_category: "Software & IT",
+    professional_title: "Full-Stack Engineer",
+    looking_for_category: "Creative & Design",
+    looking_for_title: "Product Designer",
+    spoken_languages: ["English", "Gujarati"],
     bio: "Full-stack, ships weekly, hates giant specs.",
     contact_url: "github.com/devarjun",
     pace: 4,
@@ -43,8 +56,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "kai.scripts@example.com",
     codename: "KAI_SCRIPTS",
-    role: "writer",
-    looking_for: "maker",
+    full_name: "Kai Sterling",
+    industry_category: "Marketing & Content",
+    professional_title: "Technical Storyteller & Copywriter",
+    looking_for_category: "Engineering & Hardware",
+    looking_for_title: "Hardware Prototyper",
+    spoken_languages: ["English", "Japanese"],
     bio: "Narrative and docs for weird tools.",
     contact_url: "kai.substack.com",
     pace: 2,
@@ -55,8 +72,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "neo.maker@example.com",
     codename: "NEO_MAKER",
-    role: "maker",
-    looking_for: "writer",
+    full_name: "Neo Vance",
+    industry_category: "Engineering & Hardware",
+    professional_title: "Hardware & IoT Systems Maker",
+    looking_for_category: "Marketing & Content",
+    looking_for_title: "Growth Writer",
+    spoken_languages: ["English", "German"],
     bio: "Hardware-ish prototypes and physical installs.",
     contact_url: "x.com/neo_maker",
     pace: 3,
@@ -67,8 +88,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "luna.code@example.com",
     codename: "LUNA_CODE",
-    role: "coder",
-    looking_for: "maker",
+    full_name: "Luna Chen",
+    industry_category: "Software & IT",
+    professional_title: "AI/ML Systems Researcher",
+    looking_for_category: "Engineering & Hardware",
+    looking_for_title: "Robotics Maker",
+    spoken_languages: ["English", "Mandarin"],
     bio: "ML tinkerer looking for someone who builds in the real world.",
     contact_url: "github.com/luna-code",
     pace: 5,
@@ -79,8 +104,12 @@ const DEMOS: DemoUser[] = [
   {
     email: "alex.growth@example.com",
     codename: "ALEX_GROWTH",
-    role: "designer",
-    looking_for: "writer",
+    full_name: "Alex Rivera",
+    industry_category: "Business & Sales",
+    professional_title: "Growth & GTM Strategist",
+    looking_for_category: "Marketing & Content",
+    looking_for_title: "Content Lead",
+    spoken_languages: ["English", "Spanish"],
     bio: "Growth experiments with a design brain.",
     contact_url: "alexgrowth@example.com",
     pace: 4,
@@ -150,8 +179,12 @@ async function main() {
     const { error: profileError } = await supabase.from("profiles").upsert({
       id: userId,
       codename: demo.codename,
-      role: demo.role,
-      looking_for: demo.looking_for,
+      full_name: demo.full_name,
+      industry_category: demo.industry_category,
+      professional_title: demo.professional_title,
+      looking_for_category: demo.looking_for_category,
+      looking_for_title: demo.looking_for_title,
+      spoken_languages: demo.spoken_languages,
       bio: demo.bio,
       onboarding_complete: true,
     });
